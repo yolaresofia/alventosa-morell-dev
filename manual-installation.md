@@ -23,7 +23,7 @@ npx sanity init --bare
 You will be prompted with an output that contains the project ID and dataset name.
 
 ```bash
-Success! Below are your project details:
+Success! Below are your project d
 
 Project ID: <projectId>
 Dataset: <dataset>
