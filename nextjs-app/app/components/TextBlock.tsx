@@ -12,6 +12,7 @@ export const TextBlock = ({ block }: Props) => {
   const text = getTranslation(block?.text, language);
   const alignment = block.alignment || "left";
 
+  
   return (
     <section className="w-full px-8 py-12">
       <div
