@@ -14,7 +14,7 @@ import { assist } from '@sanity/assist';
 import { colorInput } from '@sanity/color-input';
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID';
-const dataset = process.env.SANITY_STUDIO_DATASET || 'production';
+const dataset = process.env.SANITY_STUDIO_DATASET || 'staging';
 
 
 const SANITY_STUDIO_PREVIEW_URL =
