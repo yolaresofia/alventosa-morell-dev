@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { getTranslation } from "@/app/utils/translations";
+import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
 
 type LocalizedField = {
   ca?: string;
@@ -44,16 +45,13 @@ export default function Nav({
   const pathname = usePathname();
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
+  const { category: selectedCategory, setCategory } = useProjectCategory();
   const availableLanguages = languages.filter((lang) => lang !== language);
 
   const isProjectDetailPage =
     pathname.startsWith("/projects/") &&
     pathname !== "/projects" &&
     pathname !== "/projects/index";
-
-  const selectedCategory = isProjectDetailPage
-    ? currentProjectCategory || "all"
-    : "all"; // default fallback
 
   const shouldShowFilters =
     (pathname === "/projects" || pathname.startsWith("/projects/")) &&
@@ -78,9 +76,7 @@ export default function Nav({
             <span key={idx} className="flex items-center">
               <Link
                 href={link.href}
-                className={`hover:underline ${
-                  isActive ? "text-red-500" : ""
-                }`}
+                className={`hover:underline ${isActive ? "text-red-500" : ""}`}
               >
                 {translatedLabel}
               </Link>
@@ -102,6 +98,7 @@ export default function Nav({
                 <button
                   onClick={() => {
                     if (!isProjectDetailPage) {
+                      setCategory(cat.value as typeof selectedCategory);
                       router.push(`/projects?cat=${cat.value}`);
                     }
                   }}

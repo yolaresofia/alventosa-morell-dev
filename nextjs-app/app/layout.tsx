@@ -16,6 +16,7 @@ import MobileNav from "./components/MobileNav";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import Nav from "./components/Nav";
 import { FilterProvider } from "./context/FilterContext";
+import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
@@ -76,6 +77,7 @@ export default async function RootLayout({
   return (
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
+      <ProjectCategoryProvider>
         <FilterProvider>
           <LanguageProvider>
             <SanityLive onError={handleError} />
@@ -105,6 +107,7 @@ export default async function RootLayout({
             <SpeedInsights />
           </LanguageProvider>
         </FilterProvider>
+       </ProjectCategoryProvider>
       </body>
     </html>
   );

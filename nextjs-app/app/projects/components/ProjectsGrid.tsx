@@ -6,23 +6,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/utils";
 import { GetProjectsGridQueryResult } from "@/sanity.types";
+import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
 
 export function ProjectsGrid({
   projects,
 }: {
   projects: GetProjectsGridQueryResult;
 }) {
+  const { category } = useProjectCategory();
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const category = searchParams.get("cat") || "all";
 
   const filteredProjects = projects.filter((project) =>
     category === "all" ? true : project.category === category
   );
 
   return (
-    <section className="relative w-full min-h-screen px-12 pt-24">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-12 gap-y-16">
+    <section className="relative w-full min-h-screen px-16 py-24">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
         {filteredProjects.map((project) => {
           const imageUrl = project.thumbnail
             ? urlForImage(project.thumbnail)?.url()
