@@ -17,7 +17,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-12 pt-24">
-      <div className="grid grid-cols-5 font-medium text-sm border-b border-black pb-2 mb-4">
+      <div className="grid grid-cols-5 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
         <div>Projecte</div>
         <div>Programa</div>
         <div>Ubicació</div>
@@ -44,7 +44,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
             >
               <Link
                 href={`/projects/${project.slug.current}`}
-                className={`grid grid-cols-5 text-sm items-center transition-colors duration-300 py-2 ${
+                className={`grid grid-cols-5 text-sm items-center transition-colors duration-300 py-1.5 ${
                   isHovered ? "text-red-500" : "hover:text-red-500"
                 }`}
               >
@@ -60,7 +60,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
               </Link>
 
               {isHovered && project.thumbnail && (
-                <div className="grid grid-cols-5 py-6">
+                <div className="grid grid-cols-5 py-2">
                   <div className="col-span-1">
                     <div className="relative w-full aspect-[4/3]">
                       <Image
