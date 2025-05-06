@@ -77,7 +77,7 @@ export default async function ProjectPage({
       <ImageSliderProvider>
         <PageBuilderPage page={project} />
         <PopupSlider />
-        <div className="flex items-center text-sm px-32 mb-24">
+        <div className="flex items-center text-sm px-6 mb-24">
           {prevProject && (
             <Link
               href={`/projects/${prevProject.slug}`}

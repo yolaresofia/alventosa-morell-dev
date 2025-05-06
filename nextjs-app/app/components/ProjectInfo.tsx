@@ -13,14 +13,14 @@ export const ProjectInfo = ({ block }: Props) => {
   const translate = (field: any) => getTranslation(field, language);
 
   return (
-    <section className="w-full px-4 sm:px-8 md:px-16 lg:px-32 py-12">
+    <section className="w-full px-4 sm:px-8 md:px-6 py-12 font-soehne">
       {block.description && (
         <p className="max-w-5xl text-lg text-black font-medium leading-relaxed mb-16">
           {translate(block.description)}
         </p>
       )}
 
-      <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-4 max-w-xl text-black text-base font-medium">
+      <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-1 max-w-xl text-black text-base font-medium">
         {block.project && (
           <>
             <div>{translate(block.project.label)}</div>

@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/utils";
 import { GetProjectsGridQueryResult } from "@/sanity.types";
 
-type Props = {
+export function ProjectsGrid({
+  projects,
+}: {
   projects: GetProjectsGridQueryResult;
-  category: string; // <-- New prop
-};
-
-export function ProjectsGrid({ projects, category }: Props) {
+}) {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const category = searchParams.get("cat") || "all";
 
   const filteredProjects = projects.filter((project) =>
     category === "all" ? true : project.category === category
