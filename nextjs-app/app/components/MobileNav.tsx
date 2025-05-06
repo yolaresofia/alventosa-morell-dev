@@ -4,9 +4,17 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/app/context/LanguageContext";
+import { getTranslation } from "@/app/utils/translations";
+
+type LocalizedField = {
+  ca?: string;
+  es?: string;
+  en?: string;
+};
 
 type NavLink = {
-  label?: string;
+  label?: string | LocalizedField;
   href?: string;
 };
 
@@ -19,11 +27,13 @@ export default function MobileNav({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { language } = useLanguage();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
     <>
+      {/* Hamburger icon */}
       <div
         className="md:hidden flex items-center fixed top-4 right-4 z-50 cursor-pointer"
         onClick={toggleMenu}
@@ -42,6 +52,7 @@ export default function MobileNav({
         </div>
       </div>
 
+      {/* Full-screen mobile nav */}
       <div
         className={`fixed inset-0 bg-white/90 z-40 transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
@@ -50,6 +61,11 @@ export default function MobileNav({
         <div className="flex flex-col items-center justify-center h-full space-y-6 text-3xl font-medium text-black">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
+            const label =
+              typeof link.label === "string"
+                ? link.label
+                : getTranslation(link.label, language);
+
             return (
               <Link
                 key={link.href}
@@ -59,7 +75,7 @@ export default function MobileNav({
                 }`}
                 onClick={() => setIsOpen(false)}
               >
-                {link.label}
+                {label}
               </Link>
             );
           })}

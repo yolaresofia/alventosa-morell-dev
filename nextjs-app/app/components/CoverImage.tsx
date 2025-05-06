@@ -13,14 +13,12 @@ export const CoverImage = ({ block }: CoverImageProps) => {
 
   const alt = getTranslation(block.altText, language);
   const imageUrl = block.image ? urlForImage(block?.image)?.url() : "";
-  const pt = block.paddingTop ? `pt-${block.paddingTop}` : "";
-  const pb = block.paddingBottom ? `pb-${block.paddingBottom}` : "";
 
   if (!imageUrl) return null;
 
   return (
     <div
-      className={`w-full h-screen bg-center bg-cover ${pt} ${pb}`}
+      className="w-full h-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${imageUrl})` }}
       role="img"
       aria-label={alt}

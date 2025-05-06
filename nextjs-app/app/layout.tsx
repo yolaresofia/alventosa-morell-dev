@@ -14,6 +14,8 @@ import Image from "next/image";
 import NavLinks from "./components/NavLinks";
 import MobileNav from "./components/MobileNav";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import Nav from "./components/Nav";
+import { FilterProvider } from "./context/FilterContext";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
@@ -74,38 +76,35 @@ export default async function RootLayout({
   return (
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
-        <LanguageProvider>
-          <SanityLive onError={handleError} />
-          <MotionLayout>
-            {logoUrl && (
-              <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-                <Link href="/">
-                  <Image
-                    src={logoUrl}
-                    alt="Alventosa Morell Arquitectes"
-                    width={75}
-                    height={16}
-                    className="object-contain h-5 w-auto mix-blend-overlay z-50"
-                    priority
-                    unoptimized
-                  />
-                </Link>
-              </div>
-            )}
+        <FilterProvider>
+          <LanguageProvider>
+            <SanityLive onError={handleError} />
+            <MotionLayout>
+              {logoUrl && (
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                  <Link href="/">
+                    <Image
+                      src={logoUrl}
+                      alt="Alventosa Morell Arquitectes"
+                      width={75}
+                      height={16}
+                      className="object-contain h-5 w-auto mix-blend-overlay z-50"
+                      priority
+                      unoptimized
+                    />
+                  </Link>
+                </div>
+              )}
 
-            <NavLinks navLinks={navLinks} />
-            <MobileNav navLinks={navLinks} languages={languages} />
+              <MobileNav navLinks={navLinks} languages={languages} />
 
-            <main className="min-h-screen flex flex-col">{children}</main>
-          </MotionLayout>
+              <main className="min-h-screen flex flex-col">{children}</main>
 
-          {/* ✅ Language switcher shown on desktop only */}
-          <div className="fixed bottom-4 right-4 z-50 hidden md:block">
-            <LanguageSwitcher languages={languages} />
-          </div>
-
-          <SpeedInsights />
-        </LanguageProvider>
+              <Nav navLinks={navLinks} languages={languages} />
+            </MotionLayout>
+            <SpeedInsights />
+          </LanguageProvider>
+        </FilterProvider>
       </body>
     </html>
   );

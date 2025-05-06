@@ -22,15 +22,10 @@ export const DiptychImage = ({ block }: Props) => {
   const leftAlt = getTranslation(block.leftAltText, language);
   const rightAlt = getTranslation(block.rightAltText, language);
 
-  const pt = block.paddingTop ? `pt-${block.paddingTop}` : "";
-  const pb = block.paddingBottom ? `pb-${block.paddingBottom}` : "";
-
   if (!leftImageUrl || !rightImageUrl) return null;
 
-  console.log(pt, pb)
-
   return (
-    <section className={`w-full px-4 sm:px-8 md:px-16 lg:px-48 ${pt ? pt : 'pt-48'} ${pb ? pb : 'pb-48'}`}>
+    <section className="w-full px-4 sm:px-8 md:px-16 lg:px-48 pt-48 pb-48">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="relative w-full aspect-[3/4]">
           <Image

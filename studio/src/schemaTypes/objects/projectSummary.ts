@@ -1,5 +1,5 @@
-import { ListIcon } from '@sanity/icons'
-import {defineField, defineType} from 'sanity'
+import { ListIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
 export const projectSummary = defineType({
   name: 'projectSummary',
@@ -21,8 +21,27 @@ export const projectSummary = defineType({
     defineField({
       name: 'description',
       title: 'Descripció',
-      type: 'text',
-      rows: 4,
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'ca',
+          title: 'Català',
+          type: 'text',
+          rows: 4,
+        }),
+        defineField({
+          name: 'es',
+          title: 'Español',
+          type: 'text',
+          rows: 4,
+        }),
+        defineField({
+          name: 'en',
+          title: 'English',
+          type: 'text',
+          rows: 4,
+        }),
+      ],
     }),
   ],
   preview: {
@@ -30,11 +49,11 @@ export const projectSummary = defineType({
       title: 'title',
       subtitle: 'number',
     },
-    prepare({title, subtitle}) {
+    prepare({ title, subtitle }) {
       return {
         title,
         subtitle: subtitle ? `Projecte ${subtitle}` : undefined,
-      }
+      };
     },
   },
-})
+});

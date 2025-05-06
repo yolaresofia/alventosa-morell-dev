@@ -1,7 +1,6 @@
 import React from "react";
 
 import { dataAttr } from "@/sanity/lib/utils";
-import IntroHero from "./IntroHero";
 import { CoverImage } from "./CoverImage";
 import { ProjectSummary } from "./ProjectSummary";
 import { DiptychImage } from "./DiptychImage";
@@ -26,7 +25,6 @@ type BlockProps = {
 };
 
 const Blocks: BlocksType = {
-  introHero: IntroHero,
   coverImage: CoverImage,
   projectSummary: ProjectSummary,
   diptychImage: DiptychImage,

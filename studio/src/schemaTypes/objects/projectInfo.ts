@@ -135,7 +135,6 @@ export const projectInfo = defineType({
         ]}),
       ],
     }),
-
     defineField({
       name: 'photographer',
       title: 'Fotògraf',

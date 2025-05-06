@@ -95,8 +95,22 @@ export const settings = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            {name: 'label', title: 'Label', type: 'string'},
-            {name: 'href', title: 'Href', type: 'string'},
+            {
+              name: 'label',
+              title: 'Label (Localized)',
+              type: 'object',
+              fields: [
+                {name: 'ca', type: 'string', title: 'Catalan'},
+                {name: 'es', type: 'string', title: 'Spanish'},
+                {name: 'en', type: 'string', title: 'English'},
+              ],
+            },
+            {
+              name: 'href',
+              title: 'Href',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            },
           ],
         }),
       ],

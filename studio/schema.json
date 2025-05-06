@@ -1591,120 +1591,6 @@
             }
           },
           "optional": false
-        },
-        "paddingTop": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "union",
-            "of": [
-              {
-                "type": "string",
-                "value": "0"
-              },
-              {
-                "type": "string",
-                "value": "4"
-              },
-              {
-                "type": "string",
-                "value": "8"
-              },
-              {
-                "type": "string",
-                "value": "12"
-              },
-              {
-                "type": "string",
-                "value": "16"
-              },
-              {
-                "type": "string",
-                "value": "20"
-              },
-              {
-                "type": "string",
-                "value": "24"
-              },
-              {
-                "type": "string",
-                "value": "32"
-              },
-              {
-                "type": "string",
-                "value": "40"
-              },
-              {
-                "type": "string",
-                "value": "48"
-              },
-              {
-                "type": "string",
-                "value": "56"
-              },
-              {
-                "type": "string",
-                "value": "64"
-              }
-            ]
-          },
-          "optional": true
-        },
-        "paddingBottom": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "union",
-            "of": [
-              {
-                "type": "string",
-                "value": "0"
-              },
-              {
-                "type": "string",
-                "value": "4"
-              },
-              {
-                "type": "string",
-                "value": "8"
-              },
-              {
-                "type": "string",
-                "value": "12"
-              },
-              {
-                "type": "string",
-                "value": "16"
-              },
-              {
-                "type": "string",
-                "value": "20"
-              },
-              {
-                "type": "string",
-                "value": "24"
-              },
-              {
-                "type": "string",
-                "value": "32"
-              },
-              {
-                "type": "string",
-                "value": "40"
-              },
-              {
-                "type": "string",
-                "value": "48"
-              },
-              {
-                "type": "string",
-                "value": "56"
-              },
-              {
-                "type": "string",
-                "value": "64"
-              }
-            ]
-          },
-          "optional": true
         }
       }
     }
@@ -1739,7 +1625,30 @@
         "description": {
           "type": "objectAttribute",
           "value": {
-            "type": "string"
+            "type": "object",
+            "attributes": {
+              "ca": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "es": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "en": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            }
           },
           "optional": true
         }
@@ -1850,120 +1759,6 @@
             }
           },
           "optional": false
-        },
-        "paddingTop": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "union",
-            "of": [
-              {
-                "type": "string",
-                "value": "0"
-              },
-              {
-                "type": "string",
-                "value": "4"
-              },
-              {
-                "type": "string",
-                "value": "8"
-              },
-              {
-                "type": "string",
-                "value": "12"
-              },
-              {
-                "type": "string",
-                "value": "16"
-              },
-              {
-                "type": "string",
-                "value": "20"
-              },
-              {
-                "type": "string",
-                "value": "24"
-              },
-              {
-                "type": "string",
-                "value": "32"
-              },
-              {
-                "type": "string",
-                "value": "40"
-              },
-              {
-                "type": "string",
-                "value": "48"
-              },
-              {
-                "type": "string",
-                "value": "56"
-              },
-              {
-                "type": "string",
-                "value": "64"
-              }
-            ]
-          },
-          "optional": true
-        },
-        "paddingBottom": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "union",
-            "of": [
-              {
-                "type": "string",
-                "value": "0"
-              },
-              {
-                "type": "string",
-                "value": "4"
-              },
-              {
-                "type": "string",
-                "value": "8"
-              },
-              {
-                "type": "string",
-                "value": "12"
-              },
-              {
-                "type": "string",
-                "value": "16"
-              },
-              {
-                "type": "string",
-                "value": "20"
-              },
-              {
-                "type": "string",
-                "value": "24"
-              },
-              {
-                "type": "string",
-                "value": "32"
-              },
-              {
-                "type": "string",
-                "value": "40"
-              },
-              {
-                "type": "string",
-                "value": "48"
-              },
-              {
-                "type": "string",
-                "value": "56"
-              },
-              {
-                "type": "string",
-                "value": "64"
-              }
-            ]
-          },
-          "optional": true
         }
       }
     }

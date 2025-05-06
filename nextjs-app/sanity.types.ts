@@ -282,15 +282,17 @@ export type DiptychImage = {
     es?: string;
     en?: string;
   };
-  paddingTop?: "0" | "4" | "8" | "12" | "16" | "20" | "24" | "32" | "40" | "48" | "56" | "64";
-  paddingBottom?: "0" | "4" | "8" | "12" | "16" | "20" | "24" | "32" | "40" | "48" | "56" | "64";
 };
 
 export type ProjectSummary = {
   _type: "projectSummary";
   number?: string;
   title: string;
-  description?: string;
+  description?: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
 };
 
 export type CoverImage = {
@@ -311,8 +313,6 @@ export type CoverImage = {
     es?: string;
     en?: string;
   };
-  paddingTop?: "0" | "4" | "8" | "12" | "16" | "20" | "24" | "32" | "40" | "48" | "56" | "64";
-  paddingBottom?: "0" | "4" | "8" | "12" | "16" | "20" | "24" | "32" | "40" | "48" | "56" | "64";
 };
 
 export type About = {
@@ -1186,8 +1186,6 @@ export type GetSingleProjectQueryResult = {
       es?: string;
       en?: string;
     };
-    paddingTop?: "0" | "12" | "16" | "20" | "24" | "32" | "4" | "40" | "48" | "56" | "64" | "8";
-    paddingBottom?: "0" | "12" | "16" | "20" | "24" | "32" | "4" | "40" | "48" | "56" | "64" | "8";
   } | {
     _key: string;
     _type: "diptychImage";
@@ -1223,8 +1221,6 @@ export type GetSingleProjectQueryResult = {
       es?: string;
       en?: string;
     };
-    paddingTop?: "0" | "12" | "16" | "20" | "24" | "32" | "4" | "40" | "48" | "56" | "64" | "8";
-    paddingBottom?: "0" | "12" | "16" | "20" | "24" | "32" | "4" | "40" | "48" | "56" | "64" | "8";
   } | {
     _key: string;
     _type: "imageCarousel";
@@ -1345,7 +1341,11 @@ export type GetSingleProjectQueryResult = {
     _type: "projectSummary";
     number?: string;
     title: string;
-    description?: string;
+    description?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
   } | {
     _key: string;
     _type: "textBlock";

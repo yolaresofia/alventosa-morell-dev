@@ -1,7 +1,6 @@
 import {settings} from './singletons/settings'
 import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
-import { introHero } from './objects/introHero'
 import { about } from './singletons/about'
 import { coverImage } from './objects/coverImage'
 import { projectSummary } from './objects/projectSummary'
@@ -19,7 +18,6 @@ export const schemaTypes = [
   // Objects
   blockContent,
   link,
-  introHero,
   about,
   coverImage,
   projectSummary,

@@ -61,17 +61,17 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
 
               {isHovered && project.thumbnail && (
                 <div className="grid grid-cols-5 py-6">
-                  <div className="col-span-2">
+                  <div className="col-span-1">
                     <div className="relative w-full aspect-[4/3]">
                       <Image
                         src={urlForImage(project.thumbnail)?.url() || ""}
                         alt={project.title}
                         fill
-                        className="object-cover rounded-md"
+                        className="object-cover"
                       />
                     </div>
                   </div>
-                  <div className="col-span-3"></div>
+                  <div className="col-span-4"></div>
                 </div>
               )}
             </div>

@@ -48,6 +48,8 @@ export default async function ProjectPage({ params }: { params: { slug: string }
     ),
   ]);
 
+  console.log("Fetched project:", project);
+
   if (!project) {
     return <div>Project not found</div>;
   }

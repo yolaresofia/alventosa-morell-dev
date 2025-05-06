@@ -3,12 +3,11 @@
 import { PortableText, PortableTextBlock } from "next-sanity";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "../context/LanguageContext";
+import { getPortableTextTranslation, getTranslation } from "../utils/translations";
 
 export default function AboutPageClient({ about }: { about: any }) {
   const router = useRouter();
   const { language } = useLanguage();
-
-  const getTranslation = (field: any) => field?.[language] || field?.en || "";
 
   const handleBackgroundClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -28,12 +27,12 @@ export default function AboutPageClient({ about }: { about: any }) {
       onClick={handleBackgroundClick}
     >
       <div className="md:text-2xl text-lg font-medium leading-tight md:pb-24">
-        <PortableText value={getTranslation(about.aboutText) as PortableTextBlock[]} />
+        <PortableText value={getPortableTextTranslation(about.aboutText, language) as PortableTextBlock[]} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10 text-sm flex-grow">
         <div className="col-span-1">
-          <h2>{getTranslation(about.contact?.titleTranslations)}</h2>
+          <h2>{getTranslation(about.contact?.titleTranslations, language)}</h2>
           <a href={`mailto:${about.contact?.email || ""}`}>
             {about.contact?.email}
           </a>
@@ -42,7 +41,7 @@ export default function AboutPageClient({ about }: { about: any }) {
           </a>
 
           <h2 className="mt-4">
-            {getTranslation(about.office?.titleTranslations)}
+            {getTranslation(about.office?.titleTranslations, language)}
           </h2>
           <a href={about.office?.addressUrl?.href || ""} target="_blank">
             <PortableText value={about.office?.address as PortableTextBlock[]} />
@@ -55,16 +54,16 @@ export default function AboutPageClient({ about }: { about: any }) {
           </div>
 
           <div className="text-sm">
-            <PortableText value={getTranslation(about.aboutInfo) as PortableTextBlock[]} />
+            <PortableText value={getPortableTextTranslation(about.aboutInfo, language) as PortableTextBlock[]} />
           </div>
         </div>
 
         <div className="col-span-1">
-          <h2>{getTranslation(about.team?.titleTranslations)}</h2>
+          <h2>{getTranslation(about.team?.titleTranslations, language)}</h2>
           {about.team?.coFounders?.map((member: any) => (
             <div key={member._key || member.name} className="py-4">
               <p>{member.name}</p>
-              <p>{getTranslation(member.role)}</p>
+              <p>{getTranslation(member.role, language)}</p>
             </div>
           ))}
           {about.team?.teammates?.map((member: any) => (
@@ -72,7 +71,7 @@ export default function AboutPageClient({ about }: { about: any }) {
               <p>{member.name}</p>
             </div>
           ))}
-          <h2 className="pb-4">{getTranslation(about.team?.pastTeammatesTitleTranslations)}</h2>
+          <h2 className="pb-4">{getTranslation(about.team?.pastTeammatesTitleTranslations, language)}</h2>
           {about.team?.pastTeammates?.map((member: any) => (
             <div key={member._key || member.name}>
               <p>{member.name}</p>

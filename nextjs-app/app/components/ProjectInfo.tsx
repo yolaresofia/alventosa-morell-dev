@@ -1,14 +1,15 @@
 "use client";
 
-import { ProjectInfo as ProjectInfoType } from "@/sanity.types";
+import { useLanguage } from "@/app/context/LanguageContext";
 import { getTranslation } from "@/app/utils/translations";
+import { ProjectInfo as ProjectInfoType } from "@/sanity.types";
 
 type Props = {
   block: ProjectInfoType;
-  language?: "ca" | "es" | "en";
 };
 
-export const ProjectInfo = ({ block, language = "ca" }: Props) => {
+export const ProjectInfo = ({ block }: Props) => {
+  const { language } = useLanguage();
   const translate = (field: any) => getTranslation(field, language);
 
   return (
