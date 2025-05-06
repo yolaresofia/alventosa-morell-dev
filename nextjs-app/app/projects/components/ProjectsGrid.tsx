@@ -6,17 +6,22 @@ import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/utils";
 import { GetProjectsGridQueryResult } from "@/sanity.types";
 
-export function ProjectsGrid({
-  projects,
-}: {
+type Props = {
   projects: GetProjectsGridQueryResult;
-}) {
+  category: string; // <-- New prop
+};
+
+export function ProjectsGrid({ projects, category }: Props) {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+
+  const filteredProjects = projects.filter((project) =>
+    category === "all" ? true : project.category === category
+  );
 
   return (
     <section className="relative w-full min-h-screen px-12 pt-24">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-12 gap-y-16">
-        {projects.map((project) => {
+        {filteredProjects.map((project) => {
           const imageUrl = project.thumbnail
             ? urlForImage(project.thumbnail)?.url()
             : null;
