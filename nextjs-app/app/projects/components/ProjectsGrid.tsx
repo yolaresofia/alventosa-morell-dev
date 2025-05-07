@@ -20,7 +20,7 @@ export function ProjectsGrid({
   );
 
   return (
-    <section className="relative w-full min-h-screen px-16 py-32">
+    <section className="relative w-full min-h-screen px-16 py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
         {filteredProjects.map((project) => {
           const imageUrl = project.thumbnail
@@ -51,13 +51,18 @@ export function ProjectsGrid({
                   />
                 )}
               </div>
+
               <div
-                className={`mt-2 text-sm font-medium leading-tight flex gap-2 transition-opacity duration-300 ${
+                className={`mt-2 min-h-[24px] text-sm font-medium leading-tight flex transition-opacity duration-300 ${
                   isHovered ? "lg:opacity-100" : "lg:opacity-20"
                 }`}
               >
-                <div>{project.projectNumber || "-"}</div>
-                <div>{project.title}</div>
+                {isHovered && (
+                  <div className="flex">
+                    <div className="pr-2">{project.projectNumber || "-"}</div>
+                    <div>{project.title}</div>
+                  </div>
+                )}
               </div>
             </Link>
           );

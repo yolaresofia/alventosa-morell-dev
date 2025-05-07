@@ -30,12 +30,13 @@ export default function AboutPageClient({ about }: { about: any }) {
         <PortableText value={getPortableTextTranslation(about.aboutText, language) as PortableTextBlock[]} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10 text-sm flex-grow">
-        <div className="col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-8 md:grid-cols-6 gap-8 mt-10 text-sm flex-grow">
+        <div className="col-span-2">
           <h2>{getTranslation(about.contact?.titleTranslations, language)}</h2>
           <a href={`mailto:${about.contact?.email || ""}`}>
             {about.contact?.email}
           </a>
+          <br />
           <a href={`tel:${about.contact?.phone || ""}`}>
             {about.contact?.phone}
           </a>
@@ -58,7 +59,7 @@ export default function AboutPageClient({ about }: { about: any }) {
           </div>
         </div>
 
-        <div className="col-span-1">
+        <div className="col-span-2">
           <h2>{getTranslation(about.team?.titleTranslations, language)}</h2>
           {about.team?.coFounders?.map((member: any) => (
             <div key={member._key || member.name} className="py-4">

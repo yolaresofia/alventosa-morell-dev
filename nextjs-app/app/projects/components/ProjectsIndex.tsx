@@ -25,7 +25,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
   };
 
   return (
-    <section className="relative w-full min-h-screen bg-white text-black px-12 pt-24">
+    <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
       <div className="grid grid-cols-5 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
         <div>{getTranslation(columnTitles.project, language)}</div>
         <div>{getTranslation(columnTitles.program, language)}</div>

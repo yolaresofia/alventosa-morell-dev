@@ -63,9 +63,7 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
 
   return (
     <section ref={sectionRef} className="w-full h-[300vh] relative">
-      {/* The sticky container that holds everything */}
       <div className="sticky top-0 left-0 w-full h-screen flex flex-col overflow-hidden">
-        {/* The scrollable container with images that starts from the top */}
         <div className="flex overflow-x-hidden scrollbar-hide pt-0" ref={containerRef}>
           {projects.map((project: any) => {
             const imageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
@@ -87,7 +85,6 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
                   opacity: isFocused ? 1 : 0.2,
                 }}
               >
-                {/* Image container that reaches the top but is not full height */}
                 <div className="h-[85vh] w-auto">
                   <Image
                     src={imageUrl || "/placeholder.svg"}
@@ -98,7 +95,6 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
                     unoptimized
                   />
                 </div>
-                {/* Project title and number below the image */}
                 <div className="mt-2 text-sm pl-4 font-medium leading-tight flex">
                   <div className="pr-3">{project.projectNumber}</div>
                   <div>{project.title}</div>
@@ -107,7 +103,6 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
             )
           })}
         </div>
-
       </div>
     </section>
   )
