@@ -24,25 +24,41 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
     year: { ca: "Any", es: "Año", en: "Year" },
   };
 
+  // Clean and capitalize program label
+  const formatProgram = (value: string | null | undefined) => {
+    if (!value) return "-";
+    const withoutCasa = value.replace(/^Casa\s+/i, "").trim();
+    return withoutCasa.charAt(0).toUpperCase() + withoutCasa.slice(1);
+  };
+
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
       {/* Column Headers */}
-      <div className="grid grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
-        <div className="col-span-3">{getTranslation(columnTitles.project, language)}</div>
-        <div className="col-span-2">{getTranslation(columnTitles.program, language)}</div>
-        <div className="col-span-2">{getTranslation(columnTitles.location, language)}</div>
-        <div className="col-span-1">{getTranslation(columnTitles.area, language)}</div>
-        <div className="col-span-1 text-right">{getTranslation(columnTitles.year, language)}</div>
+      <div className="grid grid-cols-6 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
+        <div className="col-span-4 md:col-span-3">
+          {getTranslation(columnTitles.project, language)}
+        </div>
+        <div className="col-span-1 md:col-span-2">
+          {getTranslation(columnTitles.program, language)}
+        </div>
+        <div className="hidden md:block md:col-span-2">
+          {getTranslation(columnTitles.location, language)}
+        </div>
+        <div className="hidden md:block md:col-span-1">
+          {getTranslation(columnTitles.area, language)}
+        </div>
+        <div className="col-span-1 md:col-span-1 text-right">
+          {getTranslation(columnTitles.year, language)}
+        </div>
       </div>
 
       {/* Data Rows */}
       <div className="flex flex-col">
         {projects.map((project) => {
           const isHovered = hoveredSlug === project.slug.current;
-          const program =
-            getTranslation(project.projectInfo?.program?.value, language) || "-";
-          const location =
-            getTranslation(project.projectInfo?.location?.value, language) || "-";
+          const rawProgram = getTranslation(project.projectInfo?.program?.value, language);
+          const program = formatProgram(rawProgram);
+          const location = getTranslation(project.projectInfo?.location?.value, language) || "-";
           const area = project.projectInfo?.area?.value || "-";
           const year = project.projectInfo?.year?.value || "-";
 
@@ -55,19 +71,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
             >
               <Link
                 href={`/projects/${project.slug.current}`}
-                className={`grid grid-cols-9 text-sm items-center transition-colors duration-300 py-1.5 ${
+                className={`grid grid-cols-6 md:grid-cols-9 text-sm items-center transition-colors duration-300 py-1.5 ${
                   isHovered ? "text-red-500" : "hover:text-red-500"
                 }`}
               >
-                <div className="col-span-3 font-medium">
+                <div className="col-span-4 md:col-span-3 font-medium">
                   {project.projectNumber
                     ? `${project.projectNumber} ${project.title}`
                     : project.title}
                 </div>
-                <div className="col-span-2">{program}</div>
-                <div className="col-span-2">{location}</div>
-                <div className="col-span-1">{area}</div>
-                <div className="col-span-1 text-right">{year}</div>
+                <div className="col-span-1 md:col-span-2">{program}</div>
+                <div className="hidden md:block md:col-span-2">{location}</div>
+                <div className="hidden md:block md:col-span-1">{area}</div>
+                <div className="col-span-1 md:col-span-1 text-right">{year}</div>
               </Link>
 
               {isHovered && project.thumbnail && (
