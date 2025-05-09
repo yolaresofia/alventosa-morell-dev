@@ -3,7 +3,6 @@ import Head from "next/head";
 import Link from "next/link";
 
 import PageBuilderPage from "@/app/components/PageBuilder";
-import { sanityFetch } from "@/sanity/lib/live";
 import { client } from "@/sanity/lib/client";
 import { ImageSliderProvider } from "@/app/context/ImageSliderContext";
 import PopupSlider from "@/app/components/PopupSlider";
