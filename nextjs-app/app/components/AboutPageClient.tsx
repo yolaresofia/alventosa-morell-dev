@@ -26,7 +26,7 @@ export default function AboutPageClient({ about }: { about: any }) {
       className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-16 flex flex-col"
       onClick={handleBackgroundClick}
     >
-      <div className="md:text-2xl text-lg font-medium leading-tight md:pb-24">
+      <div className="md:text-2xl text-lg font-medium leading-[1.5] md:pb-24">
         <PortableText value={getPortableTextTranslation(about.aboutText, language) as PortableTextBlock[]} />
       </div>
 

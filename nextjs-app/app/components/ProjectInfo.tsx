@@ -15,7 +15,7 @@ export const ProjectInfo = ({ block }: Props) => {
   return (
     <section className="w-full px-4 sm:px-8 md:px-6 py-12 font-soehne">
       {block.description && (
-        <p className="max-w-5xl text-base text-black font-medium leading-tight mb-16">
+        <p className="max-w-5xl text-base text-black font-medium leading-[1.5] mb-16">
           {translate(block.description)}
         </p>
       )}

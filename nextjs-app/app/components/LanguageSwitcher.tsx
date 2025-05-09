@@ -2,13 +2,24 @@
 
 import { useLanguage } from "@/app/context/LanguageContext";
 
-export default function LanguageSwitcher({ languages }: { languages: string[] }) {
+export default function LanguageSwitcher({
+  languages,
+  mobile = false,
+}: {
+  languages: string[];
+  mobile?: boolean;
+}) {
   const { language, setLanguage } = useLanguage();
-
   const availableLanguages = languages.filter((lang) => lang !== language);
 
   return (
-    <div className="fixed bottom-4 right-4 flex items-center space-x-1 text-sm z-40">
+    <div
+      className={`${
+        mobile
+          ? "absolute bottom-10 left-1/2 transform -translate-x-1/2 text-4xl"
+          : "fixed bottom-4 right-4 text-sm z-40 hidden md:flex"
+      } flex items-center space-x-2`}
+    >
       {availableLanguages.map((lang, idx) => (
         <div key={lang} className="flex items-center space-x-1">
           <button

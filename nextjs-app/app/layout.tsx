@@ -11,9 +11,7 @@ import MotionLayout from "./components/MotionLayout";
 import { LanguageProvider } from "./context/LanguageContext";
 import Link from "next/link";
 import Image from "next/image";
-import NavLinks from "./components/NavLinks";
 import MobileNav from "./components/MobileNav";
-import LanguageSwitcher from "./components/LanguageSwitcher";
 import Nav from "./components/Nav";
 import { FilterProvider } from "./context/FilterContext";
 import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
@@ -90,7 +88,7 @@ export default async function RootLayout({
                       alt="Alventosa Morell Arquitectes"
                       width={75}
                       height={16}
-                      className="object-contain h-5 w-auto mix-blend-overlay z-50"
+                      className="object-contain h-[18px] w-auto mix-blend-overlay z-50"
                       priority
                       unoptimized
                     />

@@ -14,13 +14,13 @@ export const TextBlock = ({ block }: Props) => {
   const alignment = block.alignment || "left";
 
   return (
-    <section className="w-full px-8 py-12">
+    <section className="w-full px-6 py-12">
       <div
         className={`max-w-4xl ${
           alignment === "right" ? "text-right ml-auto" : "text-left"
         }`}
       >
-        <p className="text-base leading-tight text-black">{text}</p>
+        <p className="text-base leading-[1.5] text-black">{text}</p>
       </div>
     </section>
   );

@@ -33,7 +33,6 @@ export default function MobileNav({
 
   return (
     <>
-      {/* Hamburger icon */}
       <div
         className="md:hidden flex items-center fixed top-4 right-4 z-50 cursor-pointer"
         onClick={toggleMenu}
@@ -51,14 +50,12 @@ export default function MobileNav({
           />
         </div>
       </div>
-
-      {/* Full-screen mobile nav */}
       <div
         className={`fixed inset-0 bg-white/90 z-40 transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col items-center justify-center h-full space-y-6 text-3xl font-medium text-black">
+        <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             const label =
@@ -81,8 +78,8 @@ export default function MobileNav({
           })}
         </div>
 
-        <div className="absolute bottom-4 w-full text-center">
-          <LanguageSwitcher languages={languages} />
+        <div className="w-full text-center">
+          <LanguageSwitcher languages={languages} mobile />
         </div>
       </div>
     </>
