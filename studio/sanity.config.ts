@@ -12,6 +12,7 @@ import {
 } from 'sanity/presentation';
 import { assist } from '@sanity/assist';
 import { colorInput } from '@sanity/color-input';
+import { vercelDeployTool } from 'sanity-plugin-vercel-deploy'
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID';
 const dataset = process.env.SANITY_STUDIO_DATASET || 'production';
@@ -45,53 +46,53 @@ export default defineConfig({
   dataset,
 
   plugins: [
-    presentationTool({
-      previewUrl: {
-        origin: SANITY_STUDIO_PREVIEW_URL,
-        previewMode: {
-          enable: '/api/draft-mode/enable',
-        },
-      },
-      resolve: {
-        mainDocuments: defineDocuments([
-          {
-            route: '/',
-            filter: `_type == "settings"`,
-          },
-          {
-            route: '/projects/:slug',
-            filter: `_type == "project" && slug.current == $slug || _id == $slug`,
-          },
-        ]),
-        locations: {
-          settings: defineLocations({
-            locations: [homeLocation],
-            message: 'This document is used as your homepage',
-            tone: 'positive',
-          }),
-          project: defineLocations({
-            select: {
-              name: 'title',
-              slug: 'slug.current',
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.name || 'Projecte sense títol',
-                  href: resolveHref('project', doc?.slug)!,
-                },
-              ],
-            }),
-          }),
-        },
-      },
-    }),
+    // presentationTool({
+    //   previewUrl: {
+    //     origin: SANITY_STUDIO_PREVIEW_URL,
+    //     previewMode: {
+    //       enable: '/api/draft-mode/enable',
+    //     },
+    //   },
+    //   resolve: {
+    //     mainDocuments: defineDocuments([
+    //       {
+    //         route: '/',
+    //         filter: `_type == "settings"`,
+    //       },
+    //       {
+    //         route: '/projects/:slug',
+    //         filter: `_type == "project" && slug.current == $slug || _id == $slug`,
+    //       },
+    //     ]),
+    //     locations: {
+    //       settings: defineLocations({
+    //         locations: [homeLocation],
+    //         message: 'This document is used as your homepage',
+    //         tone: 'positive',
+    //       }),
+    //       project: defineLocations({
+    //         select: {
+    //           name: 'title',
+    //           slug: 'slug.current',
+    //         },
+    //         resolve: (doc) => ({
+    //           locations: [
+    //             {
+    //               title: doc?.name || 'Projecte sense títol',
+    //               href: resolveHref('project', doc?.slug)!,
+    //             },
+    //           ],
+    //         }),
+    //       }),
+    //     },
+    //   },
+    // }),
     structureTool({
       structure,
     }),
     unsplashImageAsset(),
+    vercelDeployTool(),
     assist(),
-    visionTool(),
     colorInput(),
   ],
 
