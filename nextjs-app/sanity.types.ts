@@ -68,6 +68,36 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type CoverVideo = {
+  _type: "coverVideo";
+  vimeoUrl?: string;
+  altText: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
+};
+
+export type MonoptychImage = {
+  _type: "monoptychImage";
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  altText: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
+};
+
 export type Project = {
   _id: string;
   _type: "project";
@@ -112,7 +142,11 @@ export type Project = {
     _key: string;
   } & ImageCarousel | {
     _key: string;
-  } & ProjectInfo>;
+  } & ProjectInfo | {
+    _key: string;
+  } & MonoptychImage | {
+    _key: string;
+  } & CoverVideo>;
 };
 
 export type Slug = {
@@ -531,53 +565,6 @@ export type About = {
   };
 };
 
-export type IntroHero = {
-  _type: "introHero";
-  desktopBackgroundImages?: Array<{
-    image?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-    altText?: string;
-    _key: string;
-  }>;
-  mobileBackgroundImages?: Array<{
-    image?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-    altText?: string;
-    _key: string;
-  }>;
-  logo?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  logoAltText?: string;
-  filter?: boolean;
-};
-
 export type Link = {
   _type: "link";
   linkType?: "href";
@@ -673,8 +660,12 @@ export type Settings = {
     _type: "image";
   };
   navLinks?: Array<{
-    label?: string;
-    href?: string;
+    label?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    href: string;
     _key: string;
   }>;
   languages?: Array<string>;
@@ -735,6 +726,89 @@ export type SanityImageMetadata = {
   blurHash?: string;
   hasAlpha?: boolean;
   isOpaque?: boolean;
+};
+
+export type MuxVideo = {
+  _type: "mux.video";
+  asset?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "mux.videoAsset";
+  };
+};
+
+export type MuxVideoAsset = {
+  _id: string;
+  _type: "mux.videoAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  status?: string;
+  assetId?: string;
+  playbackId?: string;
+  filename?: string;
+  thumbTime?: number;
+  data?: MuxAssetData;
+};
+
+export type MuxAssetData = {
+  _type: "mux.assetData";
+  resolution_tier?: string;
+  upload_id?: string;
+  created_at?: string;
+  id?: string;
+  status?: string;
+  max_stored_resolution?: string;
+  passthrough?: string;
+  encoding_tier?: string;
+  master_access?: string;
+  aspect_ratio?: string;
+  duration?: number;
+  max_stored_frame_rate?: number;
+  mp4_support?: string;
+  max_resolution_tier?: string;
+  tracks?: Array<{
+    _key: string;
+  } & MuxTrack>;
+  playback_ids?: Array<{
+    _key: string;
+  } & MuxPlaybackId>;
+  static_renditions?: MuxStaticRenditions;
+};
+
+export type MuxStaticRenditions = {
+  _type: "mux.staticRenditions";
+  status?: string;
+  files?: Array<{
+    _key: string;
+  } & MuxStaticRenditionFile>;
+};
+
+export type MuxStaticRenditionFile = {
+  _type: "mux.staticRenditionFile";
+  ext?: string;
+  name?: string;
+  width?: number;
+  bitrate?: number;
+  filesize?: number;
+  height?: number;
+};
+
+export type MuxPlaybackId = {
+  _type: "mux.playbackId";
+  id?: string;
+  policy?: string;
+};
+
+export type MuxTrack = {
+  _type: "mux.track";
+  id?: string;
+  type?: string;
+  max_width?: number;
+  max_frame_rate?: number;
+  duration?: number;
+  max_height?: number;
 };
 
 export type Color = {
@@ -891,7 +965,7 @@ export type SanityAssistSchemaTypeField = {
   } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | IntroHero | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | MuxVideo | MuxVideoAsset | MuxAssetData | MuxStaticRenditions | MuxStaticRenditionFile | MuxPlaybackId | MuxTrack | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
@@ -1101,7 +1175,7 @@ export type GetAboutPageQueryResult = {
   } | null;
 } | null;
 // Variable: getProjectsGridQuery
-// Query: *[_type == "project"] | order(projectNumber asc) {    title,    slug,    projectNumber,    category, // ← ADD THIS    thumbnail,    "projectInfo": builder[_type == "projectInfo"][0]{      year,      location,      program,      area    }  }
+// Query: *[_type == "project"] | order(projectNumber asc) {    title,    slug,    projectNumber,    category,    thumbnail,    "projectInfo": builder[_type == "projectInfo"][0]{      year,      location,      program,      area    }  }
 export type GetProjectsGridQueryResult = Array<{
   title: string;
   slug: Slug;
@@ -1162,7 +1236,7 @@ export type GetProjectsGridQueryResult = Array<{
   } | null;
 }>;
 // Variable: getSingleProjectQuery
-// Query: *[_type == "project" && slug.current == $slug][0]{    title,    slug,    projectNumber,    builder[]{      // Your dynamic sections like images, text, etc      ...    }  }
+// Query: *[_type == "project" && slug.current == $slug][0]{    title,    slug,    projectNumber,    builder[]{      ...,      _type == "coverVideo" => {        _type,        _key,        altText,        video {          asset->{            _id,            playbackId,            thumbTime          }        }      }    }  }
 export type GetSingleProjectQueryResult = {
   title: string;
   slug: Slug;
@@ -1186,6 +1260,16 @@ export type GetSingleProjectQueryResult = {
       es?: string;
       en?: string;
     };
+  } | {
+    _key: string;
+    _type: "coverVideo";
+    vimeoUrl?: string;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    video: null;
   } | {
     _key: string;
     _type: "diptychImage";
@@ -1244,6 +1328,25 @@ export type GetSingleProjectQueryResult = {
       _type: "imageWithAltText";
       _key: string;
     }>;
+  } | {
+    _key: string;
+    _type: "monoptychImage";
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
   } | {
     _key: string;
     _type: "projectInfo";
@@ -1404,8 +1507,12 @@ export type SettingsQueryResult = {
     _type: "image";
   } | null;
   navLinks: Array<{
-    label?: string;
-    href?: string;
+    label?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    href: string;
     _key: string;
   }> | null;
   languages: Array<string> | null;
@@ -1416,8 +1523,8 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact {\n      titleTranslations,\n      email,\n      phone\n    },\n    office {\n      titleTranslations,\n      address,\n      addressUrl\n    },\n    social {\n      instagram\n    },\n    team {\n      titleTranslations,\n      coFounders[]{\n        name,\n        role\n      },\n      teammates[]{\n        name\n      },\n      teammatesTitleTranslations,\n      pastTeammates[]{\n        name\n      },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo\n  }\n": GetAboutPageQueryResult;
-    "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category, // \u2190 ADD THIS\n    thumbnail,\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area\n    }\n  }\n": GetProjectsGridQueryResult;
-    "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      // Your dynamic sections like images, text, etc\n      ...\n    }\n  }\n": GetSingleProjectQueryResult;
+    "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    thumbnail,\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area\n    }\n  }\n": GetProjectsGridQueryResult;
+    "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        video {\n          asset->{\n            _id,\n            playbackId,\n            thumbTime\n          }\n        }\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
     "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo,\n    navLinks,\n    languages\n  }\n": SettingsQueryResult;
   }
 }

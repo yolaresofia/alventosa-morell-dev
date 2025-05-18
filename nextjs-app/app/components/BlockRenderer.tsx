@@ -7,6 +7,8 @@ import { DiptychImage } from "./DiptychImage";
 import { ImageCarousel } from "./ImageCarousel";
 import { TextBlock } from "./TextBlock";
 import { ProjectInfo } from "./ProjectInfo";
+import { MonoptychImage } from "./MonoptychImage";
+import { CoverVideo } from "./CoverVideo";
 
 type BlocksType = {
   [key: string]: React.FC<any>;
@@ -26,8 +28,10 @@ type BlockProps = {
 
 const Blocks: BlocksType = {
   coverImage: CoverImage,
+  coverVideo: CoverVideo,
   projectSummary: ProjectSummary,
   diptychImage: DiptychImage,
+  monoptychImage: MonoptychImage,
   imageCarousel: ImageCarousel,
   textBlock: TextBlock,
   projectInfo: ProjectInfo,
@@ -39,6 +43,7 @@ export default function BlockRenderer({
   pageId,
   pageType,
 }: BlockProps) {
+  console.log("Rendering block:", block._type);
   if (typeof Blocks[block._type] !== "undefined") {
     return (
       <div

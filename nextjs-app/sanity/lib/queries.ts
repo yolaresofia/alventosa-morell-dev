@@ -49,7 +49,7 @@ export const getProjectsGridQuery = defineQuery(`
     title,
     slug,
     projectNumber,
-    category, // ← ADD THIS
+    category,
     thumbnail,
     "projectInfo": builder[_type == "projectInfo"][0]{
       year,
@@ -66,8 +66,13 @@ export const getSingleProjectQuery = defineQuery(`
     slug,
     projectNumber,
     builder[]{
-      // Your dynamic sections like images, text, etc
-      ...
+      ...,
+      _type == "coverVideo" => {
+        _type,
+        _key,
+        altText,
+        vimeoUrl
+      }
     }
   }
 `);

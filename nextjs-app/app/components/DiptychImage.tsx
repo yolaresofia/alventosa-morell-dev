@@ -27,6 +27,8 @@ export const DiptychImage = ({ block }: Props) => {
   const rightAlt = getTranslation(block.rightAltText, language);
 
   const [baseIndex, setBaseIndex] = useState<number | null>(null);
+  const [leftLoaded, setLeftLoaded] = useState(false);
+  const [rightLoaded, setRightLoaded] = useState(false);
 
   useEffect(() => {
     if (leftImageUrl && rightImageUrl) {
@@ -36,7 +38,7 @@ export const DiptychImage = ({ block }: Props) => {
       ]);
       setBaseIndex(index);
     }
-  }, [leftImageUrl, rightImageUrl, leftAlt, rightAlt]);
+  }, [leftImageUrl, rightImageUrl, leftAlt, rightAlt, addImages]);
 
   if (!leftImageUrl || !rightImageUrl || baseIndex === null) return null;
 
@@ -52,7 +54,8 @@ export const DiptychImage = ({ block }: Props) => {
             alt={leftAlt}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
+            onLoad={() => setLeftLoaded(true)}
+            className={`object-cover ${leftLoaded ? "blur-0" : "blur-md"}`}
           />
         </div>
         <div
@@ -64,7 +67,8 @@ export const DiptychImage = ({ block }: Props) => {
             alt={rightAlt}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
+            onLoad={() => setRightLoaded(true)}
+            className={`object-cover ${rightLoaded ? "blur-0" : "blur-md"}`}
           />
         </div>
       </div>

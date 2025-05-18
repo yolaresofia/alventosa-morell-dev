@@ -10,6 +10,8 @@ import { textBlock } from './objects/textBlock'
 import { projectInfo } from './objects/projectInfo'
 import { project } from './documents/project'
 import { home } from './singletons/home'
+import { monoptychImage } from './objects/monoptychImage'
+import { coverVideo } from './objects/coverVideo'
 
 export const schemaTypes = [
   // Singletons
@@ -26,4 +28,6 @@ export const schemaTypes = [
   textBlock,
   projectInfo,
   project,
+  monoptychImage,
+  coverVideo
 ]

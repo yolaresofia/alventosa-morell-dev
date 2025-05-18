@@ -75,11 +75,10 @@ export default async function RootLayout({
   return (
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
-      <ProjectCategoryProvider>
-        <FilterProvider>
-          <LanguageProvider>
-            <SanityLive onError={handleError} />
-            <MotionLayout>
+        <ProjectCategoryProvider>
+          <FilterProvider>
+            <LanguageProvider>
+              <SanityLive onError={handleError} />
               {logoUrl && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
                   <Link href="/">
@@ -101,11 +100,10 @@ export default async function RootLayout({
               <main className="min-h-screen flex flex-col">{children}</main>
 
               <Nav navLinks={navLinks} languages={languages} />
-            </MotionLayout>
-            <SpeedInsights />
-          </LanguageProvider>
-        </FilterProvider>
-       </ProjectCategoryProvider>
+              <SpeedInsights />
+            </LanguageProvider>
+          </FilterProvider>
+        </ProjectCategoryProvider>
       </body>
     </html>
   );

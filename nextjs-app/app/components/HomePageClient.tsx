@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useRef, useState, useEffect } from "react"
@@ -5,42 +6,87 @@ import Link from "next/link"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 
-export default function HomePageClient({ homepage }: { homepage: any }) {
+type Props = {
+  homepage: any
+  logoUrl: string | null
+}
+
+export default function HomePageClient({ homepage, logoUrl }: Props) {
   const projects = homepage?.featuredProjects || []
   const [currentSlug, setCurrentSlug] = useState<string | null>(null)
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
+  const [overlayOpacity, setOverlayOpacity] = useState(1)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const section = sectionRef.current
-    const container = containerRef.current
+    // Add global style to hide scrollbars
+    const style = document.createElement("style")
+    style.textContent = `
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  `
+    document.head.appendChild(style)
 
-    if (!section || !container) return
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
+  // Sync horizontal scroll + overlay fade
+  useEffect(() => {
     const handleScroll = () => {
+      const section = sectionRef.current
+      const container = containerRef.current
+
+      if (!section || !container) return
+
       const sectionRect = section.getBoundingClientRect()
       const sectionTop = sectionRect.top
       const sectionHeight = sectionRect.height
       const viewportHeight = window.innerHeight
 
-      let scrollProgress = 0
-
+      // Calculate scroll progress (0 to 1)
+      let progress = 0
       if (sectionTop <= 0) {
-        scrollProgress = Math.min(Math.abs(sectionTop) / (sectionHeight - viewportHeight), 1)
+        progress = Math.min(Math.abs(sectionTop) / (sectionHeight - viewportHeight), 1)
       }
 
-      const maxScroll = container.scrollWidth - container.clientWidth
-      const targetScrollLeft = scrollProgress * maxScroll
-      container.scrollLeft = targetScrollLeft
+      setScrollProgress(progress)
+
+      // Overlay fades out in first 15% of scroll
+      const fadeEnd = 0.15
+      const easedOpacity = Math.max(0, 1 - Math.min(progress / fadeEnd, 1))
+      setOverlayOpacity(easedOpacity)
+
+      // Horizontal scroll effect starts ONLY after overlay has completely faded
+      const scrollDelay = 0.2 // Increased threshold to ensure overlay is completely gone
+
+      // Ensure absolutely no horizontal scrolling happens before the threshold
+      if (progress <= scrollDelay) {
+        container.scrollLeft = 0
+      } else {
+        // Calculate scroll progress after the delay point
+        const adjustedScrollProgress = (progress - scrollDelay) / (1 - scrollDelay)
+        const maxScroll = container.scrollWidth - container.clientWidth
+        container.scrollLeft = adjustedScrollProgress * maxScroll
+      }
     }
 
     window.addEventListener("scroll", handleScroll)
-    handleScroll()
+    handleScroll() // Initial call
 
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Track visible project for active styling
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -59,12 +105,26 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
     return () => observer.disconnect()
   }, [projects])
 
+  // Force container to start at scroll position 0 on component mount
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft = 0
+    }
+  }, [])
+
   if (!projects.length) return <div>No featured projects</div>
 
   return (
-    <section ref={sectionRef} className="w-full h-[300vh] relative">
-      <div className="sticky top-0 left-0 w-full h-screen flex flex-col overflow-hidden">
-        <div className="flex overflow-x-hidden scrollbar-hide pt-0" ref={containerRef}>
+    <section ref={sectionRef} className="w-full h-[200vh] relative">
+      <div className="sticky top-0 left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10">
+        <div
+          className="flex overflow-x-hidden scrollbar-hide pt-0"
+          ref={containerRef}
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
           {projects.map((project: any) => {
             const imageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
             const slug = project.slug?.current
@@ -80,12 +140,14 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
                 data-slug={slug}
                 onMouseEnter={() => setHoveredSlug(slug)}
                 onMouseLeave={() => setHoveredSlug(null)}
-                className="snap-center flex-shrink-0 flex flex-col items-start transition-opacity duration-300"
+                className="snap-center flex-shrink-0 flex flex-col items-start"
                 style={{
                   opacity: isFocused ? 1 : 0.2,
+                  // Only apply transition after overlay is gone
+                  transition: scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
                 }}
               >
-                <div className="h-[85vh] w-auto">
+                <div className="h-[90vh] w-auto">
                   <Image
                     src={imageUrl || "/placeholder.svg"}
                     alt={project.title}
@@ -104,6 +166,28 @@ export default function HomePageClient({ homepage }: { homepage: any }) {
           })}
         </div>
       </div>
+      <div
+        className="fixed inset-0 bg-white z-40 pointer-events-none"
+        style={{
+          opacity: overlayOpacity * 0.85,
+          transition: "opacity 0.5s ease-out",
+        }}
+      />
+      {logoUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          style={{
+            opacity: overlayOpacity,
+            transition: "opacity 0.5s ease-out",
+          }}
+        >
+          <img
+            src={logoUrl || "/placeholder.svg"}
+            alt="Alventosa Morell Arquitectes"
+            className="w-[600px] h-auto object-contain mix-blend-multiply"
+          />
+        </div>
+      )}
     </section>
   )
 }

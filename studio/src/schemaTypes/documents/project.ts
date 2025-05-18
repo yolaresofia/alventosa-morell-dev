@@ -59,6 +59,8 @@ export const project = defineType({
         {type: 'textBlock'},
         {type: 'imageCarousel'},
         {type: 'projectInfo'},
+        {type: 'monoptychImage'},
+        {type: 'coverVideo'},
       ],
     }),
   ],
