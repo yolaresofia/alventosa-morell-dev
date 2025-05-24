@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { getTranslation } from "@/app/utils/translations";
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
@@ -40,6 +41,7 @@ const categories = [
 export default function Nav({
   navLinks,
   languages = [],
+  currentProjectCategory,
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
@@ -55,6 +57,13 @@ export default function Nav({
   const shouldShowFilters =
     (pathname === "/projects" || pathname.startsWith("/projects/")) &&
     pathname !== "/projects/index";
+
+  // 💡 Sync category context if coming from a project detail page
+  useEffect(() => {
+    if (isProjectDetailPage && currentProjectCategory) {
+      setCategory(currentProjectCategory as typeof selectedCategory);
+    }
+  }, [isProjectDetailPage, currentProjectCategory, setCategory]);
 
   return (
     <>
@@ -95,13 +104,12 @@ export default function Nav({
                   onClick={() => {
                     if (!isProjectDetailPage) {
                       setCategory(cat.value as typeof selectedCategory);
-                      router.push(`/projects?cat=${cat.value}`);
                     }
+                    router.push(`/projects?cat=${cat.value}`);
                   }}
-                  disabled={isProjectDetailPage}
                   className={`font-medium text-base ${
                     isActive ? "text-red-500" : "text-black"
-                  } ${isProjectDetailPage ? "cursor-default" : "hover:text-red-500"}`}
+                  } ${isProjectDetailPage ? "hover:text-red-500" : ""}`}
                 >
                   {label}
                 </button>

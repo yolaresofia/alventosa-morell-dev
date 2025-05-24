@@ -1,7 +1,7 @@
-// app/context/ProjectCategoryContext.tsx
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 type ProjectCategory = "all" | "uni" | "pluri" | "equip";
 
@@ -14,7 +14,13 @@ const ProjectCategoryContext = createContext<{
 });
 
 export function ProjectCategoryProvider({ children }: { children: React.ReactNode }) {
-  const [category, setCategory] = useState<ProjectCategory>("all");
+  const searchParams = useSearchParams();
+  const urlCategory = (searchParams.get("cat") || "all") as ProjectCategory;
+  const [category, setCategory] = useState<ProjectCategory>(urlCategory);
+
+  useEffect(() => {
+    setCategory(urlCategory);
+  }, [urlCategory]);
 
   return (
     <ProjectCategoryContext.Provider value={{ category, setCategory }}>

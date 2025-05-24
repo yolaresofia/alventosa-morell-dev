@@ -6,6 +6,9 @@ import PageBuilderPage from "@/app/components/PageBuilder"
 import { client } from "@/sanity/lib/client"
 import { ImageSliderProvider } from "@/app/context/ImageSliderContext"
 import PopupSlider from "@/app/components/PopupSlider"
+import Nav from "@/app/components/Nav"
+import { sanityFetch } from "@/sanity/lib/live"
+import { settingsQuery } from "@/sanity/lib/queries"
 
 export async function generateStaticParams() {
   const slugs = await client.fetch(
@@ -24,7 +27,6 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  // Await params before using its properties
   const { slug } = await params
 
   const project = await client.fetch(`*[_type == "project" && slug.current == $slug][0]`, { slug })
@@ -40,10 +42,9 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  // Await params before using its properties
   const { slug } = await params
 
-  const [project, allProjects] = await Promise.all([
+  const [project, allProjects, settings] = await Promise.all([
     client.fetch('*[_type == "project" && slug.current == $slug][0]', {
       slug,
     }),
@@ -53,6 +54,7 @@ export default async function ProjectPage({
         projectNumber
       }`,
     ),
+    sanityFetch({ query: settingsQuery }),
   ])
 
   if (!project) {
@@ -64,12 +66,24 @@ export default async function ProjectPage({
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null
   const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : null
 
+  const navLinks = (settings?.data?.navLinks || []).map((link: any) => ({
+    href: link.href as string,
+    label: link.label,
+  }))
+
+  const languages = settings?.data?.languages || ["ca", "es", "en"]
+
   return (
     <div className="bg-white min-h-screen relative">
       <Head>
         <title>{project.title}</title>
       </Head>
       <ImageSliderProvider>
+        <Nav
+          navLinks={navLinks}
+          languages={languages}
+          currentProjectCategory={project.category || "all"}
+        />
         <PageBuilderPage page={project} />
         <PopupSlider />
         <div className="flex items-center text-sm px-6 mb-24">
