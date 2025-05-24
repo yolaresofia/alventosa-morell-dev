@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 
 type ProjectCategory = "all" | "uni" | "pluri" | "equip";
 
@@ -14,13 +13,18 @@ const ProjectCategoryContext = createContext<{
 });
 
 export function ProjectCategoryProvider({ children }: { children: React.ReactNode }) {
-  const searchParams = useSearchParams();
-  const urlCategory = (searchParams.get("cat") || "all") as ProjectCategory;
-  const [category, setCategory] = useState<ProjectCategory>(urlCategory);
+  const [category, setCategory] = useState<ProjectCategory>("all");
 
   useEffect(() => {
-    setCategory(urlCategory);
-  }, [urlCategory]);
+    // This only runs on client
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get("cat") as ProjectCategory;
+    if (cat && ["uni", "pluri", "equip"].includes(cat)) {
+      setCategory(cat);
+    } else {
+      setCategory("all");
+    }
+  }, []);
 
   return (
     <ProjectCategoryContext.Provider value={{ category, setCategory }}>
