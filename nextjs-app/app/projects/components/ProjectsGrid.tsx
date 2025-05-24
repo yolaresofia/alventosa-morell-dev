@@ -1,63 +1,67 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { urlForImage } from "@/sanity/lib/utils";
-import { GetProjectsGridQueryResult } from "@/sanity.types";
-import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
+import { useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { urlForImage } from "@/sanity/lib/utils"
+import type { GetProjectsGridQueryResult } from "@/sanity.types"
+import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
 
-export function ProjectsGrid({
-  projects,
-}: {
-  projects: GetProjectsGridQueryResult;
-}) {
-  const { category } = useProjectCategory();
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
+  const { category } = useProjectCategory()
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
+  const [hasUserHovered, setHasUserHovered] = useState(false)
 
-  const filteredProjects = projects.filter((project) =>
-    category === "all" ? true : project.category === category
-  );
+  const filteredProjects = projects.filter((project) => (category === "all" ? true : project.category === category))
+
+  const firstProjectSlug = filteredProjects[0]?.slug.current || null
+
+  const handleMouseEnter = (slug: string) => {
+    setHoveredSlug(slug)
+    setHasUserHovered(true)
+  }
+
+  const handleMouseLeave = () => {
+    setHoveredSlug(null)
+  }
+
+  const getActiveSlug = () => {
+    if (hoveredSlug) return hoveredSlug
+    if (!hasUserHovered && firstProjectSlug) return firstProjectSlug
+    return null
+  }
+
+  const activeSlug = getActiveSlug()
 
   return (
     <section className="relative w-full min-h-screen px-16 py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
         {filteredProjects.map((project) => {
-          const imageUrl = project.thumbnail
-            ? urlForImage(project.thumbnail)?.url()
-            : null;
+          const imageUrl = project.thumbnail ? urlForImage(project.thumbnail)?.url() : null
 
-          const isHovered = hoveredSlug === project.slug.current;
+          const isActive = activeSlug === project.slug.current
+          const showTitle = isActive
+          const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
+          const titleOpacity = showTitle ? "lg:opacity-100" : "lg:opacity-0"
 
           return (
             <Link
               href={`/projects/${project.slug.current}`}
               key={project.slug.current}
-              onMouseEnter={() => setHoveredSlug(project.slug.current)}
-              onMouseLeave={() => setHoveredSlug(null)}
+              onMouseEnter={() => handleMouseEnter(project.slug.current)}
+              onMouseLeave={handleMouseLeave}
               className="flex flex-col items-start transition-opacity duration-300"
             >
-              <div
-                className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${
-                  isHovered ? "lg:opacity-100" : "lg:opacity-20"
-                }`}
-              >
+              <div className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}>
                 {imageUrl && (
-                  <Image
-                    src={imageUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={imageUrl || "/placeholder.svg"} alt={project.title} fill className="object-cover" />
                 )}
               </div>
 
               <div
-                className={`mt-2 min-h-[24px] text-sm font-medium leading-tight flex transition-opacity duration-300 ${
-                  isHovered ? "lg:opacity-100" : "lg:opacity-20"
-                }`}
+                className={`mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
               >
-                {isHovered && (
+                {showTitle && (
                   <div className="flex">
                     <div className="pr-2">{project.projectNumber || "-"}</div>
                     <div>{project.title}</div>
@@ -65,9 +69,9 @@ export function ProjectsGrid({
                 )}
               </div>
             </Link>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

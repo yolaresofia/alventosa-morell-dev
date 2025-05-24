@@ -1,152 +1,125 @@
 /* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 
-import { useRef, useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { urlForImage } from "@/sanity/lib/utils"
+import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { urlForImage } from "@/sanity/lib/utils";
 
 type Props = {
-  homepage: any
-  logoUrl: string | null
-}
+  homepage: any;
+  logoUrl: string | null;
+};
 
 export default function HomePageClient({ homepage, logoUrl }: Props) {
-  const projects = homepage?.featuredProjects || []
-  const [currentSlug, setCurrentSlug] = useState<string | null>(null)
-  const [overlayOpacity, setOverlayOpacity] = useState(1)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const projects = homepage?.featuredProjects || [];
+  const [currentSlug, setCurrentSlug] = useState<string | null>(null);
+  const [overlayOpacity, setOverlayOpacity] = useState(1);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const sectionRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // Add global style to hide scrollbars
-    const style = document.createElement("style")
+    const style = document.createElement("style");
     style.textContent = `
-    ::-webkit-scrollbar {
-      display: none;
-    }
-    * {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  `
-    document.head.appendChild(style)
-
+      ::-webkit-scrollbar { display: none; }
+      * { -ms-overflow-style: none; scrollbar-width: none; }
+    `;
+    document.head.appendChild(style);
     return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+      document.head.removeChild(style);
+    };
+  }, []);
 
-  // Sync horizontal scroll + overlay fade
   useEffect(() => {
     const handleScroll = () => {
-      const section = sectionRef.current
-      const container = containerRef.current
+      const section = sectionRef.current;
+      const container = containerRef.current;
 
-      if (!section || !container) return
+      if (!section || !container) return;
 
-      const sectionRect = section.getBoundingClientRect()
-      const sectionTop = sectionRect.top
-      const sectionHeight = sectionRect.height
-      const viewportHeight = window.innerHeight
+      const sectionRect = section.getBoundingClientRect();
+      const sectionTop = sectionRect.top;
+      const sectionHeight = sectionRect.height;
+      const viewportHeight = window.innerHeight;
 
-      // Calculate scroll progress (0 to 1)
-      let progress = 0
+      let progress = 0;
       if (sectionTop <= 0) {
-        progress = Math.min(Math.abs(sectionTop) / (sectionHeight - viewportHeight), 1)
+        progress = Math.min(
+          Math.abs(sectionTop) / (sectionHeight - viewportHeight),
+          1
+        );
       }
 
-      setScrollProgress(progress)
+      setScrollProgress(progress);
 
-      // Overlay fades out in first 15% of scroll
-      const fadeEnd = 0.15
-      const easedOpacity = Math.max(0, 1 - Math.min(progress / fadeEnd, 1))
-      setOverlayOpacity(easedOpacity)
+      const fadeEnd = 0.15;
+      const easedOpacity = Math.max(0, 1 - Math.min(progress / fadeEnd, 1));
+      setOverlayOpacity(easedOpacity);
 
-      // Horizontal scroll effect starts ONLY after overlay has completely faded
-      const scrollDelay = 0.2 // Increased threshold to ensure overlay is completely gone
-
-      // Ensure absolutely no horizontal scrolling happens before the threshold
+      const scrollDelay = 0.2;
       if (progress <= scrollDelay) {
-        container.scrollLeft = 0
+        container.scrollLeft = 0;
       } else {
-        // Calculate scroll progress after the delay point
-        const adjustedScrollProgress = (progress - scrollDelay) / (1 - scrollDelay)
-        const maxScroll = container.scrollWidth - container.clientWidth
-        container.scrollLeft = adjustedScrollProgress * maxScroll
+        const adjustedScrollProgress =
+          (progress - scrollDelay) / (1 - scrollDelay);
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        container.scrollLeft = adjustedScrollProgress * maxScroll;
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    handleScroll() // Initial call
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  // Track visible project for active styling - improved for center detection
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          const slug = entry.target.getAttribute("data-slug")
-
-          if (entry.isIntersecting && slug) {
-            // Calculate how centered the element is
-            const rect = entry.target.getBoundingClientRect()
-            const viewportWidth = window.innerWidth
-            const elementCenterX = rect.left + rect.width / 2
-            const viewportCenterX = viewportWidth / 2
-
-            // If element is close to center (within 15% of viewport width)
-            const threshold = viewportWidth * 0.15
-            if (Math.abs(elementCenterX - viewportCenterX) < threshold) {
-              setCurrentSlug(slug)
-            }
-          }
-        })
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible?.target) {
+          const slug = visible.target.getAttribute("data-slug");
+          if (slug) setCurrentSlug(slug);
+        }
       },
-      {
-        root: null, // Use viewport as root
-        threshold: 0.7, // Higher threshold for better center detection
-        rootMargin: "0px",
-      },
-    )
+      { root: containerRef.current, threshold: 0.6 }
+    );
 
-    const elements = document.querySelectorAll("[data-slug]")
-    elements.forEach((el) => observer.observe(el))
+    const elements = containerRef.current?.querySelectorAll("[data-slug]");
+    elements?.forEach((el) => observer.observe(el));
 
-    return () => observer.disconnect()
-  }, [projects])
+    return () => observer.disconnect();
+  }, [projects]);
 
-  // Force container to start at scroll position 0 on component mount
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft = 0
+      containerRef.current.scrollLeft = 0;
     }
-  }, [])
+  }, []);
 
-  if (!projects.length) return <div>No featured projects</div>
+  if (!projects.length) return <div>No featured projects</div>;
 
   return (
     <section ref={sectionRef} className="w-full h-[200vh] relative">
-      <div className="sticky top-0 left-0 w-full h-[90vh] flex flex-col overflow-hidden">
+      <div className="sticky top-0 left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10">
         <div
-          className="flex overflow-x-hidden scrollbar-hide pt-0 snap-x snap-mandatory"
           ref={containerRef}
+          className="flex pt-0 snap-x snap-mandatory overflow-x-auto overflow-y-hidden w-full h-full"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
           }}
         >
           {projects.map((project: any) => {
-            const imageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
-            const slug = project.slug?.current
+            const imageUrl = project.featuredImage
+              ? urlForImage(project.featuredImage)?.url()
+              : null;
+            const slug = project.slug?.current;
 
-            if (!slug || !imageUrl) return null
+            if (!slug || !imageUrl) return null;
 
-            const isActive = currentSlug === slug
+            const isFocused = currentSlug === slug;
 
             return (
               <Link
@@ -155,13 +128,14 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 data-slug={slug}
                 className="snap-center flex-shrink-0 flex flex-col items-start"
                 style={{
-                  opacity: isActive ? 1 : 0.2,
-                  transition: scrollProgress > 0.2 ? "opacity 0.5s ease" : "none",
+                  opacity: isFocused ? 1 : 0.2,
+                  transition:
+                    scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
                 }}
               >
                 <div className="h-[90vh] w-auto">
                   <Image
-                    src={imageUrl || "/placeholder.svg"}
+                    src={imageUrl}
                     alt={project.title}
                     width={1000}
                     height={1500}
@@ -174,17 +148,21 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                   <div>{project.title}</div>
                 </div>
               </Link>
-            )
+            );
           })}
         </div>
       </div>
+
+      {/* White overlay */}
       <div
-        className="fixed inset-0 bg-white z-50 pointer-events-none"
+        className="fixed inset-0 bg-white z-40 pointer-events-none"
         style={{
           opacity: overlayOpacity * 0.85,
           transition: "opacity 0.5s ease-out",
         }}
       />
+
+      {/* Centered logo */}
       {logoUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
@@ -194,12 +172,12 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           }}
         >
           <img
-            src={logoUrl || "/placeholder.svg"}
+            src={logoUrl}
             alt="Alventosa Morell Arquitectes"
             className="w-[600px] h-auto object-contain mix-blend-multiply"
           />
         </div>
       )}
     </section>
-  )
+  );
 }

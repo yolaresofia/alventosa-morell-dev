@@ -73,7 +73,7 @@ export default function Nav({
             <span key={idx} className="flex items-center">
               <Link
                 href={link.href}
-                className={`text-base${isActive ? "text-red-500" : ""}`}
+                className={`text-base ${isActive ? "text-red-500" : ""}`}
               >
                 {translatedLabel}
               </Link>

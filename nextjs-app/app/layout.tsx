@@ -78,14 +78,16 @@ export default async function RootLayout({
               {logoUrl && (
                 <div className="fixed top-0 w-full h-[60px] z-30 flex justify-center items-center px-4">
                   <Link href="/" className="relative block w-[150px] h-[35px] sm:w-[200px] sm:h-[48px]">
-                    <Image
-                      src={logoUrl || "/placeholder.svg"}
-                      alt="Alventosa Morell Arquitectes"
-                      className="object-contain"
-                      priority
-                      unoptimized
-                      fill
-                    />
+                    <div className="logo-container">
+                      <Image
+                        src={logoUrl || "/placeholder.svg"}
+                        alt="Alventosa Morell Arquitectes"
+                        className="object-contain logo-negative-effect"
+                        priority
+                        unoptimized
+                        fill
+                      />
+                    </div>
                   </Link>
                 </div>
               )}
