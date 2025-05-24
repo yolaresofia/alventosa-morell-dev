@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useImageSlider } from "../context/ImageSliderContext";
 import { CloseButton } from "./CloseButton";
 import { LeftArrow } from "./LeftArrow";
@@ -9,6 +10,35 @@ export default function PopupSlider() {
   const { isOpen, images, currentIndex, closeSlider, goToNext, goToPrev } =
     useImageSlider();
   const image = images[currentIndex];
+
+  // ✨ Block background scroll
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
+  // ⌨️ Keyboard interactions: arrows and Escape
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        goToPrev();
+      } else if (event.key === "ArrowRight") {
+        goToNext();
+      } else if (event.key === "Escape") {
+        closeSlider();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, goToPrev, goToNext, closeSlider]);
 
   if (!isOpen || !image) return null;
 
@@ -31,7 +61,7 @@ export default function PopupSlider() {
       <img
         src={image.url}
         alt={image.alt || ""}
-        className="max-h-[90vh] max-w-[90vw]"
+        className="max-h-[95vh] max-w-[90vw]"
       />
       <button
         onClick={goToNext}

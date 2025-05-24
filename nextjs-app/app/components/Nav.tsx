@@ -70,7 +70,7 @@ export default function Nav({
       {shouldShowFilters && (
         <div className="fixed bottom-0 left-0 w-full h-11 bg-white z-30" />
       )}
-      <nav className="hidden md:flex fixed bottom-3 left-6 z-40 text-sm items-center">
+      <nav className="hidden md:flex fixed bottom-3 left-6 z-30 text-sm items-center">
         {navLinks.map((link, idx) => {
           const isActive = pathname === link.href;
           const translatedLabel =
@@ -119,7 +119,7 @@ export default function Nav({
           })}
         </div>
       )}
-      <div className="fixed bottom-3 right-6 items-center space-x-1 z-40 hidden md:flex text-base">
+      <div className="fixed bottom-3 right-6 items-center space-x-1 z-30 hidden md:flex text-base">
         {availableLanguages.map((lang, idx) => (
           <div key={lang} className="flex items-center space-x-1">
             <button
