@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { urlForImage } from "@/sanity/lib/utils";
-import { useLanguage } from "@/app/context/LanguageContext";
-import { GetProjectsGridQueryResult } from "@/sanity.types";
-import { getTranslation } from "@/app/utils/translations";
+import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { urlForImage } from "@/sanity/lib/utils"
+import { useLanguage } from "@/app/context/LanguageContext"
+import type { GetProjectsGridQueryResult } from "@/sanity.types"
+import { getTranslation } from "@/app/utils/translations"
 
 type ProjectsIndexProps = {
-  projects: GetProjectsGridQueryResult;
-};
+  projects: GetProjectsGridQueryResult
+}
 
 export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
-  const { language } = useLanguage();
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const { language } = useLanguage()
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
 
   const columnTitles = {
     project: { ca: "Projecte", es: "Proyecto", en: "Project" },
@@ -22,87 +22,85 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
     location: { ca: "Ubicació", es: "Ubicación", en: "Location" },
     area: { ca: "Àrea", es: "Área", en: "Area" },
     year: { ca: "Any", es: "Año", en: "Year" },
-  };
+  }
 
   // Clean and capitalize program label
   const formatProgram = (value: string | null | undefined) => {
-    if (!value) return "-";
-    const withoutCasa = value.replace(/^Casa\s+/i, "").trim();
-    return withoutCasa.charAt(0).toUpperCase() + withoutCasa.slice(1);
-  };
+    if (!value) return "-"
+    const withoutCasa = value.replace(/^Casa\s+/i, "").trim()
+    return withoutCasa.charAt(0).toUpperCase() + withoutCasa.slice(1)
+  }
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
-      {/* Column Headers */}
       <div className="grid grid-cols-6 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
-        <div className="col-span-4 md:col-span-3">
-          {getTranslation(columnTitles.project, language)}
-        </div>
-        <div className="col-span-1 md:col-span-2">
-          {getTranslation(columnTitles.program, language)}
-        </div>
-        <div className="hidden md:block md:col-span-2">
-          {getTranslation(columnTitles.location, language)}
-        </div>
-        <div className="hidden md:block md:col-span-1">
-          {getTranslation(columnTitles.area, language)}
-        </div>
-        <div className="col-span-1 md:col-span-1 text-right">
-          {getTranslation(columnTitles.year, language)}
-        </div>
+        <div className="col-span-4 md:col-span-3">{getTranslation(columnTitles.project, language)}</div>
+        <div className="col-span-1 md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
+        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.location, language)}</div>
+        <div className="hidden md:block md:col-span-1">{getTranslation(columnTitles.area, language)}</div>
+        <div className="col-span-1 md:col-span-1 text-right">{getTranslation(columnTitles.year, language)}</div>
       </div>
-
-      {/* Data Rows */}
       <div className="flex flex-col">
         {projects.map((project) => {
-          const isHovered = hoveredSlug === project.slug.current;
-          const rawProgram = getTranslation(project.projectInfo?.program?.value, language);
-          const program = formatProgram(rawProgram);
-          const location = getTranslation(project.projectInfo?.location?.value, language) || "-";
-          const area = project.projectInfo?.area?.value || "-";
-          const year = project.projectInfo?.year?.value || "-";
+          const isHovered = hoveredSlug === project.slug.current
+          const rawProgram = getTranslation(project.projectInfo?.program?.value, language)
+          const program = formatProgram(rawProgram)
+          const location = getTranslation(project.projectInfo?.location?.value, language) || "-"
+          const area = project.projectInfo?.area?.value || "-"
+          const year = project.projectInfo?.year?.value || "-"
 
           return (
-            <div
-              key={project.slug.current}
-              className="transition-all duration-300"
-              onMouseEnter={() => setHoveredSlug(project.slug.current)}
-              onMouseLeave={() => setHoveredSlug(null)}
-            >
-              <Link
-                href={`/projects/${project.slug.current}`}
-                className={`grid grid-cols-6 md:grid-cols-9 text-sm items-center transition-colors duration-300 py-1.5 ${
-                  isHovered ? "text-red-500" : "hover:text-red-500"
-                }`}
-              >
-                <div className="col-span-4 md:col-span-3 font-medium">
-                  {project.projectNumber
-                    ? `${project.projectNumber} ${project.title}`
-                    : project.title}
-                </div>
-                <div className="col-span-1 md:col-span-2">{program}</div>
-                <div className="hidden md:block md:col-span-2">{location}</div>
-                <div className="hidden md:block md:col-span-1">{area}</div>
-                <div className="col-span-1 md:col-span-1 text-right">{year}</div>
-              </Link>
-
-              {isHovered && project.thumbnail && (
-                <div className="py-2">
-                  <div className="relative h-64 w-auto">
-                    <Image
-                      src={urlForImage(project.thumbnail)?.url() || ""}
-                      alt={project.title}
-                      fill
-                      className="object-contain"
-                      style={{ objectPosition: "left" }}
-                    />
+            <div key={project.slug.current} className="group">
+              <div onMouseEnter={() => setHoveredSlug(project.slug.current)} onMouseLeave={() => setHoveredSlug(null)}>
+                <Link
+                  href={`/projects/${project.slug.current}`}
+                  className={`grid grid-cols-6 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
+                    isHovered ? "text-red-500" : "hover:text-red-500"
+                  }`}
+                >
+                  <div className="col-span-4 md:col-span-3 font-medium">
+                    {project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title}
                   </div>
+                  <div className="col-span-1 md:col-span-2">{program}</div>
+                  <div className="hidden md:block md:col-span-2">{location}</div>
+                  <div className="hidden md:block md:col-span-1">{area}</div>
+                  <div className="col-span-1 md:col-span-1 text-right">{year}</div>
+                </Link>
+                <div
+                  className="overflow-hidden bg-white"
+                  style={{
+                    height: isHovered ? "300px" : "0px",
+                    transition: "height 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }}
+                >
+                  {project.thumbnail && (
+                    <Link href={`/projects/${project.slug.current}`} className="block h-full w-full">
+                      <div
+                        className="relative h-full w-full cursor-pointer"
+                        style={{
+                          opacity: isHovered ? 1 : 0,
+                          transform: isHovered ? "translateY(0)" : "translateY(10px)",
+                          transition: isHovered
+                            ? "opacity 0.25s ease-out 0.4s, transform 0.25s ease-out 0.4s"
+                            : "opacity 0.15s ease-out, transform 0.15s ease-out",
+                        }}
+                      >
+                        <Image
+                          src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
+                          alt={project.title}
+                          fill
+                          className="object-contain"
+                          style={{ objectPosition: "left" }}
+                        />
+                      </div>
+                    </Link>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

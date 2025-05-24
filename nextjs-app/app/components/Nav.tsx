@@ -58,7 +58,6 @@ export default function Nav({
     (pathname === "/projects" || pathname.startsWith("/projects/")) &&
     pathname !== "/projects/index";
 
-  // 💡 Sync category context if coming from a project detail page
   useEffect(() => {
     if (isProjectDetailPage && currentProjectCategory) {
       setCategory(currentProjectCategory as typeof selectedCategory);
@@ -68,9 +67,9 @@ export default function Nav({
   return (
     <>
       {shouldShowFilters && (
-        <div className="fixed bottom-0 left-0 w-full h-11 bg-white z-30" />
+        <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 bg-white z-30" />
       )}
-      <nav className="hidden md:flex fixed bottom-3 left-6 z-30 text-sm items-center">
+      <nav className="hidden md:flex fixed bottom-3 left-6 z-40 text-sm items-center">
         {navLinks.map((link, idx) => {
           const isActive = pathname === link.href;
           const translatedLabel =
@@ -93,7 +92,7 @@ export default function Nav({
       </nav>
 
       {shouldShowFilters && (
-        <div className="fixed bottom-3 left-1/2 transform -translate-x-1/2 flex items-center gap-0.5 z-30 text-sm">
+        <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30 text-sm">
           {categories.map((cat, idx) => {
             const label = getTranslation(categoryLabels[cat.value], language);
             const isActive = selectedCategory === cat.value;

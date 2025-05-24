@@ -11,7 +11,6 @@ export default function PopupSlider() {
     useImageSlider();
   const image = images[currentIndex];
 
-  // ✨ Block background scroll
   useEffect(() => {
     if (isOpen) {
       const originalOverflow = document.body.style.overflow;
@@ -22,7 +21,6 @@ export default function PopupSlider() {
     }
   }, [isOpen]);
 
-  // ⌨️ Keyboard interactions: arrows and Escape
   useEffect(() => {
     if (!isOpen) return;
 
@@ -43,7 +41,7 @@ export default function PopupSlider() {
   if (!isOpen || !image) return null;
 
   return (
-    <div className="fixed inset-0 z-40 bg-white flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
       <button
         onClick={closeSlider}
         className="absolute top-4 right-4"
