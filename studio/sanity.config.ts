@@ -13,7 +13,6 @@ import {
 import { assist } from '@sanity/assist';
 import { colorInput } from '@sanity/color-input';
 import { vercelDeployTool } from 'sanity-plugin-vercel-deploy';
-import { muxInput } from 'sanity-plugin-mux-input'; // ✅ Mux plugin added
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID';
 const dataset = process.env.SANITY_STUDIO_DATASET || 'production';
@@ -53,7 +52,6 @@ export default defineConfig({
     vercelDeployTool(),
     assist(),
     colorInput(),
-    muxInput(),
   ],
 
   schema: {

@@ -1,42 +1,46 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { getTranslation } from "../utils/translations";
-import { urlForImage } from "@/sanity/lib/utils";
-import { CoverImage as CoverImageType } from "@/sanity.types";
-import { useImageSlider } from "../context/ImageSliderContext";
+import { useState } from "react"
+import { getTranslation } from "../utils/translations"
+import { urlForImage } from "@/sanity/lib/utils"
+import type { CoverImage as CoverImageType } from "@/sanity.types"
 
 type CoverImageProps = {
-  block: CoverImageType;
-};
+  block: CoverImageType
+}
 
 export const CoverImage = ({ block }: CoverImageProps) => {
-  const [language] = useState<"ca" | "es" | "en">("ca");
-  const { addImages, openSlider } = useImageSlider();
+  const [language] = useState<"ca" | "es" | "en">("ca")
 
-  const alt = getTranslation(block.altText, language);
-  const imageUrl = block.image ? urlForImage(block.image)?.url() : undefined;
+  const alt = getTranslation(block.altText, language)
+  const imageUrl = block.image ? urlForImage(block.image)?.url() : undefined
+  const hasPadding = block.hasPadding || false
 
-  const [imageIndex, setImageIndex] = useState<number | null>(null);
+  if (!imageUrl) return null
 
-  useEffect(() => {
-    if (imageUrl) {
-      const index = addImages([{ url: imageUrl, alt }]);
-      setImageIndex(index);
-    }
-  }, [imageUrl, alt]);
-
-  if (!imageUrl || imageIndex === null) return null;
+  if (hasPadding) {
+    return (
+      <div className="w-full py-24">
+        <div
+          className="w-full h-[calc(100vh-12rem)] bg-center bg-cover"
+          style={{ backgroundImage: `url(${imageUrl})` }}
+          role="img"
+          aria-label={alt}
+        >
+          <span className="sr-only">{alt}</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
-      className="w-full h-screen bg-center bg-cover cursor-pointer"
+      className="w-full h-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${imageUrl})` }}
       role="img"
       aria-label={alt}
-      onClick={() => openSlider(imageIndex)}
     >
       <span className="sr-only">{alt}</span>
     </div>
-  );
-};
+  )
+}

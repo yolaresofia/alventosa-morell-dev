@@ -32,26 +32,26 @@ export default function MobileNav({
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
-    <>
+    <div className="md:hidden">
       <div
-        className="md:hidden flex items-center fixed top-4 right-4 z-50 cursor-pointer"
+        className="fixed top-0 right-0 h-[60px] flex items-center pr-4 z-40 cursor-pointer"
         onClick={toggleMenu}
       >
         <div className="relative w-8 h-6">
           <span
-            className={`absolute w-8 h-[1px] bg-black transition-transform duration-300 ${
+            className={`absolute w-8 h-[1px] z-40 bg-black transition-transform duration-300 ${
               isOpen ? "rotate-45 top-2.5" : "top-2"
             }`}
           />
           <span
-            className={`absolute w-8 h-[1px] bg-black transition-transform duration-300 ${
+            className={`absolute w-8 h-[1px] z-40 bg-black transition-transform duration-300 ${
               isOpen ? "-rotate-45 top-2.5" : "top-3.5"
             }`}
           />
         </div>
       </div>
       <div
-        className={`fixed inset-0 bg-white/90 z-40 transition-transform duration-300 ${
+        className={`fixed inset-0 bg-white z-40 transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -67,9 +67,7 @@ export default function MobileNav({
               <Link
                 key={link.href}
                 href={link.href || "/"}
-                className={`transition-colors ${
-                  isActive ? "text-red-500" : "hover:text-red-500"
-                }`}
+                className={`transition-colors ${isActive ? "text-red-500" : "hover:text-red-500"}`}
                 onClick={() => setIsOpen(false)}
               >
                 {label}
@@ -82,6 +80,6 @@ export default function MobileNav({
           <LanguageSwitcher languages={languages} mobile />
         </div>
       </div>
-    </>
+    </div>
   );
 }

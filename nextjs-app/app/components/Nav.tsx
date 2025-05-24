@@ -73,7 +73,7 @@ export default function Nav({
             <span key={idx} className="flex items-center">
               <Link
                 href={link.href}
-                className={`hover:underline ${isActive ? "text-red-500" : ""}`}
+                className={`text-base${isActive ? "text-red-500" : ""}`}
               >
                 {translatedLabel}
               </Link>
@@ -99,7 +99,7 @@ export default function Nav({
                     }
                   }}
                   disabled={isProjectDetailPage}
-                  className={`font-medium ${
+                  className={`font-medium text-base ${
                     isActive ? "text-red-500" : "text-black"
                   } ${isProjectDetailPage ? "cursor-default" : "hover:text-red-500"}`}
                 >
@@ -111,11 +111,11 @@ export default function Nav({
           })}
         </div>
       )}
-      <div className="fixed bottom-3 right-6 items-center space-x-1 text-sm z-40 hidden md:flex">
+      <div className="fixed bottom-3 right-6 items-center space-x-1 z-40 hidden md:flex text-base">
         {availableLanguages.map((lang, idx) => (
           <div key={lang} className="flex items-center space-x-1">
             <button
-              className="hover:underline uppercase"
+              className="uppercase"
               onClick={() => setLanguage(lang as "ca" | "es" | "en")}
             >
               {lang}

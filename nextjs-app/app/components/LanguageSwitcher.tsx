@@ -23,7 +23,7 @@ export default function LanguageSwitcher({
       {availableLanguages.map((lang, idx) => (
         <div key={lang} className="flex items-center space-x-1">
           <button
-            className="hover:underline uppercase"
+            className="uppercase"
             onClick={() => setLanguage(lang as "ca" | "es" | "en")}
           >
             {lang}

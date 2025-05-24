@@ -52,8 +52,6 @@ export default async function ProjectPage({
     ),
   ]);
 
-  console.log("Fetched project:", project);
-
   if (!project) {
     return <div>Project not found</div>;
   }

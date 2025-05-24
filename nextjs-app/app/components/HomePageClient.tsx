@@ -14,7 +14,6 @@ type Props = {
 export default function HomePageClient({ homepage, logoUrl }: Props) {
   const projects = homepage?.featuredProjects || []
   const [currentSlug, setCurrentSlug] = useState<string | null>(null)
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
   const [overlayOpacity, setOverlayOpacity] = useState(1)
   const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -86,21 +85,37 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Track visible project for active styling
+  // Track visible project for active styling - improved for center detection
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting)
-        if (visible?.target) {
-          const slug = visible.target.getAttribute("data-slug")
-          if (slug) setCurrentSlug(slug)
-        }
+        entries.forEach((entry) => {
+          const slug = entry.target.getAttribute("data-slug")
+
+          if (entry.isIntersecting && slug) {
+            // Calculate how centered the element is
+            const rect = entry.target.getBoundingClientRect()
+            const viewportWidth = window.innerWidth
+            const elementCenterX = rect.left + rect.width / 2
+            const viewportCenterX = viewportWidth / 2
+
+            // If element is close to center (within 15% of viewport width)
+            const threshold = viewportWidth * 0.15
+            if (Math.abs(elementCenterX - viewportCenterX) < threshold) {
+              setCurrentSlug(slug)
+            }
+          }
+        })
       },
-      { root: containerRef.current, threshold: 0.6 },
+      {
+        root: null, // Use viewport as root
+        threshold: 0.7, // Higher threshold for better center detection
+        rootMargin: "0px",
+      },
     )
 
-    const elements = containerRef.current?.querySelectorAll("[data-slug]")
-    elements?.forEach((el) => observer.observe(el))
+    const elements = document.querySelectorAll("[data-slug]")
+    elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
   }, [projects])
@@ -116,9 +131,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   return (
     <section ref={sectionRef} className="w-full h-[200vh] relative">
-      <div className="sticky top-0 left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10">
+      <div className="sticky top-0 left-0 w-full h-[90vh] flex flex-col overflow-hidden">
         <div
-          className="flex overflow-x-hidden scrollbar-hide pt-0"
+          className="flex overflow-x-hidden scrollbar-hide pt-0 snap-x snap-mandatory"
           ref={containerRef}
           style={{
             scrollbarWidth: "none",
@@ -131,20 +146,17 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
             if (!slug || !imageUrl) return null
 
-            const isFocused = hoveredSlug === slug || currentSlug === slug
+            const isActive = currentSlug === slug
 
             return (
               <Link
                 href={`/projects/${slug}`}
                 key={slug}
                 data-slug={slug}
-                onMouseEnter={() => setHoveredSlug(slug)}
-                onMouseLeave={() => setHoveredSlug(null)}
                 className="snap-center flex-shrink-0 flex flex-col items-start"
                 style={{
-                  opacity: isFocused ? 1 : 0.2,
-                  // Only apply transition after overlay is gone
-                  transition: scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
+                  opacity: isActive ? 1 : 0.2,
+                  transition: scrollProgress > 0.2 ? "opacity 0.5s ease" : "none",
                 }}
               >
                 <div className="h-[90vh] w-auto">
@@ -167,7 +179,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
         </div>
       </div>
       <div
-        className="fixed inset-0 bg-white z-40 pointer-events-none"
+        className="fixed inset-0 bg-white z-50 pointer-events-none"
         style={{
           opacity: overlayOpacity * 0.85,
           transition: "opacity 0.5s ease-out",

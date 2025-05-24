@@ -1950,6 +1950,13 @@
             }
           },
           "optional": false
+        },
+        "hasPadding": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
         }
       }
     }

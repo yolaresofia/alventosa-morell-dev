@@ -1,30 +1,30 @@
-import React from "react";
+import React from "react"
 
-import { dataAttr } from "@/sanity/lib/utils";
-import { CoverImage } from "./CoverImage";
-import { ProjectSummary } from "./ProjectSummary";
-import { DiptychImage } from "./DiptychImage";
-import { ImageCarousel } from "./ImageCarousel";
-import { TextBlock } from "./TextBlock";
-import { ProjectInfo } from "./ProjectInfo";
-import { MonoptychImage } from "./MonoptychImage";
-import { CoverVideo } from "./CoverVideo";
+import { dataAttr } from "@/sanity/lib/utils"
+import { CoverImage } from "./CoverImage"
+import { ProjectSummary } from "./ProjectSummary"
+import { DiptychImage } from "./DiptychImage"
+import { ImageCarousel } from "./ImageCarousel"
+import { TextBlock } from "./TextBlock"
+import { ProjectInfo } from "./ProjectInfo"
+import { MonoptychImage } from "./MonoptychImage"
+import { CoverVideo } from "./CoverVideo"
 
 type BlocksType = {
-  [key: string]: React.FC<any>;
-};
+  [key: string]: React.FC<any>
+}
 
 type BlockType = {
-  _type: string;
-  _key: string;
-};
+  _type: string
+  _key: string
+}
 
 type BlockProps = {
-  index: number;
-  block: BlockType;
-  pageId: string;
-  pageType: string;
-};
+  index: number
+  block: BlockType
+  pageId: string
+  pageType: string
+}
 
 const Blocks: BlocksType = {
   coverImage: CoverImage,
@@ -35,15 +35,10 @@ const Blocks: BlocksType = {
   imageCarousel: ImageCarousel,
   textBlock: TextBlock,
   projectInfo: ProjectInfo,
-};
+}
 
-export default function BlockRenderer({
-  block,
-  index,
-  pageId,
-  pageType,
-}: BlockProps) {
-  console.log("Rendering block:", block._type);
+export default function BlockRenderer({ block, index, pageId, pageType }: BlockProps) {
+
   if (typeof Blocks[block._type] !== "undefined") {
     return (
       <div
@@ -60,7 +55,7 @@ export default function BlockRenderer({
           index: index,
         })}
       </div>
-    );
+    )
   }
 
   return React.createElement(
@@ -69,6 +64,6 @@ export default function BlockRenderer({
         A &ldquo;{block._type}&rdquo; block hasn&apos;t been created
       </div>
     ),
-    { key: block._key }
-  );
+    { key: block._key },
+  )
 }

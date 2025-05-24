@@ -13,7 +13,7 @@ export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
   const { number, title, description } = block;
   
   return (
-    <section className="w-full px-6 pt-4 text-black font-soehne">
+    <section className="w-full px-6 pt-4 pb-24 text-black font-soehne">
       <div className="grid grid-cols-12">
         <div className="col-span-12 md:col-span-3 flex">
           {number && <p className="text-base pr-2">{number}</p>}
