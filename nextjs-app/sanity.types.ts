@@ -117,6 +117,17 @@ export type Project = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  mobileFeaturedImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   thumbnail?: {
     asset?: {
       _ref: string;
@@ -332,6 +343,17 @@ export type ProjectSummary = {
 export type CoverImage = {
   _type: "coverImage";
   image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  mobileImage?: {
     asset?: {
       _ref: string;
       _type: "reference";
@@ -729,89 +751,6 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type MuxVideo = {
-  _type: "mux.video";
-  asset?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "mux.videoAsset";
-  };
-};
-
-export type MuxVideoAsset = {
-  _id: string;
-  _type: "mux.videoAsset";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  status?: string;
-  assetId?: string;
-  playbackId?: string;
-  filename?: string;
-  thumbTime?: number;
-  data?: MuxAssetData;
-};
-
-export type MuxAssetData = {
-  _type: "mux.assetData";
-  resolution_tier?: string;
-  upload_id?: string;
-  created_at?: string;
-  id?: string;
-  status?: string;
-  max_stored_resolution?: string;
-  passthrough?: string;
-  encoding_tier?: string;
-  master_access?: string;
-  aspect_ratio?: string;
-  duration?: number;
-  max_stored_frame_rate?: number;
-  mp4_support?: string;
-  max_resolution_tier?: string;
-  tracks?: Array<{
-    _key: string;
-  } & MuxTrack>;
-  playback_ids?: Array<{
-    _key: string;
-  } & MuxPlaybackId>;
-  static_renditions?: MuxStaticRenditions;
-};
-
-export type MuxStaticRenditions = {
-  _type: "mux.staticRenditions";
-  status?: string;
-  files?: Array<{
-    _key: string;
-  } & MuxStaticRenditionFile>;
-};
-
-export type MuxStaticRenditionFile = {
-  _type: "mux.staticRenditionFile";
-  ext?: string;
-  name?: string;
-  width?: number;
-  bitrate?: number;
-  filesize?: number;
-  height?: number;
-};
-
-export type MuxPlaybackId = {
-  _type: "mux.playbackId";
-  id?: string;
-  policy?: string;
-};
-
-export type MuxTrack = {
-  _type: "mux.track";
-  id?: string;
-  type?: string;
-  max_width?: number;
-  max_frame_rate?: number;
-  duration?: number;
-  max_height?: number;
-};
-
 export type Color = {
   _type: "color";
   hex?: string;
@@ -966,7 +905,7 @@ export type SanityAssistSchemaTypeField = {
   } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | MuxVideo | MuxVideoAsset | MuxAssetData | MuxStaticRenditions | MuxStaticRenditionFile | MuxPlaybackId | MuxTrack | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
@@ -1246,6 +1185,17 @@ export type GetSingleProjectQueryResult = {
     _key: string;
     _type: "coverImage";
     image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    mobileImage?: {
       asset?: {
         _ref: string;
         _type: "reference";

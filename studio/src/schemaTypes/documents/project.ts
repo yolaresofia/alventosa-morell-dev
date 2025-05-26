@@ -25,6 +25,12 @@ export const project = defineType({
       options: {hotspot: true},
     }),
     defineField({
+      name: 'mobileFeaturedImage',
+      title: 'Imatge destacada móvil',
+      type: 'image',
+      options: {hotspot: true},
+    }),
+    defineField({
       name: 'thumbnail',
       title: 'Imatge miniatura',
       type: 'image',

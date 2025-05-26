@@ -14,6 +14,12 @@ export const coverImage = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "mobileImage",
+      title: "Imatge móvil",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "altText",
       title: "Text alternatiu",
       type: "object",

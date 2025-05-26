@@ -1,35 +1,39 @@
-import type React from "react"
-import "./globals.css"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { sanityFetch, SanityLive } from "@/sanity/lib/live"
-import { settingsQuery } from "@/sanity/lib/queries"
-import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils"
-import { toPlainText } from "next-sanity"
-import { handleError } from "./client-utils"
-import type { Metadata } from "next"
-import { LanguageProvider } from "./context/LanguageContext"
-import Link from "next/link"
-import Image from "next/image"
-import MobileNav from "./components/MobileNav"
-import Nav from "./components/Nav"
-import { FilterProvider } from "./context/FilterContext"
-import { ProjectCategoryProvider } from "./context/ProjectCategoryContext"
+import type React from "react";
+import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { settingsQuery } from "@/sanity/lib/queries";
+import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
+import { toPlainText } from "next-sanity";
+import { handleError } from "./client-utils";
+import type { Metadata } from "next";
+import { LanguageProvider } from "./context/LanguageContext";
+import Link from "next/link";
+import Image from "next/image";
+import MobileNav from "./components/MobileNav";
+import Nav from "./components/Nav";
+import { FilterProvider } from "./context/FilterContext";
+import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
     query: settingsQuery,
     stega: false,
-  })
+  });
 
-  const title = settings?.siteTitle || "Alventosa Morell"
-  const description = settings?.description ? toPlainText(settings.description) : "Default description"
-  const ogImage = resolveOpenGraphImage(settings?.ogImage)
+  const title = settings?.siteTitle || "Alventosa Morell";
+  const description = settings?.description
+    ? toPlainText(settings.description)
+    : "Default description";
+  const ogImage = resolveOpenGraphImage(settings?.ogImage);
 
-  let metadataBase: URL | undefined = undefined
+  let metadataBase: URL | undefined = undefined;
   try {
-    metadataBase = settings?.ogImage?.metadataBase ? new URL(settings.ogImage.metadataBase) : undefined
+    metadataBase = settings?.ogImage?.metadataBase
+      ? new URL(settings.ogImage.metadataBase)
+      : undefined;
   } catch (e) {
-    console.error("Invalid metadataBase URL in settings", e)
+    console.error("Invalid metadataBase URL in settings", e);
   }
 
   return {
@@ -44,28 +48,28 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: ogImage ? [ogImage] : [],
     },
-  }
+  };
 }
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   const { data: settings } = await sanityFetch({
     query: settingsQuery,
     stega: false,
-  })
+  });
 
-  const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null
+  const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
   const navLinks = (settings?.navLinks || [])
     .filter((link) => link.href && link.label)
     .map((link) => ({
       href: link.href as string,
       label: link.label as string,
-    }))
+    }));
 
-  const languages = settings?.languages || ["ca", "es", "en"]
+  const languages = settings?.languages || ["ca", "es", "en"];
 
   return (
     <html lang="ca">
@@ -77,17 +81,18 @@ export default async function RootLayout({
               <div className="fixed top-0 left-0 w-full h-[60px] bg-white z-20 sm:hidden flex items-center"></div>
               {logoUrl && (
                 <div className="fixed top-0 w-full h-[60px] z-30 flex justify-center items-center px-4">
-                  <Link href="/" className="relative block w-[150px] h-[35px] sm:w-[200px] sm:h-[48px]">
-                    <div className="logo-container">
-                      <Image
-                        src={logoUrl}
-                        alt="Alventosa Morell Arquitectes"
-                        className="object-contain"
-                        priority
-                        unoptimized
-                        fill
-                      />
-                    </div>
+                  <Link
+                    href="/"
+                    className="relative block w-[150px] h-[35px] sm:w-[200px] sm:h-[48px]"
+                  >
+                    <Image
+                      src={logoUrl}
+                      alt="Alventosa Morell Arquitectes"
+                      className="object-contain"
+                      priority
+                      unoptimized
+                      fill
+                    />
                   </Link>
                 </div>
               )}
@@ -100,5 +105,5 @@ export default async function RootLayout({
         </ProjectCategoryProvider>
       </body>
     </html>
-  )
+  );
 }
