@@ -16,7 +16,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const [currentSlug, setCurrentSlug] = useState<string | null>(null)
   const [overlayOpacity, setOverlayOpacity] = useState(1)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [logoBlinking, setLogoBlinking] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -28,15 +27,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     style.textContent = `
       ::-webkit-scrollbar { display: none; }
       * { -ms-overflow-style: none; scrollbar-width: none; }
-
-      @keyframes softBlink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-      }
-
-      .logo-blink {
-        animation: softBlink 0.8s ease-in-out 3;
-      }
     `
     document.head.appendChild(style)
     return () => {
@@ -46,12 +36,10 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   useEffect(() => {
     const startAnimation = () => {
-      setLogoBlinking(true)
       setTimeout(() => {
-        setLogoBlinking(false)
         setAnimationComplete(true)
-        setTimeout(() => setOverlayOpacity(0), 100)
-      }, 2400)
+        setTimeout(() => setOverlayOpacity(0), 20)
+      }, 500)
     }
     const timer = setTimeout(startAnimation, 500)
     return () => clearTimeout(timer)
@@ -111,8 +99,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       },
       {
         root: containerRef.current,
-        threshold: 0.9, // 👈 Increased threshold to reduce sensitivity
-      }
+        threshold: 0.9,
+      },
     )
 
     const elements = containerRef.current?.querySelectorAll("[data-slug]")
@@ -182,7 +170,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
         className="fixed inset-0 bg-white z-40 pointer-events-none"
         style={{
           opacity: overlayOpacity * 0.85,
-          transition: animationComplete ? "opacity 1.5s ease-out" : "none",
+          transition: animationComplete ? "opacity 0.6s ease-out" : "none", // Reduced to half (0.6s)
         }}
       />
       {logoUrl && (
@@ -190,13 +178,13 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
           style={{
             opacity: overlayOpacity,
-            transition: animationComplete ? "opacity 1.5s ease-out" : "none",
+            transition: animationComplete ? "opacity 0.6s ease-out" : "none", // Reduced to half (0.6s)
           }}
         >
           <img
             src={logoUrl || "/placeholder.svg"}
             alt="Alventosa Morell Arquitectes"
-            className={`w-[600px] h-auto object-contain mix-blend-multiply ${logoBlinking ? "logo-blink" : ""}`}
+            className="w-[600px] h-auto object-contain mix-blend-multiply"
           />
         </div>
       )}

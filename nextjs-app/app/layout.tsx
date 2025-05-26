@@ -80,9 +80,9 @@ export default async function RootLayout({
                   <Link href="/" className="relative block w-[150px] h-[35px] sm:w-[200px] sm:h-[48px]">
                     <div className="logo-container">
                       <Image
-                        src={logoUrl || "/placeholder.svg"}
+                        src={logoUrl}
                         alt="Alventosa Morell Arquitectes"
-                        className="object-contain logo-negative-effect"
+                        className="object-contain"
                         priority
                         unoptimized
                         fill
