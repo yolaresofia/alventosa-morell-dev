@@ -180,7 +180,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 href={`/projects/${slug}`}
                 key={slug}
                 data-slug={slug}
-                className={`${isDesktop ? "snap-start" : ""} flex-shrink-0 flex flex-col items-start`}
+                className={`${isDesktop ? "snap-center" : ""} flex-shrink-0 flex flex-col items-start`}
                 style={{
                   opacity: isDesktop && isFocused ? 1 : isDesktop ? 0.2 : 1,
                   transition:
@@ -226,7 +226,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           }}
         >
           <img
-            src={logoUrl || "/placeholder.svg"}
+            src={logoUrl}
             alt="Alventosa Morell Arquitectes"
             className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
           />
