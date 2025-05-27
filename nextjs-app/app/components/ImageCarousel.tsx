@@ -71,7 +71,10 @@ export const ImageCarousel = ({ block }: Props) => {
   return (
     <section className="w-full bg-white pt-24 pb-24 relative overflow-hidden">
       <div className="max-w-6xl mx-auto flex justify-center items-center px-4 sm:px-8 md:px-16 lg:px-32 relative">
-        <div className="relative w-full max-w-4xl aspect-[3/2] cursor-pointer" onClick={handleImageClick}>
+        <div
+          className="relative w-full max-w-4xl aspect-[3/2] cursor-pointer mx-auto"
+          onClick={handleImageClick}
+        >
           <Image
             src={imageUrl || "/placeholder.svg"}
             alt={alt}
@@ -80,23 +83,25 @@ export const ImageCarousel = ({ block }: Props) => {
             className="object-contain"
           />
 
+          {/* Left arrow */}
           <button
             onClick={(e) => {
               e.stopPropagation()
               handlePrev()
             }}
-            className="absolute -left-8 top-1/2 transform -translate-y-1/2"
+            className="absolute -left-4 sm:-left-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto bg-white/80 hover:bg-white transition p-2 sm:p-3 rounded-full"
             aria-label="Imatge anterior"
           >
             <LeftArrow />
           </button>
 
+          {/* Right arrow */}
           <button
             onClick={(e) => {
               e.stopPropagation()
               handleNext()
             }}
-            className="absolute -right-8 top-1/2 transform -translate-y-1/2"
+            className="absolute -right-4 sm:-right-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto bg-white/80 hover:bg-white transition p-2 sm:p-3 rounded-full"
             aria-label="Imatge següent"
           >
             <RightArrow />

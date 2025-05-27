@@ -345,6 +345,13 @@
           },
           "optional": true
         },
+        "mobileVimeoUrl": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
         "altText": {
           "type": "objectAttribute",
           "value": {

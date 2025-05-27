@@ -71,6 +71,7 @@ export type Geopoint = {
 export type CoverVideo = {
   _type: "coverVideo";
   vimeoUrl?: string;
+  mobileVimeoUrl?: string;
   altText: {
     ca?: string;
     es?: string;
@@ -1216,6 +1217,7 @@ export type GetSingleProjectQueryResult = {
     _key: string;
     _type: "coverVideo";
     vimeoUrl: string | null;
+    mobileVimeoUrl?: string;
     altText: {
       ca?: string;
       es?: string;
