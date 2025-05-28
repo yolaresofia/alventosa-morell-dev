@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { getTranslation } from "../utils/translations";
 import type { CoverVideo as CoverVideoType } from "@/sanity.types";
 
@@ -23,22 +23,19 @@ function getVimeoEmbedUrl(vimeoUrl: string): string | null {
 export const CoverVideo = ({ block }: CoverVideoProps) => {
   const [language] = useState<"ca" | "es" | "en">("ca");
   const [isMobile, setIsMobile] = useState(false);
+
   const alt = getTranslation(block.altText, language);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // Tailwind's 'md' breakpoint
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  const selectedUrl = isMobile
-    ? block.mobileVimeoUrl || block.vimeoUrl
-    : block.vimeoUrl;
-
-  const embedUrl = selectedUrl ? getVimeoEmbedUrl(selectedUrl) : null;
+  const embedUrl = getVimeoEmbedUrl(
+    (isMobile ? block.mobileVimeoUrl : block.vimeoUrl) ?? ""
+  );
 
   if (!embedUrl) return null;
 
