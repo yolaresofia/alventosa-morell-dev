@@ -37,10 +37,13 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
 
   return (
     <section className="relative w-full min-h-screen px-16 py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
         {filteredProjects.map((project) => {
           const imageUrl = project.thumbnail ? urlForImage(project.thumbnail)?.url() : null
           const isActive = activeSlug === project.slug.current
+          const showTitle = isActive
+          const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
+          const titleOpacity = showTitle ? "lg:opacity-100" : "lg:opacity-0"
 
           return (
             <Link
@@ -51,8 +54,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
               className="flex flex-col items-start transition-opacity duration-300"
             >
               <div
-                className={`relative w-full aspect-[3/4] transition-opacity duration-300
-                opacity-100 lg:${isActive ? "opacity-100" : "opacity-20"}`}
+                className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}
               >
                 {imageUrl && (
                   <Image
@@ -65,15 +67,21 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
               </div>
 
               <div
-                className={`
-                  mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300
-                  opacity-100 lg:${isActive ? "opacity-100" : "opacity-0"}
-                `}
+                className={`mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
               >
-                <div className="flex">
+                {/* Always show on mobile */}
+                <div className="flex lg:hidden">
                   <div className="pr-2">{project.projectNumber || "-"}</div>
                   <div>{project.title}</div>
                 </div>
+
+                {/* Conditionally show on desktop */}
+                {showTitle && (
+                  <div className="hidden lg:flex">
+                    <div className="pr-2">{project.projectNumber || "-"}</div>
+                    <div>{project.title}</div>
+                  </div>
+                )}
               </div>
             </Link>
           )

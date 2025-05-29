@@ -19,7 +19,7 @@ export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
           {number && <p className="md:text-base text-sm pr-2">{number}</p>}
           {title && <h2 className="md:text-base text-sm leading-[1.5]">{title}</h2>}
         </div>
-        <div className="col-span-12 md:col-span-8 pt-24">
+        <div className="col-span-12 md:col-span-8 pt-24 lg:pt-0">
           {description && (
             <p className="md:text-base text-sm leading-[1.5]">
               {getTranslation(description, language)}
