@@ -20,7 +20,7 @@ export const TextBlock = ({ block }: Props) => {
           alignment === "right" ? "text-right ml-auto" : "text-left"
         }`}
       >
-        <p className="text-base leading-[1.5] text-black">{text}</p>
+        <p className="md:text-base text-sm leading-[1.5] text-black">{text}</p>
       </div>
     </section>
   );

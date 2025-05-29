@@ -83,7 +83,7 @@ export default async function RootLayout({
                 <div className="fixed top-0 w-full h-[60px] z-30 flex justify-center items-center px-4">
                   <Link
                     href="/"
-                    className="relative block w-[150px] h-[35px] sm:w-[200px] sm:h-[48px]"
+                    className="relative block w-[190px] h-[40px] md:w-[200px] md:h-[48px]"
                   >
                     <Image
                       src={logoUrl}
