@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import type { MonoptychImage as MonoptychImageType } from "@/sanity.types"
 import { urlForImage } from "@/sanity/lib/utils"
 import { getTranslation } from "@/app/utils/translations"
@@ -18,12 +19,20 @@ export const MonoptychImage = ({ block }: Props) => {
   const altText = getTranslation(block.altText, language)
 
   const [imageIndex, setImageIndex] = useState<number | null>(null)
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null)
 
   useEffect(() => {
     if (imageUrl) {
       const componentId = `monoptych-${block._key || Math.random().toString(36).substr(2, 9)}`
       const index = addImages([{ url: imageUrl, alt: altText }], componentId)
       setImageIndex(index)
+
+      // Load real dimensions
+      const img = new window.Image()
+      img.onload = () => {
+        setImageDimensions({ width: img.width, height: img.height })
+      }
+      img.src = imageUrl
     }
   }, [imageUrl, altText, addImages, block._key])
 
@@ -36,19 +45,39 @@ export const MonoptychImage = ({ block }: Props) => {
     }
   }
 
-  if (!imageUrl || imageIndex === null) return null
+  if (!imageUrl || imageIndex === null || !imageDimensions) return null
 
   return (
-    <section className="w-full px-8 md:px-24 lg:px-32 xl:px-48 pt-24 pb-24">
+    <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 pt-24 pb-24">
       <div className="max-w-5xl mx-auto">
+        {/* Mobile: natural ratio */}
+        <div className="block md:hidden w-full">
+          <Image
+            src={imageUrl}
+            alt={altText}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
+            className="w-full h-auto object-contain cursor-pointer"
+            onClick={handleClick}
+            unoptimized
+          />
+        </div>
+
+        {/* Desktop: fixed size to match Diptych */}
         <div
-          className="w-full h-[70vh] bg-center bg-cover cursor-pointer"
-          style={{ backgroundImage: `url(${imageUrl})` }}
+          className="hidden md:block relative cursor-pointer"
+          style={{ width: "1024px", height: "661px" }}
           onClick={handleClick}
-          role="img"
-          aria-label={altText}
-          title={altText}
-        />
+        >
+          <Image
+            src={imageUrl}
+            alt={altText}
+            fill
+            className="object-cover"
+            sizes="1024px"
+            unoptimized
+          />
+        </div>
       </div>
     </section>
   )

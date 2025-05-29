@@ -23,9 +23,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null); 
 
-  // Detect desktop view
   useEffect(() => {
     const checkDesktop = () => {
       setIsDesktop(window.innerWidth >= 768);
@@ -36,7 +35,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => window.removeEventListener("resize", checkDesktop);
   }, []);
 
-  // Hide scrollbars
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
@@ -52,7 +50,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     };
   }, []);
 
-  // Trigger overlay animation every time homepage mounts
   useEffect(() => {
     if (pathname !== "/") return;
 
@@ -69,7 +66,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  // Horizontal scroll sync logic
   useEffect(() => {
     if (!isDesktop) return;
 
@@ -120,7 +116,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     };
   }, [animationComplete, isDesktop]);
 
-  // Intersection tracking for current project
   useEffect(() => {
     if (!isDesktop) return;
 
@@ -144,7 +139,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => observer.disconnect();
   }, [projects, isDesktop]);
 
-  // Reset scroll left to 0 on mount
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollLeft = 0;
@@ -200,7 +194,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 key={slug}
                 data-slug={slug}
                 className={`${
-                  isDesktop ? "snap-center" : ""
+                  isDesktop ? "snap-start" : ""
                 } flex-shrink-0 flex flex-col items-start`}
                 style={{
                   opacity: isDesktop && isFocused ? 1 : isDesktop ? 0.2 : 1,
@@ -230,8 +224,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           })}
         </div>
       </div>
-
-      {/* Overlay background */}
       <div
         className="fixed inset-0 bg-white z-40 pointer-events-none"
         style={{
@@ -239,8 +231,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           transition: animationComplete ? "opacity 0.3s ease-out" : "none",
         }}
       />
-
-      {/* Centered big logo */}
       {logoUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
