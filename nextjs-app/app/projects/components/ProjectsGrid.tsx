@@ -12,10 +12,14 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
   const [hasUserHovered, setHasUserHovered] = useState(false)
 
-  // ✅ Filter by selected category and ensure thumbnail exists
   const filteredProjects = projects
     .filter((project) => category === "all" || project.category === category)
     .filter((project) => !!project.thumbnail)
+    .sort((a, b) => {
+      const yearA = parseInt(a.projectInfo?.year?.value || "0", 10)
+      const yearB = parseInt(b.projectInfo?.year?.value || "0", 10)
+      return yearB - yearA
+    })
 
   const firstProjectSlug = filteredProjects[0]?.slug.current || null
 
@@ -66,7 +70,6 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                   />
                 )}
               </div>
-
               <div
                 className={`mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
               >

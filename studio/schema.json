@@ -736,6 +736,13 @@
         },
         "optional": true
       },
+      "projectYear": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "category": {
         "type": "objectAttribute",
         "value": {

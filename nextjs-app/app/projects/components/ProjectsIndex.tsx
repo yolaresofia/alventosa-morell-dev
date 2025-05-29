@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { urlForImage } from "@/sanity/lib/utils";
-import { useLanguage } from "@/app/context/LanguageContext";
-import type { GetProjectsGridQueryResult } from "@/sanity.types";
-import { getTranslation } from "@/app/utils/translations";
+import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { urlForImage } from "@/sanity/lib/utils"
+import { useLanguage } from "@/app/context/LanguageContext"
+import type { GetProjectsGridQueryResult } from "@/sanity.types"
+import { getTranslation } from "@/app/utils/translations"
 
 type ProjectsIndexProps = {
-  projects: GetProjectsGridQueryResult;
-};
+  projects: GetProjectsGridQueryResult
+}
 
 export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
-  const { language } = useLanguage();
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const { language } = useLanguage()
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
 
   const columnTitles = {
     project: { ca: "Projecte", es: "Proyecto", en: "Project" },
@@ -22,13 +22,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
     location: { ca: "Ubicació", es: "Ubicación", en: "Location" },
     area: { ca: "Àrea", es: "Área", en: "Area" },
     year: { ca: "Any", es: "Año", en: "Year" },
-  };
+  }
 
   const formatProgram = (value: string | null | undefined) => {
-    if (!value) return "-";
-    const withoutCasa = value.replace(/^Casa\s+/i, "").trim();
-    return withoutCasa.charAt(0).toUpperCase() + withoutCasa.slice(1);
-  };
+    if (!value) return "-"
+    const withoutCasa = value.replace(/^Casa\s+/i, "").trim()
+    return withoutCasa.charAt(0).toUpperCase() + withoutCasa.slice(1)
+  }
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    const yearA = parseInt(a.projectInfo?.year?.value || "0", 10)
+    const yearB = parseInt(b.projectInfo?.year?.value || "0", 10)
+    return yearB - yearA
+  })
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
@@ -51,23 +57,18 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
       </div>
 
       <div className="flex flex-col">
-        {projects.map((project) => {
-          const isHovered = hoveredSlug === project.slug.current;
-          const rawProgram = getTranslation(
-            project.projectInfo?.program?.value,
-            language
-          );
-          const program = formatProgram(rawProgram);
-          const location =
-            getTranslation(project.projectInfo?.location?.value, language) ||
-            "-";
-          const area = project.projectInfo?.area?.value || "-";
-          const year = project.projectInfo?.year?.value || "-";
-          const hasThumbnail = !!project.thumbnail;
+        {sortedProjects.map((project) => {
+          const isHovered = hoveredSlug === project.slug.current
+          const rawProgram = getTranslation(project.projectInfo?.program?.value, language)
+          const program = formatProgram(rawProgram)
+          const location = getTranslation(project.projectInfo?.location?.value, language) || "-"
+          const area = project.projectInfo?.area?.value || "-"
+          const year = project.projectInfo?.year?.value || "-"
+          const hasThumbnail = !!project.thumbnail
 
           const projectTitle = project.projectNumber
             ? `${project.projectNumber} ${project.title}`
-            : project.title;
+            : project.title
 
           return (
             <div key={project.slug.current} className="group">
@@ -83,35 +84,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                       isHovered ? "text-red-500" : "hover:text-red-500"
                     }`}
                   >
-                    <div className="col-span-4 md:col-span-3 font-medium">
-                      {projectTitle}
-                    </div>
-                    <div className="hidden md:block md:col-span-2">
-                      {program}
-                    </div>
-                    <div className="hidden md:block md:col-span-2">
-                      {location}
-                    </div>
+                    <div className="col-span-4 md:col-span-3 font-medium">{projectTitle}</div>
+                    <div className="hidden md:block md:col-span-2">{program}</div>
+                    <div className="hidden md:block md:col-span-2">{location}</div>
                     <div className="hidden md:block md:col-span-1">{area}</div>
-                    <div className="col-span-1 md:col-span-1 text-right">
-                      {year}
-                    </div>
+                    <div className="col-span-1 md:col-span-1 text-right">{year}</div>
                   </Link>
                 ) : (
                   <div className="grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5">
-                    <div className="col-span-4 md:col-span-3 font-medium">
-                      {projectTitle}
-                    </div>
-                    <div className="hidden md:block md:col-span-2">
-                      {program}
-                    </div>
-                    <div className="hidden md:block md:col-span-2">
-                      {location}
-                    </div>
+                    <div className="col-span-4 md:col-span-3 font-medium">{projectTitle}</div>
+                    <div className="hidden md:block md:col-span-2">{program}</div>
+                    <div className="hidden md:block md:col-span-2">{location}</div>
                     <div className="hidden md:block md:col-span-1">{area}</div>
-                    <div className="col-span-1 md:col-span-1 text-right">
-                      {year}
-                    </div>
+                    <div className="col-span-1 md:col-span-1 text-right">{year}</div>
                   </div>
                 )}
                 {hasThumbnail && (
@@ -122,27 +107,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                       transition: "height 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                     }}
                   >
-                    <Link
-                      href={`/projects/${project.slug.current}`}
-                      className="block h-full w-full"
-                    >
+                    <Link href={`/projects/${project.slug.current}`} className="block h-full w-full">
                       <div
                         className="relative h-full w-full cursor-pointer"
                         style={{
                           opacity: isHovered ? 1 : 0,
-                          transform: isHovered
-                            ? "translateY(0)"
-                            : "translateY(10px)",
+                          transform: isHovered ? "translateY(0)" : "translateY(10px)",
                           transition: isHovered
                             ? "opacity 0.25s ease-out 0.4s, transform 0.25s ease-out 0.4s"
                             : "opacity 0.15s ease-out, transform 0.15s ease-out",
                         }}
                       >
                         <Image
-                          src={
-                            urlForImage(project.thumbnail)?.url() ||
-                            "/placeholder.svg"
-                          }
+                          src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
                           alt={project.title}
                           fill
                           className="object-contain"
@@ -153,6 +130,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                   </div>
                 )}
               </div>
+
               <div className="block md:hidden">
                 {hasThumbnail ? (
                   <Link
@@ -170,9 +148,9 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                 )}
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

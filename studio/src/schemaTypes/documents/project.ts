@@ -42,6 +42,11 @@ export const project = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'projectYear',
+      title: 'Any de projecte',
+      type: 'string',
+    }),
+    defineField({
       name: 'category',
       title: 'Categoria',
       type: 'string',

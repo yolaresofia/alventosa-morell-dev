@@ -141,6 +141,7 @@ export type Project = {
     _type: "image";
   };
   projectNumber?: string;
+  projectYear?: string;
   category?: "all" | "uni" | "pluri" | "equip";
   builder?: Array<{
     _key: string;
