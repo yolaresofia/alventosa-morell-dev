@@ -82,26 +82,22 @@ export const ImageCarousel = ({ block }: Props) => {
             sizes="(max-width: 768px) 100vw, 70vw"
             className="object-contain"
           />
-
-          {/* Left arrow */}
           <button
             onClick={(e) => {
               e.stopPropagation()
               handlePrev()
             }}
-            className="absolute -left-4 sm:-left-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto bg-white/80 hover:bg-white transition p-2 sm:p-3 rounded-full"
+            className="absolute -left-4 sm:-left-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto"
             aria-label="Imatge anterior"
           >
             <LeftArrow />
           </button>
-
-          {/* Right arrow */}
           <button
             onClick={(e) => {
               e.stopPropagation()
               handleNext()
             }}
-            className="absolute -right-4 sm:-right-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto bg-white/80 hover:bg-white transition p-2 sm:p-3 rounded-full"
+            className="absolute -right-4 sm:-right-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto"
             aria-label="Imatge següent"
           >
             <RightArrow />

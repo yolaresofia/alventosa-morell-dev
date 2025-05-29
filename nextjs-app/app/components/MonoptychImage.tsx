@@ -26,8 +26,7 @@ export const MonoptychImage = ({ block }: Props) => {
       const componentId = `monoptych-${block._key || Math.random().toString(36).substr(2, 9)}`
       const index = addImages([{ url: imageUrl, alt: altText }], componentId)
       setImageIndex(index)
-
-      // Load real dimensions
+      
       const img = new window.Image()
       img.onload = () => {
         setImageDimensions({ width: img.width, height: img.height })
@@ -50,7 +49,6 @@ export const MonoptychImage = ({ block }: Props) => {
   return (
     <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 pt-24 pb-24">
       <div className="max-w-5xl mx-auto">
-        {/* Mobile: natural ratio */}
         <div className="block md:hidden w-full">
           <Image
             src={imageUrl}
@@ -62,8 +60,6 @@ export const MonoptychImage = ({ block }: Props) => {
             unoptimized
           />
         </div>
-
-        {/* Desktop: fixed size to match Diptych */}
         <div
           className="hidden md:block relative cursor-pointer"
           style={{ width: "1024px", height: "661px" }}
