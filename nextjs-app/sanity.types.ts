@@ -307,12 +307,34 @@ export type DiptychImage = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  leftImageOnHover?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   leftAltText: {
     ca?: string;
     es?: string;
     en?: string;
   };
   rightImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  rightImageOnHover?: {
     asset?: {
       _ref: string;
       _type: "reference";
@@ -1237,12 +1259,34 @@ export type GetSingleProjectQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    leftImageOnHover?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
     leftAltText: {
       ca?: string;
       es?: string;
       en?: string;
     };
     rightImage?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    rightImageOnHover?: {
       asset?: {
         _ref: string;
         _type: "reference";

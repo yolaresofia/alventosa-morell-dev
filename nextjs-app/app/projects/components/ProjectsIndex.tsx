@@ -24,7 +24,6 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
     year: { ca: "Any", es: "Año", en: "Year" },
   }
 
-  // Clean and capitalize program label
   const formatProgram = (value: string | null | undefined) => {
     if (!value) return "-"
     const withoutCasa = value.replace(/^Casa\s+/i, "").trim()
@@ -33,13 +32,14 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
-      <div className="grid grid-cols-6 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
+      <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
         <div className="col-span-4 md:col-span-3">{getTranslation(columnTitles.project, language)}</div>
-        <div className="col-span-1 md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
+        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
         <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.location, language)}</div>
         <div className="hidden md:block md:col-span-1">{getTranslation(columnTitles.area, language)}</div>
         <div className="col-span-1 md:col-span-1 text-right">{getTranslation(columnTitles.year, language)}</div>
       </div>
+
       <div className="flex flex-col">
         {projects.map((project) => {
           const isHovered = hoveredSlug === project.slug.current
@@ -51,21 +51,26 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
 
           return (
             <div key={project.slug.current} className="group">
-              <div onMouseEnter={() => setHoveredSlug(project.slug.current)} onMouseLeave={() => setHoveredSlug(null)}>
+              <div
+                className="hidden md:block"
+                onMouseEnter={() => setHoveredSlug(project.slug.current)}
+                onMouseLeave={() => setHoveredSlug(null)}
+              >
                 <Link
                   href={`/projects/${project.slug.current}`}
-                  className={`grid grid-cols-6 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
+                  className={`grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
                     isHovered ? "text-red-500" : "hover:text-red-500"
                   }`}
                 >
                   <div className="col-span-4 md:col-span-3 font-medium">
                     {project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title}
                   </div>
-                  <div className="col-span-1 md:col-span-2">{program}</div>
+                  <div className="hidden md:block md:col-span-2">{program}</div>
                   <div className="hidden md:block md:col-span-2">{location}</div>
                   <div className="hidden md:block md:col-span-1">{area}</div>
                   <div className="col-span-1 md:col-span-1 text-right">{year}</div>
                 </Link>
+
                 <div
                   className="overflow-hidden bg-white"
                   style={{
@@ -96,6 +101,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                     </Link>
                   )}
                 </div>
+              </div>
+
+              {/* Mobile version: only basic info, no hover logic or thumbnails */}
+              <div className="block md:hidden">
+                <Link
+                  href={`/projects/${project.slug.current}`}
+                  className="grid grid-cols-5 text-sm items-center py-1.5"
+                >
+                  <div className="col-span-4 font-medium">
+                    {project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title}
+                  </div>
+                  <div className="col-span-1 text-right">{year}</div>
+                </Link>
               </div>
             </div>
           )

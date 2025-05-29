@@ -51,7 +51,7 @@ export default function PopupSlider() {
       </button>
       <button
         onClick={goToPrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2"
+        className="absolute md:left-4 left-2 top-1/2 -translate-y-1/2"
         aria-label="Imatge anterior"
       >
         <LeftArrow />
@@ -59,11 +59,11 @@ export default function PopupSlider() {
       <img
         src={image.url}
         alt={image.alt || ""}
-        className="max-h-[95vh] max-w-[90vw]"
+        className="lg:max-h-[95vh] lg:max-w-[90vw] max-w-[70vw] max-h-auto"
       />
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2"
+        className="absolute md:right-4 right-2 top-1/2 -translate-y-1/2"
         aria-label="Imatge següent"
       >
         <RightArrow />

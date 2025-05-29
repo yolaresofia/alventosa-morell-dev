@@ -15,16 +15,28 @@ export const DiptychImage = ({ block }: Props) => {
   const language: "ca" | "es" | "en" = "ca"
   const { addImages, openSlider, getImageIndex } = useImageSlider()
 
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [hoverLeft, setHoverLeft] = useState(false)
+  const [hoverRight, setHoverRight] = useState(false)
+  const [leftLoaded, setLeftLoaded] = useState(false)
+  const [rightLoaded, setRightLoaded] = useState(false)
+  const [baseIndex, setBaseIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 768)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
   const leftImageUrl = block.leftImage ? urlForImage(block.leftImage)?.url() : undefined
+  const leftHoverUrl = block.leftImageOnHover ? urlForImage(block.leftImageOnHover)?.url() : undefined
 
   const rightImageUrl = block.rightImage ? urlForImage(block.rightImage)?.url() : undefined
+  const rightHoverUrl = block.rightImageOnHover ? urlForImage(block.rightImageOnHover)?.url() : undefined
 
   const leftAlt = getTranslation(block.leftAltText, language)
   const rightAlt = getTranslation(block.rightAltText, language)
-
-  const [baseIndex, setBaseIndex] = useState<number | null>(null)
-  const [leftLoaded, setLeftLoaded] = useState(false)
-  const [rightLoaded, setRightLoaded] = useState(false)
 
   useEffect(() => {
     if (leftImageUrl && rightImageUrl) {
@@ -34,7 +46,7 @@ export const DiptychImage = ({ block }: Props) => {
           { url: leftImageUrl, alt: leftAlt },
           { url: rightImageUrl, alt: rightAlt },
         ],
-        componentId,
+        componentId
       )
       setBaseIndex(index)
     }
@@ -43,18 +55,14 @@ export const DiptychImage = ({ block }: Props) => {
   const handleLeftClick = () => {
     if (leftImageUrl) {
       const currentIndex = getImageIndex(leftImageUrl)
-      if (currentIndex >= 0) {
-        openSlider(currentIndex)
-      }
+      if (currentIndex >= 0) openSlider(currentIndex)
     }
   }
 
   const handleRightClick = () => {
     if (rightImageUrl) {
       const currentIndex = getImageIndex(rightImageUrl)
-      if (currentIndex >= 0) {
-        openSlider(currentIndex)
-      }
+      if (currentIndex >= 0) openSlider(currentIndex)
     }
   }
 
@@ -64,25 +72,70 @@ export const DiptychImage = ({ block }: Props) => {
     <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 pt-24 pb-24">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          <div className="relative w-full aspect-[3/4] cursor-pointer" onClick={handleLeftClick}>
+          {/* LEFT IMAGE */}
+          <div
+            className="relative w-full aspect-[3/4] cursor-pointer"
+            onClick={handleLeftClick}
+            onMouseEnter={() => isDesktop && setHoverLeft(true)}
+            onMouseLeave={() => isDesktop && setHoverLeft(false)}
+          >
             <Image
-              src={leftImageUrl || "/placeholder.svg"}
+              src={leftImageUrl}
               alt={leftAlt}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               onLoad={() => setLeftLoaded(true)}
-              className={`object-cover ${leftLoaded ? "blur-0" : "blur-md"}`}
+              className={`object-cover transition-opacity duration-700 ease-in-out ${
+                isDesktop && hoverLeft && leftHoverUrl ? "opacity-0" : "opacity-100"
+              } ${leftLoaded ? "blur-0" : "blur-md"}`}
+              unoptimized
             />
+
+            {isDesktop && leftHoverUrl && (
+              <Image
+                src={leftHoverUrl}
+                alt={leftAlt}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className={`object-cover absolute top-0 left-0 transition-opacity duration-700 ease-in-out ${
+                  hoverLeft ? "opacity-100" : "opacity-0"
+                }`}
+                unoptimized
+              />
+            )}
           </div>
-          <div className="relative w-full aspect-[3/4] cursor-pointer" onClick={handleRightClick}>
+
+          {/* RIGHT IMAGE */}
+          <div
+            className="relative w-full aspect-[3/4] cursor-pointer"
+            onClick={handleRightClick}
+            onMouseEnter={() => isDesktop && setHoverRight(true)}
+            onMouseLeave={() => isDesktop && setHoverRight(false)}
+          >
             <Image
-              src={rightImageUrl || "/placeholder.svg"}
+              src={rightImageUrl}
               alt={rightAlt}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               onLoad={() => setRightLoaded(true)}
-              className={`object-cover ${rightLoaded ? "blur-0" : "blur-md"}`}
+              className={`object-cover transition-opacity duration-300 ease-in-out ${
+                isDesktop && hoverRight && rightHoverUrl ? "opacity-0" : "opacity-100"
+              } ${rightLoaded ? "blur-0" : "blur-md"}`}
+              unoptimized
             />
+
+            {isDesktop && rightHoverUrl && (
+              <Image
+                src={rightHoverUrl}
+                alt={rightAlt}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className={`object-cover absolute top-0 left-0 transition-opacity duration-300 ease-in-out ${
+                  hoverRight ? "opacity-100" : "opacity-0"
+                }`}
+                unoptimized
+              />
+            )}
           </div>
         </div>
       </div>
