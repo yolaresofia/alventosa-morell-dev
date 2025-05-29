@@ -14,6 +14,7 @@ import MobileNav from "./components/MobileNav";
 import Nav from "./components/Nav";
 import { FilterProvider } from "./context/FilterContext";
 import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
+import TopLogo from "./components/TopLogo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
@@ -79,23 +80,7 @@ export default async function RootLayout({
             <LanguageProvider>
               <SanityLive onError={handleError} />
               <div className="fixed top-0 left-0 w-full h-[60px] bg-white z-20 sm:hidden flex items-center"></div>
-              {logoUrl && (
-                <div className="fixed top-0 w-full h-[60px] z-30 flex justify-center items-center px-4">
-                  <Link
-                    href="/"
-                    className="relative block w-[190px] h-[40px] md:w-[200px] md:h-[48px]"
-                  >
-                    <Image
-                      src={logoUrl}
-                      alt="Alventosa Morell Arquitectes"
-                      className="object-contain"
-                      priority
-                      unoptimized
-                      fill
-                    />
-                  </Link>
-                </div>
-              )}
+              {logoUrl && <TopLogo logoUrl={logoUrl} />}
               <MobileNav navLinks={navLinks} languages={languages} />
               <main className="min-h-screen flex flex-col">{children}</main>
               <Nav navLinks={navLinks} languages={languages} />

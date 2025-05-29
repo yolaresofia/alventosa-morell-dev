@@ -65,17 +65,13 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                   />
                 )}
               </div>
-
               <div
                 className={`mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
               >
-                {/* Always show on mobile */}
                 <div className="flex lg:hidden">
                   <div className="pr-2">{project.projectNumber || "-"}</div>
                   <div>{project.title}</div>
                 </div>
-
-                {/* Conditionally show on desktop */}
                 {showTitle && (
                   <div className="hidden lg:flex">
                     <div className="pr-2">{project.projectNumber || "-"}</div>
