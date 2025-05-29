@@ -3,31 +3,33 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 type Props = {
   logoUrl: string
 }
 
 export default function TopLogo({ logoUrl }: Props) {
-  const [visible, setVisible] = useState(false)
+  const pathname = usePathname()
+  const isHomepage = pathname === "/"
+
+  const [visible, setVisible] = useState(!isHomepage)
 
   useEffect(() => {
-    const checkVisibility = () => {
-      if (document.body.classList.contains("show-top-logo")) {
-        setVisible(true)
-      }
+    if (!isHomepage) {
+      setVisible(true)
+      return
     }
 
-    checkVisibility()
+    // Reset logo visibility every time the homepage is rendered
+    setVisible(false)
 
-    const observer = new MutationObserver(checkVisibility)
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["class"],
-    })
+    const timer = setTimeout(() => {
+      setVisible(true)
+    }, 1100) // Match the homepage animation duration
 
-    return () => observer.disconnect()
-  }, [])
+    return () => clearTimeout(timer)
+  }, [isHomepage])
 
   return (
     <div

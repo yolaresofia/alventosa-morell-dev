@@ -2,6 +2,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/sanity/lib/utils";
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export default function HomePageClient({ homepage, logoUrl }: Props) {
+  const pathname = usePathname();
   const projects = homepage?.featuredProjects || [];
   const [currentSlug, setCurrentSlug] = useState<string | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(1);
@@ -23,6 +25,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const animationFrameRef = useRef<number | null>(null);
 
+  // Detect desktop view
   useEffect(() => {
     const checkDesktop = () => {
       setIsDesktop(window.innerWidth >= 768);
@@ -33,6 +36,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => window.removeEventListener("resize", checkDesktop);
   }, []);
 
+  // Hide scrollbars
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
@@ -48,21 +52,24 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     };
   }, []);
 
+  // Trigger overlay animation every time homepage mounts
   useEffect(() => {
-    const startAnimation = () => {
+    if (pathname !== "/") return;
+
+    setOverlayOpacity(1);
+    setAnimationComplete(false);
+
+    const timer = setTimeout(() => {
+      setAnimationComplete(true);
       setTimeout(() => {
-        setAnimationComplete(true);
-        setTimeout(() => {
-          setOverlayOpacity(0);
-          document.body.classList.add("show-top-logo"); // 🔥 triggers TopLogo visibility
-        }, 20);
-      }, 500);
-    };
+        setOverlayOpacity(0);
+      }, 20);
+    }, 500);
 
-    const timer = setTimeout(startAnimation, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [pathname]);
 
+  // Horizontal scroll sync logic
   useEffect(() => {
     if (!isDesktop) return;
 
@@ -113,6 +120,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     };
   }, [animationComplete, isDesktop]);
 
+  // Intersection tracking for current project
   useEffect(() => {
     if (!isDesktop) return;
 
@@ -136,6 +144,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => observer.disconnect();
   }, [projects, isDesktop]);
 
+  // Reset scroll left to 0 on mount
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollLeft = 0;
