@@ -1,35 +1,35 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 type Props = {
-  logoUrl: string
-}
+  logoUrl: string;
+};
 
 export default function TopLogo({ logoUrl }: Props) {
-  const pathname = usePathname()
-  const isHomepage = pathname === "/"
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
 
-  const [visible, setVisible] = useState(!isHomepage)
+  const [visible, setVisible] = useState(!isHomepage);
 
   useEffect(() => {
     if (!isHomepage) {
-      setVisible(true)
-      return
+      setVisible(true);
+      return;
     }
 
     // Reset logo visibility every time the homepage is rendered
-    setVisible(false)
+    setVisible(false);
 
     const timer = setTimeout(() => {
-      setVisible(true)
-    }, 1100) // Match the homepage animation duration
+      setVisible(true);
+    }, 1100); // Match the homepage animation duration
 
-    return () => clearTimeout(timer)
-  }, [isHomepage])
+    return () => clearTimeout(timer);
+  }, [isHomepage]);
 
   return (
     <div
@@ -39,7 +39,7 @@ export default function TopLogo({ logoUrl }: Props) {
     >
       <Link
         href="/"
-        className="relative block w-[190px] h-[40px] md:w-[200px] md:h-[48px]"
+        className="relative block w-[200px] h-[44px] md:w-[250px] md:h-[55px]"
       >
         <Image
           src={logoUrl}
@@ -51,5 +51,5 @@ export default function TopLogo({ logoUrl }: Props) {
         />
       </Link>
     </div>
-  )
+  );
 }
