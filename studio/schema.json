@@ -729,6 +729,13 @@
         },
         "optional": true
       },
+      "notClickableInIndex": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
+        },
+        "optional": true
+      },
       "projectNumber": {
         "type": "objectAttribute",
         "value": {

@@ -50,6 +50,7 @@ export const getProjectsGridQuery = defineQuery(`
     slug,
     projectNumber,
     category,
+    notClickableInIndex,
     thumbnail,
     "projectInfo": builder[_type == "projectInfo"][0]{
       year,

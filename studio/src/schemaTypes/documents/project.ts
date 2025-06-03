@@ -37,6 +37,12 @@ export const project = defineType({
       options: {hotspot: true},
     }),
     defineField({
+      name: 'notClickableInIndex',
+      title: 'No clicable a l’índex',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'projectNumber',
       title: 'Número de projecte',
       type: 'string',

@@ -18,7 +18,6 @@ const ProjectCategoryContext = createContext<{
   setCategory: () => {},
 })
 
-// Client-side only component that safely uses browser APIs
 function ClientOnly({ children }: { children: ReactNode }) {
   const [isMounted, setIsMounted] = useState(false)
 
@@ -31,7 +30,6 @@ function ClientOnly({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-// Component that uses useSearchParams wrapped in Suspense
 function CategoryConsumer({
   onCategoryChange,
 }: {
@@ -41,14 +39,11 @@ function CategoryConsumer({
   const pathname = usePathname()
 
   useEffect(() => {
-    // Try to get from localStorage first
     const savedCategory =
       typeof window !== "undefined" ? (localStorage.getItem(LOCAL_STORAGE_KEY) as ProjectCategory) : null
 
-    // Then check URL query parameter
     const queryCat = searchParams.get("cat")
 
-    // Determine which category to use (URL has priority over localStorage)
     let newCategory: ProjectCategory = "all"
 
     if (VALID_CATEGORIES.includes(queryCat as ProjectCategory)) {
@@ -57,10 +52,8 @@ function CategoryConsumer({
       newCategory = savedCategory as ProjectCategory
     }
 
-    // Update state via callback
     onCategoryChange(newCategory)
 
-    // Save to localStorage for persistence
     if (typeof window !== "undefined" && newCategory) {
       localStorage.setItem(LOCAL_STORAGE_KEY, newCategory)
     }
@@ -74,19 +67,14 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
 
-  // Custom setCategory function that updates URL and localStorage
   const handleSetCategory = (newCategory: ProjectCategory) => {
-    // Update state
     setCategory(newCategory)
 
-    // Save to localStorage
     if (typeof window !== "undefined") {
       localStorage.setItem(LOCAL_STORAGE_KEY, newCategory)
     }
 
-    // Only update URL if we're on the projects page
     if (pathname === "/projects") {
-      // Create a new URLSearchParams instance
       const params = new URLSearchParams(window.location.search)
 
       if (newCategory === "all") {

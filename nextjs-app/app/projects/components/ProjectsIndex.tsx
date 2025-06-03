@@ -31,29 +31,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
   }
 
   const sortedProjects = [...projects].sort((a, b) => {
-    const yearA = parseInt(a.projectInfo?.year?.value || "0", 10)
-    const yearB = parseInt(b.projectInfo?.year?.value || "0", 10)
+    const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10)
+    const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10)
     return yearB - yearA
   })
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
       <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
-        <div className="col-span-4 md:col-span-3">
-          {getTranslation(columnTitles.project, language)}
-        </div>
-        <div className="hidden md:block md:col-span-2">
-          {getTranslation(columnTitles.program, language)}
-        </div>
-        <div className="hidden md:block md:col-span-2">
-          {getTranslation(columnTitles.location, language)}
-        </div>
-        <div className="hidden md:block md:col-span-1">
-          {getTranslation(columnTitles.area, language)}
-        </div>
-        <div className="col-span-1 md:col-span-1 text-right">
-          {getTranslation(columnTitles.year, language)}
-        </div>
+        <div className="col-span-4 md:col-span-3">{getTranslation(columnTitles.project, language)}</div>
+        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
+        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.location, language)}</div>
+        <div className="hidden md:block md:col-span-1">{getTranslation(columnTitles.area, language)}</div>
+        <div className="col-span-1 md:col-span-1 text-right">{getTranslation(columnTitles.year, language)}</div>
       </div>
 
       <div className="flex flex-col">
@@ -64,11 +54,23 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
           const location = getTranslation(project.projectInfo?.location?.value, language) || "-"
           const area = project.projectInfo?.area?.value || "-"
           const year = project.projectInfo?.year?.value || "-"
+          const isClickable = !project.notClickableInIndex
           const hasThumbnail = !!project.thumbnail
 
-          const projectTitle = project.projectNumber
-            ? `${project.projectNumber} ${project.title}`
-            : project.title
+          const projectTitle = project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title
+          const DesktopRow = () => (
+            <div
+              className={`grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
+                isHovered && isClickable ? "text-red-500" : isClickable ? "hover:text-red-500" : ""
+              }`}
+            >
+              <div className="col-span-4 md:col-span-3 font-medium">{projectTitle}</div>
+              <div className="hidden md:block md:col-span-2">{program}</div>
+              <div className="hidden md:block md:col-span-2">{location}</div>
+              <div className="hidden md:block md:col-span-1">{area}</div>
+              <div className="col-span-1 md:col-span-1 text-right">{year}</div>
+            </div>
+          )
 
           return (
             <div key={project.slug.current} className="group">
@@ -77,28 +79,14 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                 onMouseEnter={() => setHoveredSlug(project.slug.current)}
                 onMouseLeave={() => setHoveredSlug(null)}
               >
-                {hasThumbnail ? (
-                  <Link
-                    href={`/projects/${project.slug.current}`}
-                    className={`grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
-                      isHovered ? "text-red-500" : "hover:text-red-500"
-                    }`}
-                  >
-                    <div className="col-span-4 md:col-span-3 font-medium">{projectTitle}</div>
-                    <div className="hidden md:block md:col-span-2">{program}</div>
-                    <div className="hidden md:block md:col-span-2">{location}</div>
-                    <div className="hidden md:block md:col-span-1">{area}</div>
-                    <div className="col-span-1 md:col-span-1 text-right">{year}</div>
+                {isClickable ? (
+                  <Link href={`/projects/${project.slug.current}`}>
+                    <DesktopRow />
                   </Link>
                 ) : (
-                  <div className="grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5">
-                    <div className="col-span-4 md:col-span-3 font-medium">{projectTitle}</div>
-                    <div className="hidden md:block md:col-span-2">{program}</div>
-                    <div className="hidden md:block md:col-span-2">{location}</div>
-                    <div className="hidden md:block md:col-span-1">{area}</div>
-                    <div className="col-span-1 md:col-span-1 text-right">{year}</div>
-                  </div>
+                  <DesktopRow />
                 )}
+
                 {hasThumbnail && (
                   <div
                     className="overflow-hidden bg-white"
@@ -107,32 +95,56 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                       transition: "height 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                     }}
                   >
-                    <Link href={`/projects/${project.slug.current}`} className="block h-full w-full">
-                      <div
-                        className="relative h-full w-full cursor-pointer"
-                        style={{
-                          opacity: isHovered ? 1 : 0,
-                          transform: isHovered ? "translateY(0)" : "translateY(10px)",
-                          transition: isHovered
-                            ? "opacity 0.25s ease-out 0.4s, transform 0.25s ease-out 0.4s"
-                            : "opacity 0.15s ease-out, transform 0.15s ease-out",
-                        }}
-                      >
-                        <Image
-                          src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
-                          alt={project.title}
-                          fill
-                          className="object-contain"
-                          style={{ objectPosition: "left" }}
-                        />
+                    {isClickable ? (
+                      <Link href={`/projects/${project.slug.current}`} className="block h-full w-full">
+                        <div
+                          className="relative h-full w-full cursor-pointer"
+                          style={{
+                            opacity: isHovered ? 1 : 0,
+                            transform: isHovered ? "translateY(0)" : "translateY(10px)",
+                            transition: isHovered
+                              ? "opacity 0.25s ease-out 0.4s, transform 0.25s ease-out 0.4s"
+                              : "opacity 0.15s ease-out, transform 0.15s ease-out",
+                          }}
+                        >
+                          <Image
+                            src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
+                            alt={project.title}
+                            fill
+                            className="object-contain"
+                            style={{ objectPosition: "left" }}
+                          />
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="block h-full w-full">
+                        <div
+                          className="relative h-full w-full"
+                          style={{
+                            opacity: isHovered ? 1 : 0,
+                            transform: isHovered ? "translateY(0)" : "translateY(10px)",
+                            transition: isHovered
+                              ? "opacity 0.25s ease-out 0.4s, transform 0.25s ease-out 0.4s"
+                              : "opacity 0.15s ease-out, transform 0.15s ease-out",
+                          }}
+                        >
+                          <Image
+                            src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
+                            alt={project.title}
+                            fill
+                            className="object-contain"
+                            style={{ objectPosition: "left" }}
+                          />
+                        </div>
                       </div>
-                    </Link>
+                    )}
                   </div>
                 )}
               </div>
 
+              {/* Mobile view */}
               <div className="block md:hidden">
-                {hasThumbnail ? (
+                {isClickable ? (
                   <Link
                     href={`/projects/${project.slug.current}`}
                     className="grid grid-cols-5 text-sm items-center py-1.5"
