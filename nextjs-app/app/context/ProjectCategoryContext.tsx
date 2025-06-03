@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
 type ProjectCategory = "all" | "uni" | "pluri" | "equip"
 
@@ -30,13 +31,15 @@ function ClientOnly({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
-  const [category, setCategory] = useState<ProjectCategory>("all")
-  const router = useRouter()
-  const pathname = usePathname()
+// Component that uses useSearchParams wrapped in Suspense
+function CategoryConsumer({
+  onCategoryChange,
+}: {
+  onCategoryChange: (category: ProjectCategory) => void
+}) {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
-  // Effect to initialize from localStorage and URL
   useEffect(() => {
     // Try to get from localStorage first
     const savedCategory =
@@ -54,14 +57,22 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
       newCategory = savedCategory as ProjectCategory
     }
 
-    // Update state
-    setCategory(newCategory)
+    // Update state via callback
+    onCategoryChange(newCategory)
 
     // Save to localStorage for persistence
     if (typeof window !== "undefined" && newCategory) {
       localStorage.setItem(LOCAL_STORAGE_KEY, newCategory)
     }
-  }, [searchParams])
+  }, [searchParams, onCategoryChange])
+
+  return null
+}
+
+export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
+  const [category, setCategory] = useState<ProjectCategory>("all")
+  const router = useRouter()
+  const pathname = usePathname()
 
   // Custom setCategory function that updates URL and localStorage
   const handleSetCategory = (newCategory: ProjectCategory) => {
@@ -75,7 +86,8 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
 
     // Only update URL if we're on the projects page
     if (pathname === "/projects") {
-      const params = new URLSearchParams(searchParams.toString())
+      // Create a new URLSearchParams instance
+      const params = new URLSearchParams(window.location.search)
 
       if (newCategory === "all") {
         params.delete("cat")
@@ -92,7 +104,12 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProjectCategoryContext.Provider value={{ category, setCategory: handleSetCategory }}>
-      <ClientOnly>{children}</ClientOnly>
+      <ClientOnly>
+        <Suspense fallback={null}>
+          <CategoryConsumer onCategoryChange={setCategory} />
+        </Suspense>
+        {children}
+      </ClientOnly>
     </ProjectCategoryContext.Provider>
   )
 }

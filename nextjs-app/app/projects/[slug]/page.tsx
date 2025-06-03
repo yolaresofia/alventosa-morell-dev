@@ -14,9 +14,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }): Promise<Metadata> {
-  const { slug } = await params
+  // Get the slug directly without destructuring first
+  const slug = params.slug
   const project = await client.fetch(`*[_type == "project" && slug.current == $slug][0]`, { slug })
 
   if (!project) {
@@ -35,9 +36,10 @@ export async function generateMetadata({
 export default async function ProjectPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }) {
-  const { slug } = await params
+  // Get the slug directly without destructuring first
+  const slug = params.slug
 
   const [project, allProjects, settings] = await Promise.all([
     client.fetch(`*[_type == "project" && slug.current == $slug][0]`, { slug }),
