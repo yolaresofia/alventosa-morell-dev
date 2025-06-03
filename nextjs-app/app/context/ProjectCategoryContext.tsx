@@ -8,8 +8,6 @@ type ProjectCategory = "all" | "uni" | "pluri" | "equip"
 
 const VALID_CATEGORIES: ProjectCategory[] = ["all", "uni", "pluri", "equip"]
 
-const LOCAL_STORAGE_KEY = "selectedProjectCategory"
-
 const ProjectCategoryContext = createContext<{
   category: ProjectCategory
   setCategory: (category: ProjectCategory) => void
@@ -39,25 +37,20 @@ function CategoryConsumer({
   const pathname = usePathname()
 
   useEffect(() => {
-    const savedCategory =
-      typeof window !== "undefined" ? (localStorage.getItem(LOCAL_STORAGE_KEY) as ProjectCategory) : null
+    // ONLY handle category logic when we're actually on the /projects page
+    if (pathname === "/projects") {
+      const queryCat = searchParams.get("cat")
 
-    const queryCat = searchParams.get("cat")
-
-    let newCategory: ProjectCategory = "all"
-
-    if (VALID_CATEGORIES.includes(queryCat as ProjectCategory)) {
-      newCategory = queryCat as ProjectCategory
-    } else if (VALID_CATEGORIES.includes(savedCategory as ProjectCategory)) {
-      newCategory = savedCategory as ProjectCategory
+      // If there's a valid URL parameter, use it
+      if (VALID_CATEGORIES.includes(queryCat as ProjectCategory)) {
+        onCategoryChange(queryCat as ProjectCategory)
+      } else {
+        // No URL parameter, default to "all"
+        onCategoryChange("all")
+      }
     }
-
-    onCategoryChange(newCategory)
-
-    if (typeof window !== "undefined" && newCategory) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, newCategory)
-    }
-  }, [searchParams, onCategoryChange])
+    // Don't do anything when on other pages - just let them be
+  }, [searchParams, pathname, onCategoryChange])
 
   return null
 }
@@ -70,10 +63,7 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
   const handleSetCategory = (newCategory: ProjectCategory) => {
     setCategory(newCategory)
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem(LOCAL_STORAGE_KEY, newCategory)
-    }
-
+    // ONLY update URL if we're currently on the projects page
     if (pathname === "/projects") {
       const params = new URLSearchParams(window.location.search)
 
@@ -88,6 +78,8 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
 
       router.push(newPath)
     }
+    // If we're on other pages and someone calls setCategory, just update the state
+    // but don't navigate anywhere
   }
 
   return (
