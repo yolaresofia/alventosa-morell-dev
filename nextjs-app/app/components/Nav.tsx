@@ -59,9 +59,9 @@ export default function Nav({
   return (
     <>
       {shouldShowFilters && (
-        <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 bg-white z-30" />
+        <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 monitor:h-14 bg-white z-30" />
       )}
-      <nav className="hidden md:flex fixed bottom-3 left-6 z-40 text-sm items-center">
+      <nav className="hidden md:flex fixed bottom-3 left-6 z-40 items-center">
         {navLinks.map((link, idx) => {
           const isActive = pathname === link.href;
           const translatedLabel =
@@ -70,10 +70,10 @@ export default function Nav({
               : getTranslation(link.label, language);
 
           return (
-            <span key={idx} className="flex items-center">
+            <span key={idx} className="flex items-center md:text-base text-sm monitor:text-xl">
               <Link
                 href={link.href}
-                className={`md:text-base text-sm ${isActive ? "text-red-500" : ""}`}
+                className={`md:text-base text-sm monitor:text-xl ${isActive ? "text-red-500" : ""}`}
               >
                 {translatedLabel}
               </Link>
@@ -84,13 +84,13 @@ export default function Nav({
       </nav>
 
       {shouldShowFilters && (
-        <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30 text-sm">
+        <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30">
           {categories.map((cat, idx) => {
             const label = getTranslation(categoryLabels[cat.value], language);
             const isActive = selectedCategory === cat.value;
 
             return (
-              <span key={cat.value} className="flex items-center">
+              <span key={cat.value} className="flex items-center md:text-base text-sm monitor:text-xl">
                 <button
                   onClick={() => {
                     if (!isProjectDetailPage) {
@@ -98,7 +98,7 @@ export default function Nav({
                     }
                     router.push(`/projects?cat=${cat.value}`);
                   }}
-                  className={`font-medium md:text-base text-sm ${
+                  className={`font-medium md:text-base text-sm monitor:text-xl ${
                     isActive ? "text-red-500" : "text-black"
                   } ${isProjectDetailPage ? "hover:text-red-500" : ""}`}
                 >
@@ -110,7 +110,7 @@ export default function Nav({
           })}
         </div>
       )}
-      <div className="fixed bottom-3 right-6 items-center space-x-1 z-30 hidden md:flex md:text-base text-sm">
+      <div className="fixed bottom-3 right-6 items-center space-x-1 z-30 hidden md:flex md:text-base text-sm monitor:text-xl">
         {availableLanguages.map((lang, idx) => (
           <div key={lang} className="flex items-center space-x-1">
             <button

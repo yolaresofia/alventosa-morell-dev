@@ -16,12 +16,12 @@ export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
     <section className="w-full px-6 pt-4 pb-24 text-black font-soehne">
       <div className="grid grid-cols-12">
         <div className="col-span-12 md:col-span-3 flex">
-          {number && <p className="md:text-base text-sm pr-2">{number}</p>}
-          {title && <h2 className="md:text-base text-sm leading-[1.5]">{title}</h2>}
+          {number && <p className="md:text-base text-sm monitor:text-xl pr-2">{number}</p>}
+          {title && <h2 className="md:text-base text-sm monitor:text-xl leading-[1.5]">{title}</h2>}
         </div>
         <div className="col-span-12 md:col-span-8 pt-24 lg:pt-0">
           {description && (
-            <p className="md:text-base text-sm leading-[1.5]">
+            <p className="md:text-base text-sm monitor:text-xl leading-[1.5]">
               {getTranslation(description, language)}
             </p>
           )}

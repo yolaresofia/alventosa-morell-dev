@@ -18,7 +18,6 @@ export const CoverImage = ({ block }: CoverImageProps) => {
   const mobileImageUrl = block.mobileImage ? urlForImage(block.mobileImage)?.url() : undefined;
   const hasPadding = block.hasPadding || false;
 
-  // Detect mobile screen on client
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();

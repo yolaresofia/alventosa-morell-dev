@@ -71,7 +71,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                 )}
               </div>
               <div
-                className={`mt-2 min-h-[24px] text-sm font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
+                className={`mt-2 min-h-[24px] text-sm monitor:text-xl font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
               >
                 <div className="flex lg:hidden">
                   <div className="pr-2">{project.projectNumber || "-"}</div>

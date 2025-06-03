@@ -46,7 +46,7 @@ export default function ProjectPageClient({
       <ImageSliderProvider>
         <PageBuilderPage page={project} />
         <PopupSlider />
-        <div className="flex items-center text-sm px-6 mb-24">
+        <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">
           {prevProject && (
             <Link
               href={`/projects/${prevProject.slug}${catQuery}`}

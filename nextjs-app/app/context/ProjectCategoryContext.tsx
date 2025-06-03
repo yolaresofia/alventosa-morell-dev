@@ -37,19 +37,15 @@ function CategoryConsumer({
   const pathname = usePathname()
 
   useEffect(() => {
-    // ONLY handle category logic when we're actually on the /projects page
     if (pathname === "/projects") {
       const queryCat = searchParams.get("cat")
 
-      // If there's a valid URL parameter, use it
       if (VALID_CATEGORIES.includes(queryCat as ProjectCategory)) {
         onCategoryChange(queryCat as ProjectCategory)
       } else {
-        // No URL parameter, default to "all"
         onCategoryChange("all")
       }
     }
-    // Don't do anything when on other pages - just let them be
   }, [searchParams, pathname, onCategoryChange])
 
   return null
@@ -62,8 +58,6 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
 
   const handleSetCategory = (newCategory: ProjectCategory) => {
     setCategory(newCategory)
-
-    // ONLY update URL if we're currently on the projects page
     if (pathname === "/projects") {
       const params = new URLSearchParams(window.location.search)
 
@@ -78,8 +72,6 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
 
       router.push(newPath)
     }
-    // If we're on other pages and someone calls setCategory, just update the state
-    // but don't navigate anywhere
   }
 
   return (

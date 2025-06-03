@@ -20,13 +20,11 @@ export default function TopLogo({ logoUrl }: Props) {
       setVisible(true);
       return;
     }
-
-    // Reset logo visibility every time the homepage is rendered
     setVisible(false);
 
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 1100); // Match the homepage animation duration
+    }, 1100);
 
     return () => clearTimeout(timer);
   }, [isHomepage]);
@@ -39,7 +37,7 @@ export default function TopLogo({ logoUrl }: Props) {
     >
       <Link
         href="/"
-        className="relative block w-[200px] h-[44px] md:w-[250px] md:h-[55px]"
+        className="relative block w-[200px] h-[44px] md:w-[250px] md:h-[55px] monitor:w-[300px] monitor:h-[66px]"
       >
         <Image
           src={logoUrl}

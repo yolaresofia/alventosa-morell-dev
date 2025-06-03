@@ -60,7 +60,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
           const projectTitle = project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title
           const DesktopRow = () => (
             <div
-              className={`grid grid-cols-5 md:grid-cols-9 text-sm items-center py-1.5 transition-colors duration-200 ${
+              className={`grid grid-cols-5 md:grid-cols-9 text-sm monitor:text-xl items-center py-1.5 transition-colors duration-200 ${
                 isHovered && isClickable ? "text-red-500" : isClickable ? "hover:text-red-500" : ""
               }`}
             >
@@ -147,13 +147,13 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                 {isClickable ? (
                   <Link
                     href={`/projects/${project.slug.current}`}
-                    className="grid grid-cols-5 text-sm items-center py-1.5"
+                    className="grid grid-cols-5 text-sm monitor:text-xl items-center py-1.5"
                   >
                     <div className="col-span-4 font-medium">{projectTitle}</div>
                     <div className="col-span-1 text-right">{year}</div>
                   </Link>
                 ) : (
-                  <div className="grid grid-cols-5 text-sm items-center py-1.5">
+                  <div className="grid grid-cols-5 text-sm monitor:text-xl items-center py-1.5">
                     <div className="col-span-4 font-medium">{projectTitle}</div>
                     <div className="col-span-1 text-right">{year}</div>
                   </div>

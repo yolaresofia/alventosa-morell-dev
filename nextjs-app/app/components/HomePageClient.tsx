@@ -214,7 +214,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                   />
                 </div>
 
-                <div className="mt-2 text-sm pl-4 font-medium leading-tight flex">
+                <div className="mt-2 text-sm monitor:text-xl pl-4 font-medium leading-tight flex">
                   <div className="pr-3">{project.projectNumber}</div>
                   <div>{project.title}</div>
                 </div>

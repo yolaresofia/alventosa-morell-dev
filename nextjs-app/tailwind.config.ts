@@ -102,6 +102,9 @@ export default {
       fontFamily: {
         soehne: ['"Soehne Buch"', "sans-serif"],
       },
+      screens: {
+        'monitor': '1800px',
+      },
     },
   },
   future: {

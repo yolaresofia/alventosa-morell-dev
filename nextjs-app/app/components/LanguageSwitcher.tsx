@@ -17,7 +17,7 @@ export default function LanguageSwitcher({
       className={`${
         mobile
           ? "absolute bottom-10 left-1/2 transform -translate-x-1/2 text-4xl"
-          : "fixed bottom-4 right-4 text-sm z-40 hidden md:flex"
+          : "fixed bottom-4 right-4 text-sm monitor:text-xl z-40 hidden md:flex"
       } flex items-center space-x-2`}
     >
       {availableLanguages.map((lang, idx) => (
