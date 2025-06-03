@@ -23,6 +23,7 @@ function getVimeoEmbedUrl(vimeoUrl: string): string | null {
 export const CoverVideo = ({ block }: CoverVideoProps) => {
   const [language] = useState<"ca" | "es" | "en">("ca");
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const alt = getTranslation(block.altText, language);
 
@@ -40,15 +41,18 @@ export const CoverVideo = ({ block }: CoverVideoProps) => {
   if (!embedUrl) return null;
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-black">
-      <iframe
-        src={embedUrl}
-        className="absolute top-0 left-0 w-full h-full"
-        frameBorder="0"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowFullScreen
-        title={alt}
-      />
+    <div className="w-full h-screen relative overflow-hidden bg-white">
+      <div className="absolute inset-0 bg-white z-10" />
+      <div className="absolute inset-0 z-20 transition-opacity duration-500" style={{ opacity: isLoaded ? 1 : 0 }}>
+        <iframe
+          src={embedUrl}
+          onLoad={() => setIsLoaded(true)}
+          className="w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full scale-[1.01]"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          title={alt}
+        />
+      </div>
       <span className="sr-only">{alt}</span>
     </div>
   );

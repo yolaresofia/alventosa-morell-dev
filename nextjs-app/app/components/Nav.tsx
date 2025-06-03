@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { getTranslation } from "@/app/utils/translations";
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
@@ -41,7 +40,6 @@ const categories = [
 export default function Nav({
   navLinks,
   languages = [],
-  currentProjectCategory,
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
@@ -57,12 +55,6 @@ export default function Nav({
   const shouldShowFilters =
     (pathname === "/projects" || pathname.startsWith("/projects/")) &&
     pathname !== "/projects/index";
-
-  useEffect(() => {
-    if (isProjectDetailPage && currentProjectCategory) {
-      setCategory(currentProjectCategory as typeof selectedCategory);
-    }
-  }, [isProjectDetailPage, currentProjectCategory, setCategory]);
 
   return (
     <>

@@ -1737,6 +1737,36 @@
           },
           "optional": true
         },
+        "leftAltText": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "object",
+            "attributes": {
+              "ca": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "es": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "en": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            }
+          },
+          "optional": false
+        },
         "leftImageOnHover": {
           "type": "objectAttribute",
           "value": {
@@ -1799,7 +1829,7 @@
           },
           "optional": true
         },
-        "leftAltText": {
+        "leftHoverAltText": {
           "type": "objectAttribute",
           "value": {
             "type": "object",
@@ -1891,6 +1921,36 @@
           },
           "optional": true
         },
+        "rightAltText": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "object",
+            "attributes": {
+              "ca": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "es": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "en": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              }
+            }
+          },
+          "optional": false
+        },
         "rightImageOnHover": {
           "type": "objectAttribute",
           "value": {
@@ -1953,7 +2013,7 @@
           },
           "optional": true
         },
-        "rightAltText": {
+        "rightHoverAltText": {
           "type": "objectAttribute",
           "value": {
             "type": "object",

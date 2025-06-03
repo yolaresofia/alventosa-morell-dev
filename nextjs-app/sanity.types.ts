@@ -308,6 +308,11 @@ export type DiptychImage = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  leftAltText: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
   leftImageOnHover?: {
     asset?: {
       _ref: string;
@@ -319,7 +324,7 @@ export type DiptychImage = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-  leftAltText: {
+  leftHoverAltText: {
     ca?: string;
     es?: string;
     en?: string;
@@ -335,6 +340,11 @@ export type DiptychImage = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  rightAltText: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
   rightImageOnHover?: {
     asset?: {
       _ref: string;
@@ -346,7 +356,7 @@ export type DiptychImage = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-  rightAltText: {
+  rightHoverAltText: {
     ca?: string;
     es?: string;
     en?: string;
@@ -1260,6 +1270,11 @@ export type GetSingleProjectQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    leftAltText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     leftImageOnHover?: {
       asset?: {
         _ref: string;
@@ -1271,7 +1286,7 @@ export type GetSingleProjectQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
-    leftAltText: {
+    leftHoverAltText: {
       ca?: string;
       es?: string;
       en?: string;
@@ -1287,6 +1302,11 @@ export type GetSingleProjectQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    rightAltText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     rightImageOnHover?: {
       asset?: {
         _ref: string;
@@ -1298,7 +1318,7 @@ export type GetSingleProjectQueryResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
-    rightAltText: {
+    rightHoverAltText: {
       ca?: string;
       es?: string;
       en?: string;

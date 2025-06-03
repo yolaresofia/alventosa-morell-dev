@@ -20,7 +20,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const animationFrameRef = useRef<number | null>(null); 
