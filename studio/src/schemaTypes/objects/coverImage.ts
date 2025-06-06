@@ -36,6 +36,17 @@ export const coverImage = defineType({
       type: "boolean",
       description: "Afegeix marge a la part superior i inferior de la imatge",
     }),
+    defineField({
+      name: "bottomText",
+      title: "Text inferior",
+      type: "object",
+      description: "Aquest camp és opcional. Si no s'afegeix cap text, no es mostrarà.",
+      fields: [
+        defineField({ name: "ca", title: "Català", type: "text" }),
+        defineField({ name: "es", title: "Español", type: "text" }),
+        defineField({ name: "en", title: "English", type: "text" }),
+      ],
+    }),
   ],
   preview: {
     select: {

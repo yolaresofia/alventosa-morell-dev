@@ -405,6 +405,11 @@ export type CoverImage = {
     en?: string;
   };
   hasPadding?: boolean;
+  bottomText?: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
 };
 
 export type About = {
@@ -1248,6 +1253,11 @@ export type GetSingleProjectQueryResult = {
       en?: string;
     };
     hasPadding?: boolean;
+    bottomText?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
   } | {
     _key: string;
     _type: "coverVideo";
