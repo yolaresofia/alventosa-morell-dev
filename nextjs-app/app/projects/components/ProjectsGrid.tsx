@@ -10,14 +10,13 @@ import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
 export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
   const { category } = useProjectCategory()
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
-  const [hasUserHovered, setHasUserHovered] = useState(false)
 
   const filteredProjects = projects
     .filter((project) => category === "all" || project.category === category)
     .filter((project) => !!project.thumbnail)
     .sort((a, b) => {
-      const yearA = parseInt(a.projectInfo?.year?.value || "0", 10)
-      const yearB = parseInt(b.projectInfo?.year?.value || "0", 10)
+      const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10)
+      const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10)
       return yearB - yearA
     })
 
@@ -25,20 +24,12 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
 
   const handleMouseEnter = (slug: string) => {
     setHoveredSlug(slug)
-    setHasUserHovered(true)
   }
 
   const handleMouseLeave = () => {
     setHoveredSlug(null)
   }
-
-  const getActiveSlug = () => {
-    if (hoveredSlug) return hoveredSlug
-    if (!hasUserHovered && firstProjectSlug) return firstProjectSlug
-    return null
-  }
-
-  const activeSlug = getActiveSlug()
+  const activeSlug = hoveredSlug || firstProjectSlug
 
   return (
     <section className="relative w-full min-h-screen px-16 py-20">
@@ -46,9 +37,8 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
         {filteredProjects.map((project) => {
           const imageUrl = urlForImage(project.thumbnail)?.url()
           const isActive = activeSlug === project.slug.current
-          const showTitle = isActive
           const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
-          const titleOpacity = showTitle ? "lg:opacity-100" : "lg:opacity-0"
+          const titleOpacity = isActive ? "lg:opacity-100" : "lg:opacity-0"
 
           return (
             <Link
@@ -58,16 +48,9 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
               onMouseLeave={handleMouseLeave}
               className="flex flex-col items-start transition-opacity duration-300"
             >
-              <div
-                className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}
-              >
+              <div className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}>
                 {imageUrl && (
-                  <Image
-                    src={imageUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={imageUrl || "/placeholder.svg"} alt={project.title} fill className="object-cover" />
                 )}
               </div>
               <div
@@ -77,7 +60,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                   <div className="pr-2">{project.projectNumber || "-"}</div>
                   <div>{project.title}</div>
                 </div>
-                {showTitle && (
+                {isActive && (
                   <div className="hidden lg:flex">
                     <div className="pr-2">{project.projectNumber || "-"}</div>
                     <div>{project.title}</div>

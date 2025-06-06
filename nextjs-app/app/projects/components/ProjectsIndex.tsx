@@ -141,8 +141,6 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                   </div>
                 )}
               </div>
-
-              {/* Mobile view */}
               <div className="block md:hidden">
                 {isClickable ? (
                   <Link
