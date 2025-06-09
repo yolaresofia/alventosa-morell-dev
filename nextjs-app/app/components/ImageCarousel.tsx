@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 import { getTranslation } from "@/app/utils/translations"
 import type { ImageCarousel as ImageCarouselType } from "@/sanity.types"
@@ -70,36 +69,28 @@ export const ImageCarousel = ({ block }: Props) => {
 
   return (
     <section className="w-full bg-white pt-24 pb-24 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto flex justify-center items-center px-4 sm:px-8 md:px-16 lg:px-32 relative">
-        <div
-          className="relative w-full max-w-4xl aspect-[3/2] cursor-pointer mx-auto"
-          onClick={handleImageClick}
-        >
-          <Image
-            src={imageUrl || "/placeholder.svg"}
-            alt={alt}
-            fill
-            sizes="(max-width: 768px) 100vw, 70vw"
-            className="object-contain"
-          />
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handlePrev()
-            }}
-            className="absolute -left-4 sm:-left-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto"
-            aria-label="Imatge anterior"
-          >
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 md:px-16 lg:px-32 relative">
+        <div className="flex items-center justify-center gap-4 md:gap-8">
+          <button onClick={handlePrev} className="flex-shrink-0 z-10" aria-label="Imatge anterior">
             <LeftArrow />
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleNext()
-            }}
-            className="absolute -right-4 sm:-right-4 top-1/2 transform -translate-y-1/2 z-10 pointer-events-auto"
-            aria-label="Imatge següent"
+          <div
+            className="relative w-full max-w-4xl aspect-[3/2] cursor-pointer bg-gray-100 overflow-hidden"
+            onClick={handleImageClick}
           >
+            <div
+              className="w-full h-full bg-center bg-cover bg-no-repeat"
+              style={{
+                backgroundImage: `url(${imageUrl || "/placeholder.svg?height=400&width=600"})`,
+              }}
+              role="img"
+              aria-label={alt}
+            >
+              <span className="sr-only">{alt}</span>
+            </div>
+          </div>
+
+          <button onClick={handleNext} className="flex-shrink-0 z-10" aria-label="Imatge següent">
             <RightArrow />
           </button>
         </div>

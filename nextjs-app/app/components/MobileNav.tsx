@@ -53,8 +53,8 @@ export default function MobileNav({
         </div>
       </div>
       <div
-        className={`fixed inset-0 bg-white opacity-90 z-40 transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 bg-white opacity-90 z-40 ${
+          isOpen ? "block" : "hidden"
         }`}
       >
         <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">

@@ -26,11 +26,11 @@ export default function AboutPageClient({ about }: { about: any }) {
       className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-16 flex flex-col"
       onClick={handleBackgroundClick}
     >
-      <div className="md:text-2xl text-lg monitor:text-3xl font-medium leading-[1.5] md:pb-16">
+      <div className="md:text-2xl text-[20px] monitor:text-3xl font-medium leading-[1.5] tracking-wide pb-16">
         <PortableText value={getPortableTextTranslation(about.aboutText, language) as PortableTextBlock[]} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-8 md:grid-cols-6 gap-8 mt-10 text-sm monitor:text-xl flex-grow">
+      <div className="grid grid-cols-1 lg:grid-cols-8 md:grid-cols-6 gap-8 text-sm monitor:text-xl flex-grow">
         <div className="col-span-2">
           <h2>{getTranslation(about.contact?.titleTranslations, language)}</h2>
           <a href={`mailto:${about.contact?.email || ""}`}>

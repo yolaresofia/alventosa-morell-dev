@@ -11,6 +11,7 @@ export const projectInfo = defineType({
       name: 'description',
       title: 'Descripció',
       type: 'object',
+      description: "Aquest camp és opcional. Si no s'afegeix cap text, no es mostrarà.",
       fields: [
         defineField({name: 'ca', title: 'Català', type: 'text'}),
         defineField({name: 'es', title: 'Español', type: 'text'}),

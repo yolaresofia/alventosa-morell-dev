@@ -103,10 +103,9 @@ export const DiptychImage = ({ block }: Props) => {
   if (!leftImageUrl || !rightImageUrl || baseIndex === null) return null;
 
   return (
-    <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 pt-24 pb-24">
+    <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 py-32">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {/* LEFT IMAGE */}
           <div
             className="relative w-full aspect-[3/4] cursor-pointer"
             onClick={handleLeftClick}
@@ -140,8 +139,6 @@ export const DiptychImage = ({ block }: Props) => {
               />
             )}
           </div>
-
-          {/* RIGHT IMAGE */}
           <div
             className="relative w-full aspect-[3/4] cursor-pointer"
             onClick={handleRightClick}

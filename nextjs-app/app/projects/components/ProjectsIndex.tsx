@@ -38,7 +38,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24">
-      <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black pb-2 mb-4">
+      <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black/70 pb-2 mb-4">
         <div className="col-span-4 md:col-span-3">{getTranslation(columnTitles.project, language)}</div>
         <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
         <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.location, language)}</div>
