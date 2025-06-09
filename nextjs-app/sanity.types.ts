@@ -39,28 +39,6 @@ export type SanityImageDimensions = {
   aspectRatio?: number;
 };
 
-export type SanityFileAsset = {
-  _id: string;
-  _type: "sanity.fileAsset";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  originalFilename?: string;
-  label?: string;
-  title?: string;
-  description?: string;
-  altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
-  uploadId?: string;
-  path?: string;
-  url?: string;
-  source?: SanityAssetSourceData;
-};
-
 export type Geopoint = {
   _type: "geopoint";
   lat?: number;
@@ -626,6 +604,58 @@ export type About = {
       _key: string;
     }>;
   };
+  awards?: {
+    titleTranslations?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    list?: Array<{
+      title?: string;
+      _type: "award";
+      _key: string;
+    }>;
+  };
+  cv?: Array<{
+    title?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    file?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+      };
+      _type: "file";
+    };
+    _type: "cvEntry";
+    _key: string;
+  }>;
+};
+
+export type SanityFileAsset = {
+  _id: string;
+  _type: "sanity.fileAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  source?: SanityAssetSourceData;
 };
 
 export type Link = {
@@ -945,11 +975,11 @@ export type SanityAssistSchemaTypeField = {
   } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | SanityFileAsset | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
-// Query: *[_type == "about"][0]{    aboutText,    contact {      titleTranslations,      email,      phone    },    office {      titleTranslations,      address,      addressUrl    },    social {      instagram    },    team {      titleTranslations,      coFounders[]{        name,        role      },      teammates[]{        name      },      teammatesTitleTranslations,      pastTeammates[]{        name      },      pastTeammatesTitleTranslations    },    aboutInfo  }
+// Query: *[_type == "about"][0]{    aboutText,    contact {      titleTranslations,      email,      phone    },    office {      titleTranslations,      address,      addressUrl    },    social {      instagram    },    team {      titleTranslations,      coFounders[]{        name,        role      },      teammates[]{        name      },      teammatesTitleTranslations,      pastTeammates[]{        name      },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      titleTranslations,      list[]{        title      }    },    cv[]{      title,      file {        asset->{          url        }      }    }  }
 export type GetAboutPageQueryResult = {
   aboutText: {
     ca?: Array<{
@@ -1153,6 +1183,28 @@ export type GetAboutPageQueryResult = {
       _key: string;
     }>;
   } | null;
+  awards: {
+    titleTranslations: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    list: Array<{
+      title: string | null;
+    }> | null;
+  } | null;
+  cv: Array<{
+    title: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    file: {
+      asset: {
+        url: string | null;
+      } | null;
+    } | null;
+  }> | null;
 } | null;
 // Variable: getProjectsGridQuery
 // Query: *[_type == "project"] | order(projectNumber asc) {    title,    slug,    projectNumber,    category,    notClickableInIndex,    thumbnail,    "projectInfo": builder[_type == "projectInfo"][0]{      year,      location,      program,      area    }  }
@@ -1552,7 +1604,7 @@ export type SettingsQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact {\n      titleTranslations,\n      email,\n      phone\n    },\n    office {\n      titleTranslations,\n      address,\n      addressUrl\n    },\n    social {\n      instagram\n    },\n    team {\n      titleTranslations,\n      coFounders[]{\n        name,\n        role\n      },\n      teammates[]{\n        name\n      },\n      teammatesTitleTranslations,\n      pastTeammates[]{\n        name\n      },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo\n  }\n": GetAboutPageQueryResult;
+    "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact {\n      titleTranslations,\n      email,\n      phone\n    },\n    office {\n      titleTranslations,\n      address,\n      addressUrl\n    },\n    social {\n      instagram\n    },\n    team {\n      titleTranslations,\n      coFounders[]{\n        name,\n        role\n      },\n      teammates[]{\n        name\n      },\n      teammatesTitleTranslations,\n      pastTeammates[]{\n        name\n      },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        title\n      }\n    },\n    cv[]{\n      title,\n      file {\n        asset->{\n          url\n        }\n      }\n    }\n  }\n": GetAboutPageQueryResult;
     "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail,\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
     "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo,\n    navLinks,\n    languages\n  }\n": SettingsQueryResult;

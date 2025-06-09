@@ -40,9 +40,24 @@ export const getAboutPageQuery = defineQuery(`
       },
       pastTeammatesTitleTranslations
     },
-    aboutInfo
+    aboutInfo,
+    awards {
+      titleTranslations,
+      list[]{
+        title
+      }
+    },
+    cv[]{
+      title,
+      file {
+        asset->{
+          url
+        }
+      }
+    }
   }
 `);
+
 
 export const getProjectsGridQuery = defineQuery(`
   *[_type == "project"] | order(projectNumber asc) {

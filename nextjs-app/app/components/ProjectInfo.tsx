@@ -13,7 +13,7 @@ export const ProjectInfo = ({ block }: Props) => {
   const translate = (field: any) => getTranslation(field, language);
 
   return (
-    <section className="w-full px-4 sm:px-8 md:px-6 pb-12 font-soehne">
+    <section className="w-full px-6 sm:px-8 md:px-6 pb-12 font-soehne">
       {block.description && (
         <p className="max-w-5xl md:text-base text-sm monitor:text-xl text-black font-medium leading-[1.5] mb-16">
           {translate(block.description)}

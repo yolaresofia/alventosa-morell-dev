@@ -42,7 +42,7 @@ export const CoverImage = ({ block }: CoverImageProps) => {
         <span className="sr-only">{alt}</span>
       </div>
       {bottomText && (
-        <div className="pt-4 px-4 md:px-6">
+        <div className="pt-4 px-6">
          <p className="max-w-5xl md:text-base text-sm monitor:text-xl text-black font-medium leading-[1.5] mb-16">{bottomText}</p>
         </div>
       )}

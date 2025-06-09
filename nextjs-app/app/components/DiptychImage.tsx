@@ -103,7 +103,7 @@ export const DiptychImage = ({ block }: Props) => {
   if (!leftImageUrl || !rightImageUrl || baseIndex === null) return null;
 
   return (
-    <section className="w-full px-8 sm:px-16 md:px-24 lg:px-32 xl:px-48 py-32">
+    <section className="w-full px-6 sm:px-16 md:px-24 lg:px-32 xl:px-48 py-32">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           <div
