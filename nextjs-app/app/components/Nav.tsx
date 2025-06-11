@@ -37,10 +37,7 @@ const categories = [
   { value: "equip" },
 ];
 
-export default function Nav({
-  navLinks,
-  languages = [],
-}: Props) {
+export default function Nav({ navLinks, languages = [] }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
@@ -58,9 +55,7 @@ export default function Nav({
 
   return (
     <>
-      {shouldShowFilters && (
-        <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 monitor:h-14 bg-white z-30" />
-      )}
+      <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 monitor:h-14 bg-white z-30" />
       <nav className="hidden md:flex fixed bottom-3 left-6 z-40 items-center">
         {navLinks.map((link, idx) => {
           const isActive = pathname === link.href;
@@ -70,7 +65,10 @@ export default function Nav({
               : getTranslation(link.label, language);
 
           return (
-            <span key={idx} className="flex items-center md:text-base text-sm monitor:text-xl">
+            <span
+              key={idx}
+              className="flex items-center md:text-base text-sm monitor:text-xl"
+            >
               <Link
                 href={link.href}
                 className={`md:text-base text-sm monitor:text-xl ${isActive ? "text-red-500" : ""}`}
@@ -90,7 +88,10 @@ export default function Nav({
             const isActive = selectedCategory === cat.value;
 
             return (
-              <span key={cat.value} className="flex items-center md:text-base text-sm monitor:text-xl">
+              <span
+                key={cat.value}
+                className="flex items-center md:text-base text-sm monitor:text-xl"
+              >
                 <button
                   onClick={() => {
                     if (!isProjectDetailPage) {

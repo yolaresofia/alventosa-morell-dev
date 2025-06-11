@@ -58,7 +58,6 @@ export const getAboutPageQuery = defineQuery(`
   }
 `);
 
-
 export const getProjectsGridQuery = defineQuery(`
   *[_type == "project"] | order(projectNumber asc) {
     title,
@@ -71,7 +70,7 @@ export const getProjectsGridQuery = defineQuery(`
       year,
       location,
       program,
-      area
+      area,
     }
   }
 `);

@@ -24,16 +24,26 @@ export const projectInfo = defineType({
       title: 'Projecte',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
-        defineField({name: 'value', title: 'Valor', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
       ],
     }),
 
@@ -42,11 +52,16 @@ export const projectInfo = defineType({
       title: 'Any',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
         defineField({name: 'value', title: 'Valor', type: 'string'}),
       ],
     }),
@@ -56,16 +71,26 @@ export const projectInfo = defineType({
       title: 'Ubicació',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
-        defineField({name: 'value', title: 'Valor', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
       ],
     }),
 
@@ -74,16 +99,26 @@ export const projectInfo = defineType({
       title: 'Programa',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
-        defineField({name: 'value', title: 'Valor', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
       ],
     }),
 
@@ -92,11 +127,16 @@ export const projectInfo = defineType({
       title: 'Superfície',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
         defineField({name: 'value', title: 'Valor', type: 'string'}),
       ],
     }),
@@ -106,34 +146,53 @@ export const projectInfo = defineType({
       title: 'Autors',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
-        defineField({name: 'value', title: 'Valor', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
       ],
     }),
-
     defineField({
       name: 'team',
       title: 'Equip',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
-        defineField({name: 'value', title: 'Valor', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
       ],
     }),
     defineField({
@@ -141,12 +200,41 @@ export const projectInfo = defineType({
       title: 'Fotògraf',
       type: 'object',
       fields: [
-        defineField({name: 'label', title: 'Etiqueta', type: 'object', fields: [
-          defineField({name: 'ca', title: 'Català', type: 'string'}),
-          defineField({name: 'es', title: 'Español', type: 'string'}),
-          defineField({name: 'en', title: 'English', type: 'string'}),
-        ]}),
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+        }),
         defineField({name: 'value', title: 'Valor', type: 'string'}),
+      ],
+    }),
+    defineField({
+      name: 'awards',
+      title: 'Premis',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'label',
+          title: 'Etiqueta',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string', initialValue: 'Premis'}),
+            defineField({name: 'es', title: 'Español', type: 'string', initialValue: 'Premios'}),
+            defineField({name: 'en', title: 'English', type: 'string', initialValue: 'Awards'}),
+          ],
+        }),
+        defineField({
+          name: 'value',
+          title: 'Valor',
+          type: 'array',
+          of: [{type: 'string'}],
+          description: 'Llista de premis o reconeixements obtinguts pel projecte.',
+        }),
       ],
     }),
   ],

@@ -80,7 +80,7 @@ export default function AboutPageClient({ about }: { about: any }) {
               <p>{member.name}</p>
             </div>
           ))}
-          <h2 className="pb-4">
+          <h2 className="pb-4 pt-8">
             {getTranslation(
               about.team?.pastTeammatesTitleTranslations,
               language
@@ -109,7 +109,7 @@ export default function AboutPageClient({ about }: { about: any }) {
               return (
                 <div key={entry._key || title}>
                   {fileUrl ? (
-                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                    <a href={fileUrl} className="underline" target="_blank" rel="noopener noreferrer">
                       {title}
                     </a>
                   ) : (

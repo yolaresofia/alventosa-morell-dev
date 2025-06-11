@@ -69,6 +69,16 @@ export const ProjectInfo = ({ block }: Props) => {
             <div>{block.photographer.value}</div>
           </>
         )}
+        {block.awards?.value?.length && (
+          <>
+            <div>{translate(block.awards.label)}</div>
+            <div className="flex flex-col gap-0.5">
+              {block.awards.value.map((award, idx) => (
+                <div key={idx}>{award}</div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

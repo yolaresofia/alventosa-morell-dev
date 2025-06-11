@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Head from "next/head";
 import Link from "next/link";
@@ -19,7 +19,6 @@ type Props = {
 export default function ProjectPageClient({
   project,
   allProjects,
-  settings,
 }: Props) {
   const { setCategory } = useProjectCategory();
   const searchParams = useSearchParams();
@@ -31,10 +30,31 @@ export default function ProjectPageClient({
     }
   }, [project?.category, setCategory]);
 
-  const currentIndex = allProjects.findIndex((p) => p.slug === project.slug);
-  const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
-  const nextProject =
-    currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : null;
+  const normalizeSlug = (slug: any): string | undefined => {
+    if (typeof slug === "string") return slug;
+    if (slug && typeof slug === "object" && "current" in slug) return slug.current;
+    return undefined;
+  };
+
+  const filteredProjects = useMemo(() => {
+    const projects = allProjects
+      .filter((p) => selectedCategory === "all" || p.category === selectedCategory)
+      .filter((p) => !p.notClickableInIndex)
+      .sort((a, b) => {
+        const yearA = parseInt(a.projectInfo?.year?.value || "0", 10);
+        const yearB = parseInt(b.projectInfo?.year?.value || "0", 10);
+        return yearB - yearA;
+      });
+
+    return projects;
+  }, [allProjects, selectedCategory]);
+
+  const currentIndex = filteredProjects.findIndex(
+    (p) => normalizeSlug(p.slug) === normalizeSlug(project.slug)
+  );
+
+  const prevProject = currentIndex > 0 ? filteredProjects[currentIndex - 1] : null;
+  const nextProject = currentIndex < filteredProjects.length - 1 ? filteredProjects[currentIndex + 1] : null;
 
   const catQuery = selectedCategory !== "all" ? `?cat=${selectedCategory}` : "";
 
@@ -46,30 +66,64 @@ export default function ProjectPageClient({
       <ImageSliderProvider>
         <PageBuilderPage page={project} />
         <PopupSlider />
+
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">
-          {prevProject && (
+          {/* First project: only next */}
+          {currentIndex === 0 && nextProject && (
             <Link
-              href={`/projects/${prevProject.slug}${catQuery}`}
-              className="flex items-center pr-8 group"
-            >
-              <span className="group-hover:text-red-500 transition-colors">
-                &larr;
-              </span>
-              <span className="group-hover:text-red-500 transition-colors">
-                {prevProject.projectNumber}
-              </span>
-            </Link>
-          )}
-          {nextProject && (
-            <Link
-              href={`/projects/${nextProject.slug}${catQuery}`}
+              href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
               className="flex items-center group"
             >
-              <span className="group-hover:text-red-500 transition-colors">
+              <span className="group-hover:text-red-500 transition-colors mr-2">
                 {nextProject.projectNumber}
               </span>
               <span className="group-hover:text-red-500 transition-colors">
                 &rarr;
+              </span>
+            </Link>
+          )}
+
+          {/* Middle projects: both prev and next */}
+          {currentIndex > 0 && currentIndex < filteredProjects.length - 1 && (
+            <>
+              {prevProject && (
+                <Link
+                  href={`/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
+                  className="flex items-center pr-8 group"
+                >
+                  <span className="group-hover:text-red-500 transition-colors mr-2">
+                    &larr;
+                  </span>
+                  <span className="group-hover:text-red-500 transition-colors">
+                    {prevProject.projectNumber}
+                  </span>
+                </Link>
+              )}
+              {nextProject && (
+                <Link
+                  href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
+                  className="flex items-center group"
+                >
+                  <span className="group-hover:text-red-500 transition-colors mr-2">
+                    {nextProject.projectNumber}
+                  </span>
+                  <span className="group-hover:text-red-500 transition-colors">
+                    &rarr;
+                  </span>
+                </Link>
+              )}
+            </>
+          )}
+          {currentIndex === filteredProjects.length - 1 && prevProject && (
+            <Link
+              href={`/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
+              className="flex items-center pr-8 group"
+            >
+              <span className="group-hover:text-red-500 transition-colors mr-2">
+                &larr;
+              </span>
+              <span className="group-hover:text-red-500 transition-colors">
+                {prevProject.projectNumber}
               </span>
             </Link>
           )}

@@ -14,6 +14,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
   const filteredProjects = projects
     .filter((project) => category === "all" || project.category === category)
     .filter((project) => !!project.thumbnail)
+    .filter((project) => !project.notClickableInIndex)
     .sort((a, b) => {
       const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10)
       const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10)
@@ -29,6 +30,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
   const handleMouseLeave = () => {
     setHoveredSlug(null)
   }
+
   const activeSlug = hoveredSlug || firstProjectSlug
 
   return (
@@ -50,7 +52,12 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
             >
               <div className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}>
                 {imageUrl && (
-                  <Image src={imageUrl || "/placeholder.svg"} alt={project.title} fill className="object-cover" />
+                  <Image
+                    src={imageUrl || "/placeholder.svg"}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                  />
                 )}
               </div>
               <div
