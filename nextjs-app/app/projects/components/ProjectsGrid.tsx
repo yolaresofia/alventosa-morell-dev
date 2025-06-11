@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
@@ -10,6 +10,7 @@ import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
 export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
   const { category } = useProjectCategory()
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
   const filteredProjects = projects
     .filter((project) => category === "all" || project.category === category)
@@ -24,6 +25,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
   const firstProjectSlug = filteredProjects[0]?.slug.current || null
 
   const handleMouseEnter = (slug: string) => {
+    setHasInteracted(true)
     setHoveredSlug(slug)
   }
 
@@ -31,7 +33,13 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
     setHoveredSlug(null)
   }
 
-  const activeSlug = hoveredSlug || firstProjectSlug
+  // When the category changes, reset interaction
+  useEffect(() => {
+    setHasInteracted(false)
+    setHoveredSlug(null)
+  }, [category])
+
+  const activeSlug = hasInteracted ? hoveredSlug : firstProjectSlug
 
   return (
     <section className="relative w-full min-h-screen px-16 py-20">
