@@ -68,7 +68,6 @@ export default function ProjectPageClient({
         <PopupSlider />
 
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">
-          {/* First project: only next */}
           {currentIndex === 0 && nextProject && (
             <Link
               href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
@@ -82,8 +81,6 @@ export default function ProjectPageClient({
               </span>
             </Link>
           )}
-
-          {/* Middle projects: both prev and next */}
           {currentIndex > 0 && currentIndex < filteredProjects.length - 1 && (
             <>
               {prevProject && (
