@@ -5,7 +5,8 @@ export const getHomepageQuery = `*[_type == "home"][0]{
     title,
     slug,
     projectNumber,
-    featuredImage
+    featuredImage,
+    mobileFeaturedImage
   }
 }`;
 

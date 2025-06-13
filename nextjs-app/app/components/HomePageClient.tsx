@@ -19,19 +19,22 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const [overlayOpacity, setOverlayOpacity] = useState(1)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [animationComplete, setAnimationComplete] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false) // ≥768px
+  const [isLargeDesktop, setIsLargeDesktop] = useState(false) // ≥1024px
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const animationFrameRef = useRef<number | null>(null)
 
   useEffect(() => {
-    const checkDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768)
+    const checkSizes = () => {
+      const width = window.innerWidth
+      setIsDesktop(width >= 768)
+      setIsLargeDesktop(width >= 1024)
     }
 
-    checkDesktop()
-    window.addEventListener("resize", checkDesktop)
-    return () => window.removeEventListener("resize", checkDesktop)
+    checkSizes()
+    window.addEventListener("resize", checkSizes)
+    return () => window.removeEventListener("resize", checkSizes)
   }, [])
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   }, [pathname])
 
   useEffect(() => {
-    if (!isDesktop) return
+    if (!isLargeDesktop) return
 
     const handleScroll = () => {
       if (animationFrameRef.current) {
@@ -108,10 +111,10 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current)
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [animationComplete, isDesktop])
+  }, [animationComplete, isLargeDesktop])
 
   useEffect(() => {
-    if (!isDesktop) return
+    if (!isLargeDesktop) return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -131,7 +134,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     elements?.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [projects, isDesktop])
+  }, [projects, isLargeDesktop])
 
   useEffect(() => {
     if (containerRef.current) {
@@ -142,13 +145,11 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   if (!projects.length) return <div>No featured projects</div>
 
   return (
-    <section ref={sectionRef} className={`w-full ${isDesktop ? "h-[200vh]" : "h-auto"} relative`}>
-      <div className={`${isDesktop ? "sticky top-0" : ""} left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10`}>
+    <section ref={sectionRef} className={`w-full ${isLargeDesktop ? "h-[200vh]" : "h-auto"} relative`}>
+      <div className={`${isLargeDesktop ? "sticky top-0" : ""} left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10`}>
         <div
           ref={containerRef}
-          className={`flex pt-0 ${
-            isDesktop ? "snap-x snap-mandatory" : ""
-          } overflow-x-auto overflow-y-hidden w-full h-full ${isDesktop ? "scroll-smooth" : ""}`}
+          className={`flex pt-0 ${isLargeDesktop ? "snap-x snap-mandatory scroll-smooth" : ""} overflow-x-auto overflow-y-hidden w-full h-full`}
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -169,15 +170,15 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 href={`/projects/${slug}`}
                 key={slug}
                 data-slug={slug}
-                className={`${isDesktop ? "snap-start" : ""} flex-shrink-0 flex flex-col items-start`}
+                className={`${isLargeDesktop ? "snap-start" : ""} flex-shrink-0 flex flex-col items-start`}
                 style={{
-                  opacity: isDesktop && isFocused ? 1 : isDesktop ? 0.2 : 1,
-                  transition: isDesktop && scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
+                  opacity: isLargeDesktop && isFocused ? 1 : isLargeDesktop ? 0.2 : 1,
+                  transition: isLargeDesktop && scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
                 }}
               >
                 <div className={imageClass}>
                   <Image
-                    src={imageToUse || "/placeholder.svg"}
+                    src={imageToUse}
                     alt={project.title}
                     width={isDesktop ? 1000 : 500}
                     height={isDesktop ? 1500 : 800}
@@ -210,7 +211,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           }}
         >
           <img
-            src={logoUrl || "/placeholder.svg"}
+            src={logoUrl}
             alt="Alventosa Morell Arquitectes"
             className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
           />
