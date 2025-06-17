@@ -26,8 +26,16 @@ export const ImageCarousel = ({ block }: Props) => {
     if (!hasAddedImages.current && images.length > 0) {
       const sliderImages = images
         .map((img) => {
-          const url = img.image ? urlForImage(img.image)?.width(1600).quality(85).url() : undefined
+          if (!img.image?.asset) return null
+
+          const url = urlForImage(img.image)
+            ?.width(2400)
+            .quality(100)
+            .auto("format")
+            .url()
+
           if (!url) return null
+
           const alt = getTranslation(img.altText, language)
           return { url, alt }
         })
@@ -40,11 +48,15 @@ export const ImageCarousel = ({ block }: Props) => {
         hasAddedImages.current = true
       }
     }
-  }, [images, language, addImages, block._key])
+  }, [images, addImages, block._key, language])
 
   const handleImageClick = () => {
     const currentImage = images[currentIndex]
-    const imageUrl = urlForImage(currentImage.image)?.width(1600).quality(85).url()
+    const imageUrl = urlForImage(currentImage.image)
+      ?.width(2400)
+      .quality(100)
+      .auto("format")
+      .url()
 
     if (imageUrl) {
       const sliderIndex = getImageIndex(imageUrl)
@@ -57,7 +69,12 @@ export const ImageCarousel = ({ block }: Props) => {
   if (images.length < 2 || baseIndex === null) return null
 
   const currentImage = images[currentIndex]
-  const imageUrl = urlForImage(currentImage.image)?.width(1600).quality(85).url() || ""
+  const imageUrl = urlForImage(currentImage.image)
+    ?.width(1600)
+    .quality(85)
+    .auto("format")
+    .url() || "/placeholder.svg"
+
   const alt = getTranslation(currentImage.altText, language)
 
   const handlePrev = () => {
@@ -71,14 +88,13 @@ export const ImageCarousel = ({ block }: Props) => {
   return (
     <section className="w-full bg-white pt-24 pb-24 relative overflow-hidden">
       <div className="max-w-6xl mx-auto flex justify-center items-center relative">
-        {/* Container with proper spacing for arrows */}
         <div className="w-full px-16 sm:px-20 md:px-24 lg:px-32">
           <div
             className="relative w-full max-w-sm sm:max-w-2xl md:max-w-4xl aspect-[3/2] cursor-pointer mx-auto"
             onClick={handleImageClick}
           >
             <Image
-              src={imageUrl || "/placeholder.svg"}
+              src={imageUrl}
               alt={alt}
               fill
               sizes="(max-width: 640px) calc(100vw - 128px), (max-width: 768px) calc(100vw - 160px), (max-width: 1024px) calc(100vw - 192px), calc(100vw - 256px)"
@@ -87,7 +103,6 @@ export const ImageCarousel = ({ block }: Props) => {
           </div>
         </div>
 
-        {/* Arrows positioned outside the padded container */}
         <button
           onClick={(e) => {
             e.stopPropagation()
