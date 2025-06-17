@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { getTranslation } from "../utils/translations"
+import { useLanguage } from "../context/LanguageContext"
 import { urlForImage } from "@/sanity/lib/utils"
 import type { CoverImage as CoverImageType } from "@/sanity.types"
 
@@ -10,7 +11,7 @@ type CoverImageProps = {
 }
 
 export const CoverImage = ({ block }: CoverImageProps) => {
-  const [language] = useState<"ca" | "es" | "en">("ca")
+  const { language } = useLanguage()
   const [isMobile, setIsMobile] = useState(false)
 
   const alt = getTranslation(block.altText, language)
