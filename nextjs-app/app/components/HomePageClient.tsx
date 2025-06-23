@@ -19,8 +19,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const [overlayOpacity, setOverlayOpacity] = useState(1)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [animationComplete, setAnimationComplete] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false) // ≥768px
-  const [isLargeDesktop, setIsLargeDesktop] = useState(false) // ≥1024px
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [isLargeDesktop, setIsLargeDesktop] = useState(false)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const animationFrameRef = useRef<number | null>(null)
@@ -79,7 +80,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       animationFrameRef.current = requestAnimationFrame(() => {
         const section = sectionRef.current
         const container = containerRef.current
-
         if (!section || !container || !animationComplete) return
 
         const sectionRect = section.getBoundingClientRect()
@@ -127,7 +127,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       {
         root: containerRef.current,
         threshold: 0.9,
-      },
+      }
     )
 
     const elements = containerRef.current?.querySelectorAll("[data-slug]")
@@ -142,6 +142,33 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [])
 
+  // ⌨️ Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isLargeDesktop || !projects.length) return
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return
+
+      const currentIndex = projects.findIndex((p: { slug?: { current?: string } }) => p.slug?.current === currentSlug)
+
+      const nextIndex =
+        event.key === "ArrowRight"
+          ? Math.min(projects.length - 1, currentIndex + 1)
+          : Math.max(0, currentIndex - 1)
+
+      const nextProject = projects[nextIndex]
+      if (!nextProject) return
+
+      const nextEl = containerRef.current?.querySelector(`[data-slug="${nextProject.slug?.current}"]`)
+      if (nextEl instanceof HTMLElement) {
+        nextEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })
+        setCurrentSlug(nextProject.slug?.current)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isLargeDesktop, projects, currentSlug])
+
   if (!projects.length) return <div>No featured projects</div>
 
   return (
@@ -150,10 +177,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
         <div
           ref={containerRef}
           className={`flex pt-0 ${isLargeDesktop ? "snap-x snap-mandatory scroll-smooth" : ""} overflow-x-auto overflow-y-hidden w-full h-full`}
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {projects.map((project: any) => {
             const desktopImageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
@@ -195,6 +219,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           })}
         </div>
       </div>
+
       <div
         className="fixed inset-0 bg-white z-40 pointer-events-none"
         style={{
@@ -202,6 +227,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           transition: animationComplete ? "opacity 0.8s ease-out" : "none",
         }}
       />
+
       {logoUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"

@@ -231,10 +231,30 @@ export const projectInfo = defineType({
         defineField({
           name: 'value',
           title: 'Valor',
-          type: 'array',
-          of: [{type: 'string'}],
-          description: 'Llista de premis o reconeixements obtinguts pel projecte.',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'ca',
+              title: 'Català',
+              type: 'array',
+              of: [{type: 'string'}],
+            }),
+            defineField({
+              name: 'es',
+              title: 'Español',
+              type: 'array',
+              of: [{type: 'string'}],
+            }),
+            defineField({
+              name: 'en',
+              title: 'English',
+              type: 'array',
+              of: [{type: 'string'}],
+            }),
+          ],
+          description: 'Llista de premis o reconeixements obtinguts pel projecte en diversos idiomes.',
         }),
+        
       ],
     }),
   ],

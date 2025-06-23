@@ -43,9 +43,15 @@ export const getAboutPageQuery = defineQuery(`
     },
     aboutInfo,
     awards {
-      titleTranslations,
-      list[]{
-        title
+      label {
+        ca,
+        es,
+        en
+      },
+      value {
+        ca,
+        es,
+        en
       }
     },
     cv[]{
@@ -58,6 +64,8 @@ export const getAboutPageQuery = defineQuery(`
     }
   }
 `);
+
+
 
 export const getProjectsGridQuery = defineQuery(`
   *[_type == "project"] | order(projectNumber asc) {

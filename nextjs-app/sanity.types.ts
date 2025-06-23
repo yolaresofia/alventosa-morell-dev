@@ -244,7 +244,11 @@ export type ProjectInfo = {
       es?: string;
       en?: string;
     };
-    value?: Array<string>;
+    value?: {
+      ca?: Array<string>;
+      es?: Array<string>;
+      en?: Array<string>;
+    };
   };
 };
 
@@ -987,7 +991,7 @@ export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
-// Query: *[_type == "about"][0]{    aboutText,    contact {      titleTranslations,      email,      phone    },    office {      titleTranslations,      address,      addressUrl    },    social {      instagram    },    team {      titleTranslations,      coFounders[]{        name,        role      },      teammates[]{        name      },      teammatesTitleTranslations,      pastTeammates[]{        name      },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      titleTranslations,      list[]{        title      }    },    cv[]{      title,      file {        asset->{          url        }      }    }  }
+// Query: *[_type == "about"][0]{    aboutText,    contact {      titleTranslations,      email,      phone    },    office {      titleTranslations,      address,      addressUrl    },    social {      instagram    },    team {      titleTranslations,      coFounders[]{        name,        role      },      teammates[]{        name      },      teammatesTitleTranslations,      pastTeammates[]{        name      },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      label {        ca,        es,        en      },      value {        ca,        es,        en      }    },    cv[]{      title,      file {        asset->{          url        }      }    }  }
 export type GetAboutPageQueryResult = {
   aboutText: {
     ca?: Array<{
@@ -1192,14 +1196,8 @@ export type GetAboutPageQueryResult = {
     }>;
   } | null;
   awards: {
-    titleTranslations: {
-      ca?: string;
-      es?: string;
-      en?: string;
-    } | null;
-    list: Array<{
-      title: string | null;
-    }> | null;
+    label: null;
+    value: null;
   } | null;
   cv: Array<{
     title: {
@@ -1535,7 +1533,11 @@ export type GetSingleProjectQueryResult = {
         es?: string;
         en?: string;
       };
-      value?: Array<string>;
+      value?: {
+        ca?: Array<string>;
+        es?: Array<string>;
+        en?: Array<string>;
+      };
     };
   } | {
     _key: string;
@@ -1620,7 +1622,7 @@ export type SettingsQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact {\n      titleTranslations,\n      email,\n      phone\n    },\n    office {\n      titleTranslations,\n      address,\n      addressUrl\n    },\n    social {\n      instagram\n    },\n    team {\n      titleTranslations,\n      coFounders[]{\n        name,\n        role\n      },\n      teammates[]{\n        name\n      },\n      teammatesTitleTranslations,\n      pastTeammates[]{\n        name\n      },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        title\n      }\n    },\n    cv[]{\n      title,\n      file {\n        asset->{\n          url\n        }\n      }\n    }\n  }\n": GetAboutPageQueryResult;
+    "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact {\n      titleTranslations,\n      email,\n      phone\n    },\n    office {\n      titleTranslations,\n      address,\n      addressUrl\n    },\n    social {\n      instagram\n    },\n    team {\n      titleTranslations,\n      coFounders[]{\n        name,\n        role\n      },\n      teammates[]{\n        name\n      },\n      teammatesTitleTranslations,\n      pastTeammates[]{\n        name\n      },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      label {\n        ca,\n        es,\n        en\n      },\n      value {\n        ca,\n        es,\n        en\n      }\n    },\n    cv[]{\n      title,\n      file {\n        asset->{\n          url\n        }\n      }\n    }\n  }\n": GetAboutPageQueryResult;
     "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail,\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
     "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo,\n    navLinks,\n    languages\n  }\n": SettingsQueryResult;

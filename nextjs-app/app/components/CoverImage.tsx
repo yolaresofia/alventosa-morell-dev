@@ -33,13 +33,9 @@ export const CoverImage = ({ block }: CoverImageProps) => {
 
   const containerClass = hasPadding ? "w-full py-32" : "w-full h-screen"
 
-  const imageClass = hasPadding
-    ? "w-full h-[calc(100vh-12rem)] bg-center bg-cover"
-    : "w-full h-screen bg-center bg-cover"
-
   return (
     <div className={containerClass}>
-      <div className={imageClass} style={{ backgroundImage: `url(${imageUrl})` }} role="img" aria-label={alt}>
+      <div className="w-full h-screen bg-center bg-cover" style={{ backgroundImage: `url(${imageUrl})` }} role="img" aria-label={alt}>
         <span className="sr-only">{alt}</span>
       </div>
       {bottomText && (

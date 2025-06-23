@@ -16,10 +16,7 @@ type Props = {
   settings: any;
 };
 
-export default function ProjectPageClient({
-  project,
-  allProjects,
-}: Props) {
+export default function ProjectPageClient({ project, allProjects }: Props) {
   const { setCategory } = useProjectCategory();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("cat") || "all";
@@ -37,7 +34,7 @@ export default function ProjectPageClient({
   };
 
   const filteredProjects = useMemo(() => {
-    const projects = allProjects
+    return allProjects
       .filter((p) => selectedCategory === "all" || p.category === selectedCategory)
       .filter((p) => !p.notClickableInIndex)
       .sort((a, b) => {
@@ -45,73 +42,33 @@ export default function ProjectPageClient({
         const yearB = parseInt(b.projectInfo?.year?.value || "0", 10);
         return yearB - yearA;
       });
-
-    return projects;
   }, [allProjects, selectedCategory]);
 
   const currentIndex = filteredProjects.findIndex(
     (p) => normalizeSlug(p.slug) === normalizeSlug(project.slug)
   );
 
-  const prevProject = currentIndex > 0 ? filteredProjects[currentIndex - 1] : null;
-  const nextProject = currentIndex < filteredProjects.length - 1 ? filteredProjects[currentIndex + 1] : null;
-
   const catQuery = selectedCategory !== "all" ? `?cat=${selectedCategory}` : "";
+
+  const prevProject =
+    filteredProjects[
+      (currentIndex - 1 + filteredProjects.length) % filteredProjects.length
+    ];
+  const nextProject =
+    filteredProjects[(currentIndex + 1) % filteredProjects.length];
 
   return (
     <div className="bg-white min-h-screen relative">
       <Head>
         <title>{project.title}</title>
       </Head>
+
       <ImageSliderProvider>
         <PageBuilderPage page={project} />
         <PopupSlider />
 
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">
-          {currentIndex === 0 && nextProject && (
-            <Link
-              href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
-              className="flex items-center group"
-            >
-              <span className="group-hover:text-red-500 transition-colors mr-2">
-                {nextProject.projectNumber}
-              </span>
-              <span className="group-hover:text-red-500 transition-colors">
-                &rarr;
-              </span>
-            </Link>
-          )}
-          {currentIndex > 0 && currentIndex < filteredProjects.length - 1 && (
-            <>
-              {prevProject && (
-                <Link
-                  href={`/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
-                  className="flex items-center pr-8 group"
-                >
-                  <span className="group-hover:text-red-500 transition-colors mr-2">
-                    &larr;
-                  </span>
-                  <span className="group-hover:text-red-500 transition-colors">
-                    {prevProject.projectNumber}
-                  </span>
-                </Link>
-              )}
-              {nextProject && (
-                <Link
-                  href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
-                  className="flex items-center group"
-                >
-                  <span className="group-hover:text-red-500 transition-colors mr-2">
-                    {nextProject.projectNumber}
-                  </span>
-                  <span className="group-hover:text-red-500 transition-colors">
-                    &rarr;
-                  </span>
-                </Link>
-              )}
-            </>
-          )}
-          {currentIndex === filteredProjects.length - 1 && prevProject && (
+          {prevProject && (
             <Link
               href={`/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
               className="flex items-center pr-8 group"
@@ -121,6 +78,19 @@ export default function ProjectPageClient({
               </span>
               <span className="group-hover:text-red-500 transition-colors">
                 {prevProject.projectNumber}
+              </span>
+            </Link>
+          )}
+          {nextProject && (
+            <Link
+              href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
+              className="flex items-center group"
+            >
+              <span className="group-hover:text-red-500 transition-colors mr-2">
+                {nextProject.projectNumber}
+              </span>
+              <span className="group-hover:text-red-500 transition-colors">
+                &rarr;
               </span>
             </Link>
           )}

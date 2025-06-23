@@ -13,14 +13,14 @@ export const ProjectInfo = ({ block }: Props) => {
   const translate = (field: any) => getTranslation(field, language);
 
   return (
-    <section className="w-full px-6 sm:px-8 md:px-6 pb-12 font-soehne">
+    <section className="w-full px-6 sm:px-8 md:px-6 pb-12 font-soehne max-w-4xl">
       {block.description && (
-        <p className="max-w-5xl md:text-base text-sm monitor:text-xl text-black font-medium leading-[1.5] mb-16">
+        <p className="md:text-base text-sm monitor:text-xl text-black font-medium leading-[1.5] mb-16">
           {translate(block.description)}
         </p>
       )}
 
-      <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-1 max-w-xl text-black md:text-base text-sm monitor:text-xl font-medium">
+      <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-1 text-black md:text-base text-sm monitor:text-xl font-medium">
         {block.project && (
           <>
             <div>{translate(block.project.label)}</div>
@@ -69,16 +69,19 @@ export const ProjectInfo = ({ block }: Props) => {
             <div>{block.photographer.value}</div>
           </>
         )}
-        {block.awards?.value?.length && (
-          <>
-            <div>{translate(block.awards.label)}</div>
-            <div className="flex flex-col gap-0.5">
-              {block.awards.value.map((award, idx) => (
-                <div key={idx}>{award}</div>
-              ))}
-            </div>
-          </>
-        )}
+        {block.awards?.value?.[language] &&
+          block.awards.value[language].length > 0 && (
+            <>
+              <div>{translate(block.awards.label)}</div>
+              <div className="flex flex-col gap-0.5">
+                {block.awards.value[language].map(
+                  (award: string, idx: number) => (
+                    <div key={idx}>{award}</div>
+                  )
+                )}
+              </div>
+            </>
+          )}
       </div>
     </section>
   );
