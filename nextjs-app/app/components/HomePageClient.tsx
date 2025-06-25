@@ -16,12 +16,17 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const pathname = usePathname()
   const projects = homepage?.featuredProjects || []
   const [currentSlug, setCurrentSlug] = useState<string | null>(null)
-  const [overlayOpacity, setOverlayOpacity] = useState(1)
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [animationComplete, setAnimationComplete] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
   const [isLargeDesktop, setIsLargeDesktop] = useState(false)
-
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    if (typeof window === "undefined") {
+      return true
+    }
+    return sessionStorage.getItem("welcomeAnimationShown") !== "true"
+  })
+  const [overlayOpacity, setOverlayOpacity] = useState(isFirstLoad ? 1 : 0)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [animationComplete, setAnimationComplete] = useState(!isFirstLoad)
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const animationFrameRef = useRef<number | null>(null)
@@ -54,20 +59,18 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   }, [])
 
   useEffect(() => {
-    if (pathname !== "/") return
-
-    setOverlayOpacity(1)
-    setAnimationComplete(false)
+    if (pathname !== "/" || !isFirstLoad) return
 
     const timer = setTimeout(() => {
       setAnimationComplete(true)
+      sessionStorage.setItem("welcomeAnimationShown", "true")
       setTimeout(() => {
         setOverlayOpacity(0)
       }, 20)
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [pathname])
+  }, [pathname, isFirstLoad])
 
   useEffect(() => {
     if (!isLargeDesktop) return
@@ -127,7 +130,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       {
         root: containerRef.current,
         threshold: 0.9,
-      }
+      },
     )
 
     const elements = containerRef.current?.querySelectorAll("[data-slug]")
@@ -142,7 +145,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [])
 
-  // ⌨️ Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isLargeDesktop || !projects.length) return
@@ -151,9 +153,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       const currentIndex = projects.findIndex((p: { slug?: { current?: string } }) => p.slug?.current === currentSlug)
 
       const nextIndex =
-        event.key === "ArrowRight"
-          ? Math.min(projects.length - 1, currentIndex + 1)
-          : Math.max(0, currentIndex - 1)
+        event.key === "ArrowRight" ? Math.min(projects.length - 1, currentIndex + 1) : Math.max(0, currentIndex - 1)
 
       const nextProject = projects[nextIndex]
       if (!nextProject) return
@@ -173,7 +173,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   return (
     <section ref={sectionRef} className={`w-full ${isLargeDesktop ? "h-[200vh]" : "h-auto"} relative`}>
-      <div className={`${isLargeDesktop ? "sticky top-0" : ""} left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10`}>
+      <div
+        className={`${isLargeDesktop ? "sticky top-0" : ""} left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10`}
+      >
         <div
           ref={containerRef}
           className={`flex pt-0 ${isLargeDesktop ? "snap-x snap-mandatory scroll-smooth" : ""} overflow-x-auto overflow-y-hidden w-full h-full`}
@@ -202,7 +204,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
               >
                 <div className={imageClass}>
                   <Image
-                    src={imageToUse}
+                    src={imageToUse || "/placeholder.svg"}
                     alt={project.title}
                     width={isDesktop ? 1000 : 500}
                     height={isDesktop ? 1500 : 800}
@@ -237,7 +239,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           }}
         >
           <img
-            src={logoUrl}
+            src={logoUrl || "/placeholder.svg"}
             alt="Alventosa Morell Arquitectes"
             className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
           />
