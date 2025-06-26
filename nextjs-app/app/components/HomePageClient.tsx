@@ -16,10 +16,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const pathname = usePathname()
   const projects = homepage?.featuredProjects || []
   const [activeIndex, setActiveIndex] = useState(0)
-
-  // Ref to hold the current activeIndex, to be used in event handlers
-  // This avoids needing activeIndex in the dependency array of listener effects
   const activeIndexRef = useRef(activeIndex)
+
   useEffect(() => {
     activeIndexRef.current = activeIndex
   }, [activeIndex])
@@ -41,7 +39,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   const scrollCooldownRef = useRef(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const COOLDOWN_DURATION = 700 // Milliseconds
+  const COOLDOWN_DURATION = 800 // Adjust this value if needed (e.g., 1000, 1200)
 
   useEffect(() => {
     const checkSizes = () => {
@@ -80,112 +78,85 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     return () => clearTimeout(timer)
   }, [pathname, isFirstLoad])
 
-  // Effect to scroll the horizontal container based on activeIndex
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !containerRef.current || !animationComplete) return
-
     const project = projects[activeIndex]
     if (project?.slug?.current) {
-      setCurrentSlug(project.slug.current) // Keep currentSlug in sync
+      setCurrentSlug(project.slug.current)
       const element = containerRef.current.querySelector(`[data-slug="${project.slug.current}"]`)
       if (element) {
         element.scrollIntoView({
           behavior: "smooth",
-          inline: "center",
+          // --- ALIGNMENT CHANGE ---
+          // Changed from "center" back to "start" as requested.
+          inline: "start",
           block: "nearest",
         })
       }
     }
-  }, [activeIndex, isLargeDesktop, projects, animationComplete, containerRef]) // containerRef added
+  }, [activeIndex, isLargeDesktop, projects, animationComplete, containerRef])
 
-  // Effect for handling WHEEL scroll to change images
   useEffect(() => {
-    // sectionRef.current might not be available on first render, so include it in deps or check inside.
     if (!isLargeDesktop || !projects.length || !sectionRef.current || !animationComplete) {
       return
     }
-
     const currentSectionRef = sectionRef.current
     const handleWheelScroll = (event: WheelEvent) => {
-      if (!currentSectionRef.contains(event.target as Node)) {
-        return
-      }
+      if (!currentSectionRef.contains(event.target as Node)) return
       event.preventDefault()
-
       if (scrollCooldownRef.current) return
-
-      const currentActiveIndexVal = activeIndexRef.current // Use ref for current index
+      const currentActiveIndexVal = activeIndexRef.current
       let newIndex = currentActiveIndexVal
       const scrollThreshold = 1
-
       if (event.deltaY > scrollThreshold && currentActiveIndexVal < projects.length - 1) {
         newIndex = currentActiveIndexVal + 1
       } else if (event.deltaY < -scrollThreshold && currentActiveIndexVal > 0) {
         newIndex = currentActiveIndexVal - 1
       }
-
       if (newIndex !== currentActiveIndexVal) {
-        setActiveIndex(newIndex) // State update will trigger activeIndexRef update
         scrollCooldownRef.current = true
+        setActiveIndex(newIndex)
         if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
         scrollTimeoutRef.current = setTimeout(() => {
           scrollCooldownRef.current = false
         }, COOLDOWN_DURATION)
       }
     }
-
     currentSectionRef.addEventListener("wheel", handleWheelScroll, { passive: false })
-
     return () => {
       currentSectionRef.removeEventListener("wheel", handleWheelScroll)
-      // Clear timeout only if the effect is truly unmounting or its core dependencies change
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
     }
-    // activeIndex is NOT in this dependency array.
-  }, [isLargeDesktop, projects, animationComplete, sectionRef, homepage?.featuredProjects]) // Added sectionRef
+  }, [isLargeDesktop, projects, animationComplete, sectionRef, homepage?.featuredProjects])
 
-  // Keyboard navigation
   useEffect(() => {
-    if (!isLargeDesktop || !projects.length || !animationComplete) {
-      return
-    }
-
+    if (!isLargeDesktop || !projects.length || !animationComplete) return
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (scrollCooldownRef.current) return // Check cooldown first
+      if (scrollCooldownRef.current) return
       if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return
-
       event.preventDefault()
-
-      const currentActiveIndexVal = activeIndexRef.current // Use ref
+      const currentActiveIndexVal = activeIndexRef.current
       let newIndex = currentActiveIndexVal
       const direction = event.key === "ArrowRight" ? 1 : -1
-
       if (direction === 1 && currentActiveIndexVal < projects.length - 1) {
         newIndex = currentActiveIndexVal + 1
       } else if (direction === -1 && currentActiveIndexVal > 0) {
         newIndex = currentActiveIndexVal - 1
       }
-
       if (newIndex !== currentActiveIndexVal) {
-        setActiveIndex(newIndex)
         scrollCooldownRef.current = true
+        setActiveIndex(newIndex)
         if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
         scrollTimeoutRef.current = setTimeout(() => {
           scrollCooldownRef.current = false
         }, COOLDOWN_DURATION)
       }
     }
-
     window.addEventListener("keydown", handleKeyDown)
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
     }
-    // activeIndex is NOT in this dependency array.
   }, [isLargeDesktop, projects, animationComplete, homepage?.featuredProjects])
 
   if (!projects.length) return <div>No featured projects</div>
@@ -206,13 +177,11 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
             const mobileImageUrl = project.mobileFeaturedImage ? urlForImage(project.mobileFeaturedImage)?.url() : null
             const slug = project.slug?.current
             if (!slug || (!desktopImageUrl && !mobileImageUrl)) return null
-
             const isFocused = currentSlug === slug
             const imageToUse =
               (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
               `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
-
             return (
               <Link
                 href={`/projects/${slug}`}
@@ -223,7 +192,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                   opacity: isLargeDesktop && isFocused ? 1 : isLargeDesktop ? 0.2 : 1,
                   transition: isLargeDesktop ? "opacity 0.3s ease" : "none",
                   width: isLargeDesktop ? "auto" : "100vw",
-                  scrollSnapAlign: isLargeDesktop ? "center" : "none",
+                  // --- ALIGNMENT CHANGE ---
+                  // Changed from "center" back to "start" to match scrollIntoView.
+                  scrollSnapAlign: isLargeDesktop ? "start" : "none",
                 }}
                 draggable="false"
               >
@@ -248,7 +219,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           })}
         </div>
       </div>
-
       <div
         className="fixed inset-0 bg-white z-40 pointer-events-none"
         style={{
@@ -256,7 +226,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           transition: animationComplete ? "opacity 0.8s ease-out" : "none",
         }}
       />
-
       {logoUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
