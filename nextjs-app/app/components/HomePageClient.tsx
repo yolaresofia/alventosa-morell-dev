@@ -12,6 +12,15 @@ type Props = {
   logoUrl: string | null
 }
 
+const easeInOutCubic = (t: number, b: number, c: number, d: number): number => {
+  t /= d / 2
+  if (t < 1) return (c / 2) * t * t * t + b
+  t -= 2
+  return (c / 2) * (t * t * t + 2) + b
+}
+
+const CUSTOM_ANIMATION_DURATION = 600
+
 export default function HomePageClient({ homepage, logoUrl }: Props) {
   const pathname = usePathname()
   const projects = homepage?.featuredProjects || []
@@ -27,19 +36,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   )
   const [isDesktop, setIsDesktop] = useState(false)
   const [isLargeDesktop, setIsLargeDesktop] = useState(false)
-  const [isFirstLoad, setIsFirstLoad] = useState(() => {
-    if (typeof window === "undefined") return true
-    return sessionStorage.getItem("welcomeAnimationShown") !== "true"
-  })
-  const [overlayOpacity, setOverlayOpacity] = useState(isFirstLoad ? 1 : 0)
-  const [animationComplete, setAnimationComplete] = useState(!isFirstLoad)
-
-  const containerRef = useRef<HTMLDivElement>(null)
-  const sectionRef = useRef<HTMLElement>(null)
-
-  const scrollCooldownRef = useRef(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const COOLDOWN_DURATION = 800
 
   useEffect(() => {
     const checkSizes = () => {
@@ -51,6 +47,21 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     window.addEventListener("resize", checkSizes)
     return () => window.removeEventListener("resize", checkSizes)
   }, [])
+
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    if (typeof window === "undefined") return true
+    return sessionStorage.getItem("welcomeAnimationShown") !== "true"
+  })
+  const [overlayOpacity, setOverlayOpacity] = useState(isFirstLoad ? 1 : 0)
+  const [animationComplete, setAnimationComplete] = useState(!isFirstLoad)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const animationFrameIdRef = useRef<number | null>(null)
+
+  const scrollCooldownRef = useRef(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const COOLDOWN_DURATION = CUSTOM_ANIMATION_DURATION + 150 // Increased buffer
 
   useEffect(() => {
     const style = document.createElement("style")
@@ -64,49 +75,79 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [])
 
-  // This effect now handles the welcome animation ONLY on large desktops.
   useEffect(() => {
-    // If not on a large desktop, ensure the overlay is hidden.
-    if (!isLargeDesktop) {
+    const shouldPlayAnimation = isLargeDesktop && pathname === "/" && isFirstLoad
+    if (shouldPlayAnimation) {
+      setOverlayOpacity(1)
+      setAnimationComplete(false)
+      const timer = setTimeout(() => {
+        setAnimationComplete(true)
+        sessionStorage.setItem("welcomeAnimationShown", "true")
+        setTimeout(() => setOverlayOpacity(0), 20)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else {
       setOverlayOpacity(0)
       setAnimationComplete(true)
-      return
     }
+  }, [pathname, isFirstLoad, isLargeDesktop])
 
-    if (pathname !== "/" || !isFirstLoad) {
-      setAnimationComplete(true)
-      setOverlayOpacity(0)
-      return
-    }
-
-    // On first load on a large desktop, run the animation.
-    const timer = setTimeout(() => {
-      setAnimationComplete(true)
-      sessionStorage.setItem("welcomeAnimationShown", "true")
-      setTimeout(() => setOverlayOpacity(0), 20)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [pathname, isFirstLoad, isLargeDesktop]) // isLargeDesktop is a key dependency now
-
-  // This effect handles programmatic scrolling ONLY on large desktops.
+  // Custom Smooth Scroll Logic with robust target calculation
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !containerRef.current || !animationComplete) return
+
     const project = projects[activeIndex]
-    if (project?.slug?.current) {
-      setCurrentSlug(project.slug.current)
-      const element = containerRef.current.querySelector(`[data-slug="${project.slug.current}"]`)
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-          inline: "start",
-          block: "nearest",
-        })
+    if (!project?.slug?.current) return
+
+    setCurrentSlug(project.slug.current)
+    const targetElement = containerRef.current.querySelector<HTMLElement>(`[data-slug="${project.slug.current}"]`)
+
+    if (targetElement && containerRef.current) {
+      const container = containerRef.current
+      const containerRect = container.getBoundingClientRect()
+      const targetRect = targetElement.getBoundingClientRect()
+
+      const startScrollLeft = container.scrollLeft
+      // Robust calculation of targetScrollLeft:
+      // Position of target's left edge relative to container's left edge,
+      // then add current scrollLeft to get the absolute scroll value.
+      const targetScrollLeft = targetRect.left - containerRect.left + container.scrollLeft
+
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current)
+      }
+
+      let startTime: number | null = null
+      const animateScroll = (timestamp: number) => {
+        if (!containerRef.current) return // Safeguard
+        if (!startTime) startTime = timestamp
+        const elapsedTime = timestamp - startTime
+
+        const newScrollLeft = easeInOutCubic(
+          elapsedTime,
+          startScrollLeft,
+          targetScrollLeft - startScrollLeft,
+          CUSTOM_ANIMATION_DURATION,
+        )
+
+        containerRef.current.scrollLeft = newScrollLeft
+
+        if (elapsedTime < CUSTOM_ANIMATION_DURATION) {
+          animationFrameIdRef.current = requestAnimationFrame(animateScroll)
+        } else {
+          containerRef.current.scrollLeft = targetScrollLeft // Ensure it ends exactly
+          animationFrameIdRef.current = null
+        }
+      }
+      animationFrameIdRef.current = requestAnimationFrame(animateScroll)
+    }
+    return () => {
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current)
       }
     }
-  }, [activeIndex, isLargeDesktop, projects, animationComplete, containerRef])
+  }, [activeIndex, isLargeDesktop, projects, animationComplete])
 
-  // This effect hijacks wheel scroll ONLY on large desktops.
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !sectionRef.current || !animationComplete) return
     const currentSectionRef = sectionRef.current
@@ -137,7 +178,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [isLargeDesktop, projects, animationComplete, sectionRef, homepage?.featuredProjects])
 
-  // This effect handles keyboard navigation ONLY on large desktops.
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !animationComplete) return
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -170,21 +210,18 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   if (!projects.length) return <div>No featured projects</div>
 
+  const containerClasses = `flex pt-0 w-full h-full ${
+    isLargeDesktop ? "overflow-x-hidden" : "snap-x snap-mandatory scroll-smooth overflow-x-auto"
+  }`
+
   return (
     <section
       ref={sectionRef}
-      // On large desktops, it's a tall, hidden-overflow container. On smaller screens, it's auto height.
       className={`w-full ${isLargeDesktop ? "h-[90vh] overflow-hidden" : "h-auto"} relative`}
       tabIndex={isLargeDesktop ? -1 : undefined}
     >
       <div className="w-full h-full flex flex-col overflow-hidden z-10">
-        <div
-          ref={containerRef}
-          // On large desktops, manual scroll is hidden. On smaller screens, it's a native horizontal scroll container with snapping.
-          className={`flex pt-0 w-full h-full ${
-            isLargeDesktop ? "scroll-smooth overflow-x-hidden" : "snap-x snap-mandatory scroll-smooth overflow-x-auto"
-          }`}
-        >
+        <div ref={containerRef} className={containerClasses}>
           {projects.map((project: any, index: number) => {
             const desktopImageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
             const mobileImageUrl = project.mobileFeaturedImage ? urlForImage(project.mobileFeaturedImage)?.url() : null
@@ -194,7 +231,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
             const imageToUse =
               (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
               `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
-            // On smaller screens, each image takes up the full screen width.
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
             return (
               <Link
@@ -203,10 +239,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 data-slug={slug}
                 className="flex-shrink-0 flex flex-col items-start"
                 style={{
-                  // Opacity effect is ONLY for large desktops. Full opacity otherwise.
                   opacity: isLargeDesktop ? (isFocused ? 1 : 0.2) : 1,
                   transition: isLargeDesktop ? "opacity 0.3s ease" : "none",
-                  // Snapping is ONLY for smaller screens.
                   scrollSnapAlign: isLargeDesktop ? "none" : "start",
                 }}
                 draggable="false"
@@ -232,7 +266,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           })}
         </div>
       </div>
-      {/* The overlay and logo are now gated by isLargeDesktop and overlayOpacity */}
       {isLargeDesktop && (
         <>
           <div
