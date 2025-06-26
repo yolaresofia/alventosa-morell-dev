@@ -34,8 +34,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   const [currentSlug, setCurrentSlug] = useState<string | null>(
     projects.length > 0 && projects[0] ? projects[0].slug?.current : null,
   )
-  const [isDesktop, setIsDesktop] = useState(false)
-  const [isLargeDesktop, setIsLargeDesktop] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false) // True for >= 768px
+  const [isLargeDesktop, setIsLargeDesktop] = useState(false) // True for >= 1024px
 
   useEffect(() => {
     const checkSizes = () => {
@@ -61,7 +61,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   const scrollCooldownRef = useRef(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const COOLDOWN_DURATION = CUSTOM_ANIMATION_DURATION + 150 // Increased buffer
+  const COOLDOWN_DURATION = CUSTOM_ANIMATION_DURATION + 150
 
   useEffect(() => {
     const style = document.createElement("style")
@@ -92,7 +92,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [pathname, isFirstLoad, isLargeDesktop])
 
-  // Custom Smooth Scroll Logic with robust target calculation
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !containerRef.current || !animationComplete) return
 
@@ -106,11 +105,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       const container = containerRef.current
       const containerRect = container.getBoundingClientRect()
       const targetRect = targetElement.getBoundingClientRect()
-
       const startScrollLeft = container.scrollLeft
-      // Robust calculation of targetScrollLeft:
-      // Position of target's left edge relative to container's left edge,
-      // then add current scrollLeft to get the absolute scroll value.
       const targetScrollLeft = targetRect.left - containerRect.left + container.scrollLeft
 
       if (animationFrameIdRef.current) {
@@ -119,23 +114,20 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
       let startTime: number | null = null
       const animateScroll = (timestamp: number) => {
-        if (!containerRef.current) return // Safeguard
+        if (!containerRef.current) return
         if (!startTime) startTime = timestamp
         const elapsedTime = timestamp - startTime
-
         const newScrollLeft = easeInOutCubic(
           elapsedTime,
           startScrollLeft,
           targetScrollLeft - startScrollLeft,
           CUSTOM_ANIMATION_DURATION,
         )
-
         containerRef.current.scrollLeft = newScrollLeft
-
         if (elapsedTime < CUSTOM_ANIMATION_DURATION) {
           animationFrameIdRef.current = requestAnimationFrame(animateScroll)
         } else {
-          containerRef.current.scrollLeft = targetScrollLeft // Ensure it ends exactly
+          containerRef.current.scrollLeft = targetScrollLeft
           animationFrameIdRef.current = null
         }
       }
@@ -207,6 +199,20 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
     }
   }, [isLargeDesktop, projects, animationComplete, homepage?.featuredProjects])
+
+  // Effect to hide mobile browser URL bar
+  useEffect(() => {
+    // Target mobile devices (screen width < 768px based on your isDesktop state)
+    // and ensure initial setup/animations are complete.
+    if (typeof window !== "undefined" && !isDesktop && animationComplete) {
+      // A short delay can help ensure the browser is ready and layout is stable.
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 1)
+      }, 100) // 100ms delay, adjust if needed
+
+      return () => clearTimeout(timer)
+    }
+  }, [isDesktop, animationComplete]) // Re-run if isDesktop or animationComplete changes
 
   if (!projects.length) return <div>No featured projects</div>
 
