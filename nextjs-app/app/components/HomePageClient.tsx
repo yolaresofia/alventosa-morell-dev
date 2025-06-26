@@ -39,7 +39,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
 
   const scrollCooldownRef = useRef(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const COOLDOWN_DURATION = 800 // Adjust this value if needed (e.g., 1000, 1200)
+  const COOLDOWN_DURATION = 800
 
   useEffect(() => {
     const checkSizes = () => {
@@ -64,20 +64,32 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [])
 
+  // This effect now handles the welcome animation ONLY on large desktops.
   useEffect(() => {
+    // If not on a large desktop, ensure the overlay is hidden.
+    if (!isLargeDesktop) {
+      setOverlayOpacity(0)
+      setAnimationComplete(true)
+      return
+    }
+
     if (pathname !== "/" || !isFirstLoad) {
       setAnimationComplete(true)
       setOverlayOpacity(0)
       return
     }
+
+    // On first load on a large desktop, run the animation.
     const timer = setTimeout(() => {
       setAnimationComplete(true)
       sessionStorage.setItem("welcomeAnimationShown", "true")
       setTimeout(() => setOverlayOpacity(0), 20)
     }, 1000)
-    return () => clearTimeout(timer)
-  }, [pathname, isFirstLoad])
 
+    return () => clearTimeout(timer)
+  }, [pathname, isFirstLoad, isLargeDesktop]) // isLargeDesktop is a key dependency now
+
+  // This effect handles programmatic scrolling ONLY on large desktops.
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !containerRef.current || !animationComplete) return
     const project = projects[activeIndex]
@@ -87,8 +99,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       if (element) {
         element.scrollIntoView({
           behavior: "smooth",
-          // --- ALIGNMENT CHANGE ---
-          // Changed from "center" back to "start" as requested.
           inline: "start",
           block: "nearest",
         })
@@ -96,10 +106,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [activeIndex, isLargeDesktop, projects, animationComplete, containerRef])
 
+  // This effect hijacks wheel scroll ONLY on large desktops.
   useEffect(() => {
-    if (!isLargeDesktop || !projects.length || !sectionRef.current || !animationComplete) {
-      return
-    }
+    if (!isLargeDesktop || !projects.length || !sectionRef.current || !animationComplete) return
     const currentSectionRef = sectionRef.current
     const handleWheelScroll = (event: WheelEvent) => {
       if (!currentSectionRef.contains(event.target as Node)) return
@@ -107,10 +116,9 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       if (scrollCooldownRef.current) return
       const currentActiveIndexVal = activeIndexRef.current
       let newIndex = currentActiveIndexVal
-      const scrollThreshold = 1
-      if (event.deltaY > scrollThreshold && currentActiveIndexVal < projects.length - 1) {
+      if (event.deltaY > 1 && currentActiveIndexVal < projects.length - 1) {
         newIndex = currentActiveIndexVal + 1
-      } else if (event.deltaY < -scrollThreshold && currentActiveIndexVal > 0) {
+      } else if (event.deltaY < -1 && currentActiveIndexVal > 0) {
         newIndex = currentActiveIndexVal - 1
       }
       if (newIndex !== currentActiveIndexVal) {
@@ -129,6 +137,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
     }
   }, [isLargeDesktop, projects, animationComplete, sectionRef, homepage?.featuredProjects])
 
+  // This effect handles keyboard navigation ONLY on large desktops.
   useEffect(() => {
     if (!isLargeDesktop || !projects.length || !animationComplete) return
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -164,13 +173,17 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
   return (
     <section
       ref={sectionRef}
+      // On large desktops, it's a tall, hidden-overflow container. On smaller screens, it's auto height.
       className={`w-full ${isLargeDesktop ? "h-[90vh] overflow-hidden" : "h-auto"} relative`}
       tabIndex={isLargeDesktop ? -1 : undefined}
     >
       <div className="w-full h-full flex flex-col overflow-hidden z-10">
         <div
           ref={containerRef}
-          className={`flex pt-0 ${isLargeDesktop ? "scroll-smooth" : ""} overflow-x-hidden overflow-y-hidden w-full h-full`}
+          // On large desktops, manual scroll is hidden. On smaller screens, it's a native horizontal scroll container with snapping.
+          className={`flex pt-0 w-full h-full ${
+            isLargeDesktop ? "scroll-smooth overflow-x-hidden" : "snap-x snap-mandatory scroll-smooth overflow-x-auto"
+          }`}
         >
           {projects.map((project: any, index: number) => {
             const desktopImageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
@@ -181,6 +194,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
             const imageToUse =
               (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
               `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
+            // On smaller screens, each image takes up the full screen width.
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
             return (
               <Link
@@ -189,12 +203,11 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 data-slug={slug}
                 className="flex-shrink-0 flex flex-col items-start"
                 style={{
-                  opacity: isLargeDesktop && isFocused ? 1 : isLargeDesktop ? 0.2 : 1,
+                  // Opacity effect is ONLY for large desktops. Full opacity otherwise.
+                  opacity: isLargeDesktop ? (isFocused ? 1 : 0.2) : 1,
                   transition: isLargeDesktop ? "opacity 0.3s ease" : "none",
-                  width: isLargeDesktop ? "auto" : "100vw",
-                  // --- ALIGNMENT CHANGE ---
-                  // Changed from "center" back to "start" to match scrollIntoView.
-                  scrollSnapAlign: isLargeDesktop ? "start" : "none",
+                  // Snapping is ONLY for smaller screens.
+                  scrollSnapAlign: isLargeDesktop ? "none" : "start",
                 }}
                 draggable="false"
               >
@@ -219,27 +232,32 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           })}
         </div>
       </div>
-      <div
-        className="fixed inset-0 bg-white z-40 pointer-events-none"
-        style={{
-          opacity: overlayOpacity * 0.85,
-          transition: animationComplete ? "opacity 0.8s ease-out" : "none",
-        }}
-      />
-      {logoUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
-          style={{
-            opacity: overlayOpacity,
-            transition: animationComplete ? "opacity 0.5s ease-out" : "none",
-          }}
-        >
-          <img
-            src={logoUrl || "/placeholder.svg?width=600&height=200&query=company+logo"}
-            alt="Company Logo"
-            className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
+      {/* The overlay and logo are now gated by isLargeDesktop and overlayOpacity */}
+      {isLargeDesktop && (
+        <>
+          <div
+            className="fixed inset-0 bg-white z-40 pointer-events-none"
+            style={{
+              opacity: overlayOpacity * 0.85,
+              transition: animationComplete ? "opacity 0.8s ease-out" : "none",
+            }}
           />
-        </div>
+          {logoUrl && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+              style={{
+                opacity: overlayOpacity,
+                transition: animationComplete ? "opacity 0.5s ease-out" : "none",
+              }}
+            >
+              <img
+                src={logoUrl || "/placeholder.svg?width=600&height=200&query=company+logo"}
+                alt="Company Logo"
+                className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
+              />
+            </div>
+          )}
+        </>
       )}
     </section>
   )
