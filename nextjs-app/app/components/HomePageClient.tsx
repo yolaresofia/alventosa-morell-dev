@@ -15,21 +15,33 @@ type Props = {
 export default function HomePageClient({ homepage, logoUrl }: Props) {
   const pathname = usePathname()
   const projects = homepage?.featuredProjects || []
-  const [currentSlug, setCurrentSlug] = useState<string | null>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  // Ref to hold the current activeIndex, to be used in event handlers
+  // This avoids needing activeIndex in the dependency array of listener effects
+  const activeIndexRef = useRef(activeIndex)
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+  }, [activeIndex])
+
+  const [currentSlug, setCurrentSlug] = useState<string | null>(
+    projects.length > 0 && projects[0] ? projects[0].slug?.current : null,
+  )
   const [isDesktop, setIsDesktop] = useState(false)
   const [isLargeDesktop, setIsLargeDesktop] = useState(false)
   const [isFirstLoad, setIsFirstLoad] = useState(() => {
-    if (typeof window === "undefined") {
-      return true
-    }
+    if (typeof window === "undefined") return true
     return sessionStorage.getItem("welcomeAnimationShown") !== "true"
   })
   const [overlayOpacity, setOverlayOpacity] = useState(isFirstLoad ? 1 : 0)
-  const [scrollProgress, setScrollProgress] = useState(0)
   const [animationComplete, setAnimationComplete] = useState(!isFirstLoad)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
-  const animationFrameRef = useRef<number | null>(null)
+
+  const scrollCooldownRef = useRef(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const COOLDOWN_DURATION = 700 // Milliseconds
 
   useEffect(() => {
     const checkSizes = () => {
@@ -37,7 +49,6 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       setIsDesktop(width >= 768)
       setIsLargeDesktop(width >= 1024)
     }
-
     checkSizes()
     window.addEventListener("resize", checkSizes)
     return () => window.removeEventListener("resize", checkSizes)
@@ -50,145 +61,156 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
       * { -ms-overflow-style: none; scrollbar-width: none; }
     `
     document.head.appendChild(style)
-
     return () => {
-      if (style.parentNode) {
-        style.parentNode.removeChild(style)
-      }
+      if (style.parentNode) style.parentNode.removeChild(style)
     }
   }, [])
 
   useEffect(() => {
-    if (pathname !== "/" || !isFirstLoad) return
-
+    if (pathname !== "/" || !isFirstLoad) {
+      setAnimationComplete(true)
+      setOverlayOpacity(0)
+      return
+    }
     const timer = setTimeout(() => {
       setAnimationComplete(true)
       sessionStorage.setItem("welcomeAnimationShown", "true")
-      setTimeout(() => {
-        setOverlayOpacity(0)
-      }, 20)
+      setTimeout(() => setOverlayOpacity(0), 20)
     }, 1000)
-
     return () => clearTimeout(timer)
   }, [pathname, isFirstLoad])
 
+  // Effect to scroll the horizontal container based on activeIndex
   useEffect(() => {
-    if (!isLargeDesktop) return
+    if (!isLargeDesktop || !projects.length || !containerRef.current || !animationComplete) return
 
-    const handleScroll = () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
+    const project = projects[activeIndex]
+    if (project?.slug?.current) {
+      setCurrentSlug(project.slug.current) // Keep currentSlug in sync
+      const element = containerRef.current.querySelector(`[data-slug="${project.slug.current}"]`)
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        })
+      }
+    }
+  }, [activeIndex, isLargeDesktop, projects, animationComplete, containerRef]) // containerRef added
+
+  // Effect for handling WHEEL scroll to change images
+  useEffect(() => {
+    // sectionRef.current might not be available on first render, so include it in deps or check inside.
+    if (!isLargeDesktop || !projects.length || !sectionRef.current || !animationComplete) {
+      return
+    }
+
+    const currentSectionRef = sectionRef.current
+    const handleWheelScroll = (event: WheelEvent) => {
+      if (!currentSectionRef.contains(event.target as Node)) {
+        return
+      }
+      event.preventDefault()
+
+      if (scrollCooldownRef.current) return
+
+      const currentActiveIndexVal = activeIndexRef.current // Use ref for current index
+      let newIndex = currentActiveIndexVal
+      const scrollThreshold = 1
+
+      if (event.deltaY > scrollThreshold && currentActiveIndexVal < projects.length - 1) {
+        newIndex = currentActiveIndexVal + 1
+      } else if (event.deltaY < -scrollThreshold && currentActiveIndexVal > 0) {
+        newIndex = currentActiveIndexVal - 1
       }
 
-      animationFrameRef.current = requestAnimationFrame(() => {
-        const section = sectionRef.current
-        const container = containerRef.current
-        if (!section || !container || !animationComplete) return
-
-        const sectionRect = section.getBoundingClientRect()
-        const sectionTop = sectionRect.top
-        const sectionHeight = sectionRect.height
-        const viewportHeight = window.innerHeight
-
-        let progress = 0
-        if (sectionTop <= 0) {
-          progress = Math.min(Math.abs(sectionTop) / (sectionHeight - viewportHeight), 1)
-        }
-
-        setScrollProgress(progress)
-
-        const scrollDelay = 0.25
-        if (progress <= scrollDelay) {
-          container.scrollLeft = 0
-        } else {
-          const adjustedScrollProgress = (progress - scrollDelay) / (1 - scrollDelay)
-          const maxScroll = container.scrollWidth - container.clientWidth
-          container.scrollLeft = adjustedScrollProgress * maxScroll
-        }
-      })
+      if (newIndex !== currentActiveIndexVal) {
+        setActiveIndex(newIndex) // State update will trigger activeIndexRef update
+        scrollCooldownRef.current = true
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+        scrollTimeoutRef.current = setTimeout(() => {
+          scrollCooldownRef.current = false
+        }, COOLDOWN_DURATION)
+      }
     }
 
-    window.addEventListener("scroll", handleScroll)
-    handleScroll()
+    currentSectionRef.addEventListener("wheel", handleWheelScroll, { passive: false })
+
     return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current)
-      window.removeEventListener("scroll", handleScroll)
+      currentSectionRef.removeEventListener("wheel", handleWheelScroll)
+      // Clear timeout only if the effect is truly unmounting or its core dependencies change
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
     }
-  }, [animationComplete, isLargeDesktop])
+    // activeIndex is NOT in this dependency array.
+  }, [isLargeDesktop, projects, animationComplete, sectionRef, homepage?.featuredProjects]) // Added sectionRef
 
+  // Keyboard navigation
   useEffect(() => {
-    if (!isLargeDesktop) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting)
-        if (visible?.target) {
-          const slug = visible.target.getAttribute("data-slug")
-          if (slug) setCurrentSlug(slug)
-        }
-      },
-      {
-        root: containerRef.current,
-        threshold: 0.9,
-      },
-    )
-
-    const elements = containerRef.current?.querySelectorAll("[data-slug]")
-    elements?.forEach((el) => observer.observe(el))
-
-    return () => observer.disconnect()
-  }, [projects, isLargeDesktop])
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollLeft = 0
+    if (!isLargeDesktop || !projects.length || !animationComplete) {
+      return
     }
-  }, [])
 
-  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isLargeDesktop || !projects.length) return
+      if (scrollCooldownRef.current) return // Check cooldown first
       if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return
 
-      const currentIndex = projects.findIndex((p: { slug?: { current?: string } }) => p.slug?.current === currentSlug)
+      event.preventDefault()
 
-      const nextIndex =
-        event.key === "ArrowRight" ? Math.min(projects.length - 1, currentIndex + 1) : Math.max(0, currentIndex - 1)
+      const currentActiveIndexVal = activeIndexRef.current // Use ref
+      let newIndex = currentActiveIndexVal
+      const direction = event.key === "ArrowRight" ? 1 : -1
 
-      const nextProject = projects[nextIndex]
-      if (!nextProject) return
+      if (direction === 1 && currentActiveIndexVal < projects.length - 1) {
+        newIndex = currentActiveIndexVal + 1
+      } else if (direction === -1 && currentActiveIndexVal > 0) {
+        newIndex = currentActiveIndexVal - 1
+      }
 
-      const nextEl = containerRef.current?.querySelector(`[data-slug="${nextProject.slug?.current}"]`)
-      if (nextEl instanceof HTMLElement) {
-        nextEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })
-        setCurrentSlug(nextProject.slug?.current)
+      if (newIndex !== currentActiveIndexVal) {
+        setActiveIndex(newIndex)
+        scrollCooldownRef.current = true
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+        scrollTimeoutRef.current = setTimeout(() => {
+          scrollCooldownRef.current = false
+        }, COOLDOWN_DURATION)
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isLargeDesktop, projects, currentSlug])
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+    // activeIndex is NOT in this dependency array.
+  }, [isLargeDesktop, projects, animationComplete, homepage?.featuredProjects])
 
   if (!projects.length) return <div>No featured projects</div>
 
   return (
-    <section ref={sectionRef} className={`w-full ${isLargeDesktop ? "h-[200vh]" : "h-auto"} relative`}>
-      <div
-        className={`${isLargeDesktop ? "sticky top-0" : ""} left-0 w-full h-[90vh] flex flex-col overflow-hidden z-10`}
-      >
+    <section
+      ref={sectionRef}
+      className={`w-full ${isLargeDesktop ? "h-[90vh] overflow-hidden" : "h-auto"} relative`}
+      tabIndex={isLargeDesktop ? -1 : undefined}
+    >
+      <div className="w-full h-full flex flex-col overflow-hidden z-10">
         <div
           ref={containerRef}
-          className={`flex pt-0 ${isLargeDesktop ? "snap-x snap-mandatory scroll-smooth" : ""} overflow-x-auto overflow-y-hidden w-full h-full`}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          className={`flex pt-0 ${isLargeDesktop ? "scroll-smooth" : ""} overflow-x-hidden overflow-y-hidden w-full h-full`}
         >
-          {projects.map((project: any) => {
+          {projects.map((project: any, index: number) => {
             const desktopImageUrl = project.featuredImage ? urlForImage(project.featuredImage)?.url() : null
             const mobileImageUrl = project.mobileFeaturedImage ? urlForImage(project.mobileFeaturedImage)?.url() : null
             const slug = project.slug?.current
             if (!slug || (!desktopImageUrl && !mobileImageUrl)) return null
 
             const isFocused = currentSlug === slug
-            const imageToUse = (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ?? "/placeholder.svg"
+            const imageToUse =
+              (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
+              `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
 
             return (
@@ -196,20 +218,25 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 href={`/projects/${slug}`}
                 key={slug}
                 data-slug={slug}
-                className={`${isLargeDesktop ? "snap-start" : ""} flex-shrink-0 flex flex-col items-start`}
+                className="flex-shrink-0 flex flex-col items-start"
                 style={{
                   opacity: isLargeDesktop && isFocused ? 1 : isLargeDesktop ? 0.2 : 1,
-                  transition: isLargeDesktop && scrollProgress > 0.2 ? "opacity 0.3s ease" : "none",
+                  transition: isLargeDesktop ? "opacity 0.3s ease" : "none",
+                  width: isLargeDesktop ? "auto" : "100vw",
+                  scrollSnapAlign: isLargeDesktop ? "center" : "none",
                 }}
+                draggable="false"
               >
                 <div className={imageClass}>
                   <Image
                     src={imageToUse || "/placeholder.svg"}
-                    alt={project.title}
+                    alt={project.title || `Featured Project ${index + 1}`}
                     width={isDesktop ? 1000 : 500}
                     height={isDesktop ? 1500 : 800}
                     className={`object-cover ${imageClass}`}
+                    priority={index < 2}
                     unoptimized
+                    draggable="false"
                   />
                 </div>
                 <div className="mt-2 text-base monitor:text-xl pl-4 font-medium leading-tight flex">
@@ -239,8 +266,8 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
           }}
         >
           <img
-            src={logoUrl || "/placeholder.svg"}
-            alt="Alventosa Morell Arquitectes"
+            src={logoUrl || "/placeholder.svg?width=600&height=200&query=company+logo"}
+            alt="Company Logo"
             className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
           />
         </div>
