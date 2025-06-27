@@ -97,7 +97,7 @@ export default function AboutPageClient({ about }: { about: any }) {
           <h2 className="pb-4">
             {getTranslation(about.awards?.titleTranslations, language)}
           </h2>
-          {about.awards.list.map((award: any) => (
+          {about.awards?.list?.map((award: any) => (
             <div key={award._key || award.title}>
               <p>{award.title}</p>
             </div>
@@ -109,7 +109,12 @@ export default function AboutPageClient({ about }: { about: any }) {
               return (
                 <div key={entry._key || title}>
                   {fileUrl ? (
-                    <a href={fileUrl} className="underline" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={fileUrl}
+                      className="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {title}
                     </a>
                   ) : (
