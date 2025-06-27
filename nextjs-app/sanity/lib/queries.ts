@@ -9,58 +9,31 @@ export const getHomepageQuery = `*[_type == "home"][0]{
     mobileFeaturedImage
   }
 }`;
-
 export const getAboutPageQuery = defineQuery(`
   *[_type == "about"][0]{
     aboutText,
-    contact {
+    contact { titleTranslations, email, phone },
+    office  { titleTranslations, address, addressUrl },
+    social  { instagram },
+    team    {
       titleTranslations,
-      email,
-      phone
-    },
-    office {
-      titleTranslations,
-      address,
-      addressUrl
-    },
-    social {
-      instagram
-    },
-    team {
-      titleTranslations,
-      coFounders[]{
-        name,
-        role
-      },
-      teammates[]{
-        name
-      },
+      coFounders[]{ name, role },
+      teammates[]{ name },
       teammatesTitleTranslations,
-      pastTeammates[]{
-        name
-      },
+      pastTeammates[]{ name },
       pastTeammatesTitleTranslations
     },
     aboutInfo,
     awards {
-      label {
-        ca,
-        es,
-        en
-      },
-      value {
-        ca,
-        es,
-        en
+      titleTranslations,
+      list[]{
+        _key,
+        title
       }
     },
     cv[]{
       title,
-      file {
-        asset->{
-          url
-        }
-      }
+      file{ asset->{ url } }
     }
   }
 `);
