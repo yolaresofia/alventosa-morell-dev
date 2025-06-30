@@ -91,6 +91,7 @@ export default async function RootLayout({
               )}
               <Nav navLinks={navLinks} languages={languages} />
               <SpeedInsights />
+              <SanityLive />
             </LanguageProvider>
           </FilterProvider>
         </ProjectCategoryProvider>
