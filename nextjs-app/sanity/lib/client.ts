@@ -8,6 +8,7 @@ export const client = createClient({
   apiVersion,
   useCdn: true,
   perspective: "published",
+  token: process.env.NEXT_PUBLIC_SANITY_API_READ_TOKEN,
   stega: {
     studioUrl,
     filter: (props) => {

@@ -1,6 +1,5 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
-import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './src/schemaTypes';
 import { structure } from './src/structure';
 import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash';
@@ -52,6 +51,15 @@ export default defineConfig({
     vercelDeployTool(),
     assist(),
     colorInput(),
+    presentationTool({
+      previewUrl: {
+        origin: SANITY_STUDIO_PREVIEW_URL,
+        preview: "/",
+        previewMode: {
+          enable: "/api/draft-mode/enable",
+        },
+      },
+    }),
   ],
 
   schema: {

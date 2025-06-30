@@ -4,17 +4,17 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
-import { toPlainText } from "next-sanity";
+import { toPlainText, VisualEditing } from "next-sanity";
 import { handleError } from "./client-utils";
 import type { Metadata } from "next";
 import { LanguageProvider } from "./context/LanguageContext";
-import Link from "next/link";
-import Image from "next/image";
 import MobileNav from "./components/MobileNav";
 import Nav from "./components/Nav";
 import { FilterProvider } from "./context/FilterContext";
 import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
 import TopLogo from "./components/TopLogo";
+import { draftMode } from "next/headers";
+import { DisableDraftMode } from "./components/DisableDraftMode";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
@@ -83,6 +83,12 @@ export default async function RootLayout({
               {logoUrl && <TopLogo logoUrl={logoUrl} />}
               <MobileNav navLinks={navLinks} languages={languages} />
               <main className="min-h-screen flex flex-col">{children}</main>
+              {(await draftMode()).isEnabled && (
+                <>
+                  <VisualEditing />
+                  <DisableDraftMode />
+                </>
+              )}
               <Nav navLinks={navLinks} languages={languages} />
               <SpeedInsights />
             </LanguageProvider>
