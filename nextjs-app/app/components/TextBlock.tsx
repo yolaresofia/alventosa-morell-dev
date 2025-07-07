@@ -12,9 +12,10 @@ export const TextBlock = ({ block }: Props) => {
   const { language } = useLanguage();
   const text = getTranslation(block?.text, language);
   const alignment = block.alignment || "left";
+  const hasPaddingBottom = block.hasPaddingBottom;
 
   return (
-    <section className="w-full px-6 py-12">
+    <section className={`w-full px-6 pt-12 ${hasPaddingBottom ? "pb-48" : "pb-0"}`}>
       <div
         className={`max-w-4xl ${
           alignment === "right" ? "text-right ml-auto" : "text-left"

@@ -260,6 +260,7 @@ export type TextBlock = {
     en?: string;
   };
   alignment?: "left" | "right";
+  hasPaddingBottom?: boolean;
 };
 
 export type ImageCarousel = {
@@ -1565,6 +1566,7 @@ export type GetSingleProjectQueryResult = {
       en?: string;
     };
     alignment?: "left" | "right";
+    hasPaddingBottom?: boolean;
   }> | null;
 } | null;
 // Variable: settingsQuery

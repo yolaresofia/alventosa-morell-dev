@@ -31,6 +31,11 @@ export const textBlock = defineType({
         layout: 'radio',
       },
     }),
+    defineField({
+      name: 'hasPaddingBottom',
+      title: 'Té padding inferior',
+      type: 'boolean',
+    }),
   ],
   preview: {
     select: {
