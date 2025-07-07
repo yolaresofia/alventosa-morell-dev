@@ -9,6 +9,7 @@ export const getHomepageQuery = `*[_type == "home"][0]{
     mobileFeaturedImage
   }
 }`;
+
 export const getAboutPageQuery = defineQuery(`
   *[_type == "about"][0]{
     aboutText,
@@ -37,8 +38,6 @@ export const getAboutPageQuery = defineQuery(`
     }
   }
 `);
-
-
 
 export const getProjectsGridQuery = defineQuery(`
   *[_type == "project"] | order(projectNumber asc) {
