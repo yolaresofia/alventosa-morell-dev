@@ -19,7 +19,14 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
     .sort((a, b) => {
       const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10)
       const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10)
-      return yearB - yearA
+    
+      if (yearA !== yearB) {
+        return yearB - yearA
+      }
+    
+      const numA = Number(a.projectNumber) || 0
+      const numB = Number(b.projectNumber) || 0
+      return numB - numA 
     })
 
   const firstProjectSlug = filteredProjects[0]?.slug.current || null
