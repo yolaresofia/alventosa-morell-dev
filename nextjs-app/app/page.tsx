@@ -11,6 +11,7 @@ export default async function Home() {
   ]);
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() ?? null : null;
+  const logoAltText = settings?.logo?.altText ?? null;
   
-  return <HomePageClient homepage={homepage} logoUrl={logoUrl} />;
+  return <HomePageClient homepage={homepage} logoUrl={logoUrl} logoAltText={logoAltText} />;
 }

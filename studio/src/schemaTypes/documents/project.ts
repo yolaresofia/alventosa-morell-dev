@@ -23,18 +23,57 @@ export const project = defineType({
       title: 'Imatge destacada',
       type: 'image',
       options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'altText',
+          title: 'Text alternatiu',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+          validation: (Rule) => Rule.required().error('El text alternatiu és obligatori'),
+        }),
+      ],
     }),
     defineField({
       name: 'mobileFeaturedImage',
       title: 'Imatge destacada móvil',
       type: 'image',
       options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'altText',
+          title: 'Text alternatiu',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+          validation: (Rule) => Rule.required().error('El text alternatiu és obligatori'),
+        }),
+      ],
     }),
     defineField({
       name: 'thumbnail',
       title: 'Imatge miniatura',
       type: 'image',
       options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'altText',
+          title: 'Text alternatiu',
+          type: 'object',
+          fields: [
+            defineField({name: 'ca', title: 'Català', type: 'string'}),
+            defineField({name: 'es', title: 'Español', type: 'string'}),
+            defineField({name: 'en', title: 'English', type: 'string'}),
+          ],
+          validation: (Rule) => Rule.required().error('El text alternatiu és obligatori'),
+        }),
+      ],
     }),
     defineField({
       name: 'notClickableInIndex',

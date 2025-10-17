@@ -2,7 +2,11 @@ import type { Config } from "tailwindcss";
 import typography from "@tailwindcss/typography";
 
 export default {
-  content: ["./app/**/*.{ts,tsx}", "./sanity/**/*.{ts,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   safelist: [
     { pattern: /^text-/ },
     { pattern: /^bg-/ },
@@ -103,7 +107,7 @@ export default {
         soehne: ['"Soehne Buch"', "sans-serif"],
       },
       screens: {
-        'monitor': '1800px',
+        monitor: "1800px",
       },
     },
   },

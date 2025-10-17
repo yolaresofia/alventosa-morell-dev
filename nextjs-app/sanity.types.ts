@@ -94,6 +94,11 @@ export type Project = {
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   };
   mobileFeaturedImage?: {
@@ -105,6 +110,11 @@ export type Project = {
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   };
   thumbnail?: {
@@ -116,6 +126,11 @@ export type Project = {
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   };
   notClickableInIndex?: boolean;
@@ -763,6 +778,11 @@ export type Settings = {
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   };
   navLinks?: Array<{
@@ -1221,7 +1241,7 @@ export type GetAboutPageQueryResult = {
   }> | null;
 } | null;
 // Variable: getProjectsGridQuery
-// Query: *[_type == "project"] | order(projectNumber asc) {    title,    slug,    projectNumber,    category,    notClickableInIndex,    thumbnail,    "projectInfo": builder[_type == "projectInfo"][0]{      year,      location,      program,      area,    }  }
+// Query: *[_type == "project"] | order(projectNumber asc) {    title,    slug,    projectNumber,    category,    notClickableInIndex,    thumbnail{      ...,      altText    },    "projectInfo": builder[_type == "projectInfo"][0]{      year,      location,      program,      area,    }  }
 export type GetProjectsGridQueryResult = Array<{
   title: string;
   slug: Slug;
@@ -1237,6 +1257,11 @@ export type GetProjectsGridQueryResult = Array<{
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   } | null;
   projectInfo: {
@@ -1570,7 +1595,7 @@ export type GetSingleProjectQueryResult = {
   }> | null;
 } | null;
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo,    navLinks,    languages  }
+// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages  }
 export type SettingsQueryResult = {
   siteTitle: string | null;
   description: Array<{
@@ -1613,6 +1638,11 @@ export type SettingsQueryResult = {
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    altText: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
     _type: "image";
   } | null;
   navLinks: Array<{
@@ -1632,8 +1662,8 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "\n  *[_type == \"about\"][0]{\n    aboutText,\n    contact { titleTranslations, email, phone },\n    office  { titleTranslations, address, addressUrl },\n    social  { instagram },\n    team    {\n      titleTranslations,\n      coFounders[]{ name, role },\n      teammates[]{ name },\n      teammatesTitleTranslations,\n      pastTeammates[]{ name },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        _key,\n        title\n      }\n    },\n    cv[]{\n      title,\n      file{ asset->{ url } }\n    }\n  }\n": GetAboutPageQueryResult;
-    "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail,\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
+    "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail{\n      ...,\n      altText\n    },\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
-    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo,\n    navLinks,\n    languages\n  }\n": SettingsQueryResult;
+    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages\n  }\n": SettingsQueryResult;
   }
 }

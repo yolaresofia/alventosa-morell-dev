@@ -57,7 +57,6 @@ export const MonoptychImage = ({ block }: Props) => {
             height={imageDimensions.height}
             className="w-full h-auto object-contain cursor-pointer"
             onClick={handleClick}
-            unoptimized
           />
         </div>
         <div
@@ -71,7 +70,6 @@ export const MonoptychImage = ({ block }: Props) => {
             fill
             className="object-cover"
             sizes="1024px"
-            unoptimized
           />
         </div>
       </div>

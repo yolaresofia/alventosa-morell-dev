@@ -15,6 +15,7 @@ import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
 import TopLogo from "./components/TopLogo";
 import { draftMode } from "next/headers";
 import { DisableDraftMode } from "./components/DisableDraftMode";
+import ReactLenis from "lenis/react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({
@@ -63,6 +64,7 @@ export default async function RootLayout({
   });
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
+  const logoAltText = settings?.logo?.altText || null;
   const navLinks = (settings?.navLinks || [])
     .filter((link) => link.href && link.label)
     .map((link) => ({
@@ -75,12 +77,13 @@ export default async function RootLayout({
   return (
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
+                <ReactLenis root>
         <ProjectCategoryProvider>
           <FilterProvider>
             <LanguageProvider>
               <SanityLive onError={handleError} />
               <div className="fixed top-0 left-0 w-full h-[60px] bg-white z-20 sm:hidden flex items-center"></div>
-              {logoUrl && <TopLogo logoUrl={logoUrl} />}
+              {logoUrl && <TopLogo logoUrl={logoUrl} logoAltText={logoAltText} />}
               <MobileNav navLinks={navLinks} languages={languages} />
               <main className="min-h-screen flex flex-col">{children}</main>
               {(await draftMode()).isEnabled && (
@@ -95,6 +98,7 @@ export default async function RootLayout({
           </FilterProvider>
         </ProjectCategoryProvider>
         <SanityLive />
+        </ReactLenis>
       </body>
     </html>
   );

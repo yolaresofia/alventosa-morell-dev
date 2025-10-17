@@ -62,9 +62,13 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
           const area = project.projectInfo?.area?.value || "-"
           const year = project.projectInfo?.year?.value || "-"
           const isClickable = !project.notClickableInIndex
-          const hasThumbnail = !!project.thumbnail
+          const thumbnail = project.thumbnail
+          const hasThumbnail = !!thumbnail
 
           const projectTitle = project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title
+          const thumbnailAltFromSanity = thumbnail ? getTranslation(thumbnail.altText, language) : undefined
+          const thumbnailAlt =
+            thumbnailAltFromSanity || project.title || project.projectNumber || "Project thumbnail"
 
           const DesktopRow = () => (
             <div
@@ -114,8 +118,8 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                       }}
                     >
                       <Image
-                        src={urlForImage(project.thumbnail)?.url() || "/placeholder.svg"}
-                        alt={project.title}
+                        src={urlForImage(thumbnail)?.url() || "/placeholder.svg"}
+                        alt={thumbnailAlt}
                         fill
                         className="object-contain"
                         style={{ objectPosition: "left" }}

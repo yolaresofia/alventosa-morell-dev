@@ -4,16 +4,21 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/app/context/LanguageContext";
+import { getTranslation, LocalizedField } from "@/app/utils/translations";
 
 type Props = {
   logoUrl: string;
+  logoAltText?: LocalizedField | null;
 };
 
-export default function TopLogo({ logoUrl }: Props) {
+export default function TopLogo({ logoUrl, logoAltText }: Props) {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
 
   const [visible, setVisible] = useState(!isHomepage);
+  const { language } = useLanguage();
+  const logoAlt = getTranslation(logoAltText || undefined, language) || "Alventosa Morell Arquitectes";
 
   useEffect(() => {
     if (!isHomepage) {
@@ -41,10 +46,9 @@ export default function TopLogo({ logoUrl }: Props) {
       >
         <Image
           src={logoUrl}
-          alt="Alventosa Morell Arquitectes"
+          alt={logoAlt}
           className="object-contain"
           priority
-          unoptimized
           fill
         />
       </Link>

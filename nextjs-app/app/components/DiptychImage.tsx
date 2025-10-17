@@ -47,23 +47,27 @@ export const DiptychImage = ({ block }: Props) => {
   const rightAlt = getTranslation(block.rightAltText, language);
   const leftAltHover = getTranslation(block.leftHoverAltText, language);
   const rightAltHover = getTranslation(block.rightHoverAltText, language);
+  const leftAltDefault = leftAlt || leftAltHover || "Imatge esquerra";
+  const rightAltDefault = rightAlt || rightAltHover || "Imatge dreta";
+  const leftHoverAltDefault = leftAltHover || leftAltDefault;
+  const rightHoverAltDefault = rightAltHover || rightAltDefault;
 
   useEffect(() => {
     const imagesToAdd = [];
 
     if (leftImageUrl) {
-      imagesToAdd.push({ url: leftImageUrl, alt: leftAlt });
+      imagesToAdd.push({ url: leftImageUrl, alt: leftAltDefault });
       if (leftHoverUrl) {
-        imagesToAdd.push({ url: leftHoverUrl, alt: `${leftAltHover} (hover)` });
+        imagesToAdd.push({ url: leftHoverUrl, alt: `${leftHoverAltDefault} (hover)` });
       }
     }
 
     if (rightImageUrl) {
-      imagesToAdd.push({ url: rightImageUrl, alt: rightAlt });
+      imagesToAdd.push({ url: rightImageUrl, alt: rightAltDefault });
       if (rightHoverUrl) {
         imagesToAdd.push({
           url: rightHoverUrl,
-          alt: `${rightAltHover} (hover)`,
+          alt: `${rightHoverAltDefault} (hover)`,
         });
       }
     }
@@ -114,7 +118,7 @@ export const DiptychImage = ({ block }: Props) => {
           >
             <Image
               src={leftImageUrl}
-              alt={leftAlt}
+              alt={leftAltDefault}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               onLoad={() => setLeftLoaded(true)}
@@ -123,19 +127,17 @@ export const DiptychImage = ({ block }: Props) => {
                   ? "opacity-0"
                   : "opacity-100"
               } ${leftLoaded ? "blur-0" : "blur-md"}`}
-              unoptimized
             />
 
             {isDesktop && leftHoverUrl && (
               <Image
                 src={leftHoverUrl}
-                alt={leftAlt}
+                alt={leftHoverAltDefault}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={`object-cover absolute top-0 left-0 transition-opacity duration-700 ease-in-out ${
                   hoverLeft ? "opacity-100" : "opacity-0"
                 }`}
-                unoptimized
               />
             )}
           </div>
@@ -147,7 +149,7 @@ export const DiptychImage = ({ block }: Props) => {
           >
             <Image
               src={rightImageUrl}
-              alt={rightAlt}
+              alt={rightAltDefault}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               onLoad={() => setRightLoaded(true)}
@@ -156,19 +158,17 @@ export const DiptychImage = ({ block }: Props) => {
                   ? "opacity-0"
                   : "opacity-100"
               } ${rightLoaded ? "blur-0" : "blur-md"}`}
-              unoptimized
             />
 
             {isDesktop && rightHoverUrl && (
               <Image
                 src={rightHoverUrl}
-                alt={rightAlt}
+                alt={rightHoverAltDefault}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={`object-cover absolute top-0 left-0 transition-opacity duration-300 ease-in-out ${
                   hoverRight ? "opacity-100" : "opacity-0"
                 }`}
-                unoptimized
               />
             )}
           </div>

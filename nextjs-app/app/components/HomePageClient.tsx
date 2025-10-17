@@ -1,15 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useMemo } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
+import { useLanguage } from "@/app/context/LanguageContext"
+import { getTranslation, LocalizedField } from "@/app/utils/translations"
 
 type Props = {
   homepage: any
   logoUrl: string | null
+  logoAltText?: LocalizedField | null
 }
 
 const easeInOutCubic = (t: number, b: number, c: number, d: number): number => {
@@ -21,11 +24,13 @@ const easeInOutCubic = (t: number, b: number, c: number, d: number): number => {
 
 const CUSTOM_ANIMATION_DURATION = 600
 
-export default function HomePageClient({ homepage, logoUrl }: Props) {
+export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props) {
   const pathname = usePathname()
-  const projects = homepage?.featuredProjects || []
+  const projects = useMemo(() => homepage?.featuredProjects || [], [homepage?.featuredProjects])
   const [activeIndex, setActiveIndex] = useState(0)
   const activeIndexRef = useRef(activeIndex)
+  const { language } = useLanguage()
+  const logoAlt = getTranslation(logoAltText || undefined, language) || "Alventosa Morell Arquitectes"
 
   useEffect(() => {
     activeIndexRef.current = activeIndex
@@ -238,6 +243,11 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
               (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
               `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
+            const featuredAltRaw = getTranslation(project.featuredImage?.altText, language)
+            const mobileAltRaw = getTranslation(project.mobileFeaturedImage?.altText, language)
+            const fallbackAlt = project.title || `Projecte destacat ${index + 1}`
+            const imageAlt =
+              (isDesktop ? featuredAltRaw : mobileAltRaw) || featuredAltRaw || mobileAltRaw || fallbackAlt
             return (
               <Link
                 href={`/projects/${slug}`}
@@ -254,12 +264,11 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
                 <div className={imageClass}>
                   <Image
                     src={imageToUse || "/placeholder.svg"}
-                    alt={project.title || `Featured Project ${index + 1}`}
+                    alt={imageAlt}
                     width={isDesktop ? 1000 : 500}
                     height={isDesktop ? 1500 : 800}
                     className={`object-cover ${imageClass}`}
                     priority={index < 2}
-                    unoptimized
                     draggable="false"
                   />
                 </div>
@@ -291,7 +300,7 @@ export default function HomePageClient({ homepage, logoUrl }: Props) {
             >
               <img
                 src={logoUrl || "/placeholder.svg?width=600&height=200&query=company+logo"}
-                alt="Company Logo"
+                alt={logoAlt}
                 className="w-[80%] max-w-[600px] h-auto object-contain mix-blend-multiply"
               />
             </div>

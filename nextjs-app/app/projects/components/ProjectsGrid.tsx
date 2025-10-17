@@ -6,9 +6,12 @@ import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
+import { useLanguage } from "@/app/context/LanguageContext"
+import { getTranslation } from "@/app/utils/translations"
 
 export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
   const { category } = useProjectCategory()
+  const { language } = useLanguage()
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
   const [hasInteracted, setHasInteracted] = useState(false)
 
@@ -52,10 +55,15 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
     <section className="relative w-full min-h-screen px-16 py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
         {filteredProjects.map((project) => {
-          const imageUrl = urlForImage(project.thumbnail)?.url()
+          const thumbnailImage = project.thumbnail
+          if (!thumbnailImage) return null
+
+          const imageUrl = urlForImage(thumbnailImage)?.url()
           const isActive = activeSlug === project.slug.current
           const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
           const titleOpacity = isActive ? "lg:opacity-100" : "lg:opacity-0"
+          const altFromSanity = getTranslation(thumbnailImage.altText, language)
+          const imageAlt = altFromSanity || project.title || "Project thumbnail"
 
           return (
             <Link
@@ -69,7 +77,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                 {imageUrl && (
                   <Image
                     src={imageUrl || "/placeholder.svg"}
-                    alt={project.title}
+                    alt={imageAlt}
                     fill
                     className="object-cover"
                   />

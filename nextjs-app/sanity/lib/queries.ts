@@ -5,8 +5,14 @@ export const getHomepageQuery = `*[_type == "home"][0]{
     title,
     slug,
     projectNumber,
-    featuredImage,
-    mobileFeaturedImage
+    featuredImage{
+      ...,
+      altText
+    },
+    mobileFeaturedImage{
+      ...,
+      altText
+    }
   }
 }`;
 
@@ -46,7 +52,10 @@ export const getProjectsGridQuery = defineQuery(`
     projectNumber,
     category,
     notClickableInIndex,
-    thumbnail,
+    thumbnail{
+      ...,
+      altText
+    },
     "projectInfo": builder[_type == "projectInfo"][0]{
       year,
       location,
@@ -78,7 +87,10 @@ export const settingsQuery = defineQuery(`
     siteTitle,
     description,
     ogImage,
-    logo,
+    logo{
+      ...,
+      altText
+    },
     navLinks,
     languages
   }
