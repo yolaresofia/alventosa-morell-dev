@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { useImageSlider } from "../context/ImageSliderContext";
 import { CloseButton } from "./CloseButton";
 import { LeftArrow } from "./LeftArrow";
 import { RightArrow } from "./RightArrow";
 
 export default function PopupSlider() {
-  const { isOpen, images, currentIndex, closeSlider, goToNext, goToPrev } =
-    useImageSlider();
+  const { isOpen, images, currentIndex, closeSlider, goToNext, goToPrev } = useImageSlider();
   const image = images[currentIndex];
 
   useEffect(() => {
@@ -40,13 +40,12 @@ export default function PopupSlider() {
 
   if (!isOpen || !image) return null;
 
+  const altText = image.alt || "";
+  const safeSrc = image.url || "/placeholder.svg";
+
   return (
     <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
-      <button
-        onClick={closeSlider}
-        className="absolute top-4 right-4"
-        aria-label="Tancar"
-      >
+      <button onClick={closeSlider} className="absolute top-4 right-4" aria-label="Tancar">
         <CloseButton />
       </button>
       <button
@@ -56,11 +55,19 @@ export default function PopupSlider() {
       >
         <LeftArrow />
       </button>
-      <img
-        src={image.url}
-        alt={image.alt || ""}
-        className="lg:max-h-[95vh] lg:max-w-[90vw] max-w-[70vw] max-h-auto"
-      />
+      <div className="relative w-full max-w-[90vw] max-h-[95vh] px-4">
+        <div className="relative w-full" style={{ height: "min(95vh, 70vw)" }}>
+          <Image
+            src={safeSrc}
+            alt={altText}
+            fill
+            className="object-contain"
+            sizes="(max-width: 1024px) 90vw, 60vw"
+            priority={false}
+            unoptimized
+          />
+        </div>
+      </div>
       <button
         onClick={goToNext}
         className="absolute md:right-4 right-2 top-1/2 -translate-y-1/2"

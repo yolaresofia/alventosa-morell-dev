@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 import { getTranslation } from "@/app/utils/translations"
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const ImageCarousel = ({ block }: Props) => {
-  const images = block.images || []
+  const images = useMemo(() => block.images ?? [], [block.images])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [baseIndex, setBaseIndex] = useState<number | null>(null)
   const hasAddedImages = useRef(false)
