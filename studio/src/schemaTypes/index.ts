@@ -12,12 +12,14 @@ import { project } from './documents/project'
 import { home } from './singletons/home'
 import { monoptychImage } from './objects/monoptychImage'
 import { coverVideo } from './objects/coverVideo'
+import { seo } from './objects/seo'
 
 export const schemaTypes = [
   // Singletons
   settings,
   home,
   // Objects
+  seo,
   blockContent,
   link,
   about,

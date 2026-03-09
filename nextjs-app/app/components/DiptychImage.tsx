@@ -20,7 +20,7 @@ export const DiptychImage = ({ block }: Props) => {
   const [hoverRight, setHoverRight] = useState(false);
   const [leftLoaded, setLeftLoaded] = useState(false);
   const [rightLoaded, setRightLoaded] = useState(false);
-  const [baseIndex, setBaseIndex] = useState<number | null>(null);
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 768);
@@ -74,8 +74,8 @@ export const DiptychImage = ({ block }: Props) => {
 
     if (imagesToAdd.length) {
       const componentId = `diptych-${block._key || Math.random().toString(36).substr(2, 9)}`;
-      const index = addImages(imagesToAdd, componentId);
-      setBaseIndex(index);
+      addImages(imagesToAdd, componentId);
+      requestAnimationFrame(() => setRegistered(true));
     }
   }, [
     leftImageUrl,
@@ -104,7 +104,7 @@ export const DiptychImage = ({ block }: Props) => {
     }
   };
 
-  if (!leftImageUrl || !rightImageUrl || baseIndex === null) return null;
+  if (!leftImageUrl || !rightImageUrl || !registered) return null;
 
   return (
     <section className="w-full px-6 sm:px-16 md:px-24 lg:px-32 xl:px-48 py-32">

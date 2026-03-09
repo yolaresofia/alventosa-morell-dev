@@ -1,6 +1,11 @@
 import { defineQuery } from "next-sanity";
 
 export const getHomepageQuery = `*[_type == "home"][0]{
+  seo{
+    seoTitle,
+    seoDescription,
+    seoImage{ ..., alt }
+  },
   featuredProjects[]->{
     title,
     slug,
@@ -18,6 +23,11 @@ export const getHomepageQuery = `*[_type == "home"][0]{
 
 export const getAboutPageQuery = defineQuery(`
   *[_type == "about"][0]{
+    seo{
+      seoTitle,
+      seoDescription,
+      seoImage{ ..., alt }
+    },
     aboutText,
     contact { titleTranslations, email, phone },
     office  { titleTranslations, address, addressUrl },
@@ -92,6 +102,11 @@ export const settingsQuery = defineQuery(`
       altText
     },
     navLinks,
-    languages
+    languages,
+    projectsPageSeo{
+      seoTitle,
+      seoDescription,
+      seoImage{ ..., alt }
+    }
   }
 `);

@@ -129,6 +129,12 @@ export const settings = defineType({
       ],
     }),
     defineField({
+      name: 'projectsPageSeo',
+      title: 'SEO pàgina de projectes',
+      type: 'seo',
+      description: 'SEO per a les pàgines /projects i /projects/index',
+    }),
+    defineField({
       name: 'languages',
       title: 'Available Languages',
       type: 'array',

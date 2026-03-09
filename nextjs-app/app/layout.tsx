@@ -1,7 +1,8 @@
 import type React from "react";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { SanityLive } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import { toPlainText, VisualEditing } from "next-sanity";
@@ -16,39 +17,44 @@ import TopLogo from "./components/TopLogo";
 import { draftMode } from "next/headers";
 import { DisableDraftMode } from "./components/DisableDraftMode";
 import ReactLenis from "lenis/react";
+import JsonLd from "./components/JsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data: settings } = await sanityFetch({
-    query: settingsQuery,
-    stega: false,
-  });
+  const settings = await client.fetch(settingsQuery);
 
   const title = settings?.siteTitle || "Alventosa Morell";
   const description = settings?.description
     ? toPlainText(settings.description)
-    : "Default description";
+    : undefined;
   const ogImage = resolveOpenGraphImage(settings?.ogImage);
 
-  let metadataBase: URL | undefined = undefined;
-  try {
-    metadataBase = settings?.ogImage?.metadataBase
-      ? new URL(settings.ogImage.metadataBase)
-      : undefined;
-  } catch (e) {
-    console.error("Invalid metadataBase URL in settings", e);
-  }
+  // Truncate description for SEO (max 155 chars)
+  const seoDescription = description
+    ? description.length > 155
+      ? description.slice(0, 152) + "..."
+      : description
+    : undefined;
 
   return {
-    metadataBase,
+    metadataBase: new URL("https://alventosamorell.com"),
+    alternates: {
+      canonical: "/",
+    },
     title: {
       template: `%s | ${title}`,
       default: title,
     },
-    description,
+    description: seoDescription,
     openGraph: {
       title,
-      description,
+      description: seoDescription,
       images: ogImage ? [ogImage] : [],
+      siteName: title,
+      locale: "ca_ES",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
     },
   };
 }
@@ -58,25 +64,32 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: settings } = await sanityFetch({
-    query: settingsQuery,
-    stega: false,
-  });
+  const settings = await client.fetch(settingsQuery);
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
   const logoAltText = settings?.logo?.altText || null;
   const navLinks = (settings?.navLinks || [])
-    .filter((link) => link.href && link.label)
-    .map((link) => ({
-      href: link.href as string,
-      label: link.label as string,
+    .filter((link: any) => link.href && link.label)
+    .map((link: any) => ({
+      href: link.href,
+      label: link.label,
     }));
 
   const languages = settings?.languages || ["ca", "es", "en"];
 
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ArchitectureFirm",
+    name: "Alventosa Morell Arquitectes",
+    url: "https://alventosamorell.com",
+    ...(logoUrl && { logo: logoUrl }),
+    sameAs: [] as string[],
+  };
+
   return (
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
+        <JsonLd data={organizationJsonLd} />
                 <ReactLenis root>
         <ProjectCategoryProvider>
           <FilterProvider>

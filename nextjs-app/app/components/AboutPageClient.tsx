@@ -1,6 +1,7 @@
 "use client";
 
 import { PortableText, PortableTextBlock } from "next-sanity";
+import Link from "next/link";
 import { useLanguage } from "../context/LanguageContext";
 import {
   getPortableTextTranslation,
@@ -39,7 +40,7 @@ export default function AboutPageClient({ about }: { about: any }) {
           <h2 className="mt-4">
             {getTranslation(about.office?.titleTranslations, language)}
           </h2>
-          <a href={about.office?.addressUrl?.href || ""} target="_blank">
+          <a href={about.office?.addressUrl?.href || ""} target="_blank" rel="noopener noreferrer">
             <PortableText
               value={about.office?.address as PortableTextBlock[]}
             />

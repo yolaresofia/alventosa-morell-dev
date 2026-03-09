@@ -8,6 +8,11 @@ export const home = defineType({
   icon: HomeIcon,
   fields: [
     defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo',
+    }),
+    defineField({
       name: 'featuredProjects',
       title: 'Projectes destacats',
       type: 'array',

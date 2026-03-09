@@ -6,6 +6,11 @@ export const project = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo',
+    }),
+    defineField({
       name: 'title',
       title: 'Títol',
       type: 'string',

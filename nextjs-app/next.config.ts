@@ -36,6 +36,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Security headers for all pages
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+      {
         // everything in /public/fonts
         source: '/fonts/:path*',
         headers: [

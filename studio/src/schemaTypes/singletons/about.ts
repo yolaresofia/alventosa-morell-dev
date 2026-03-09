@@ -8,6 +8,11 @@ export const about = defineType({
   icon: UsersIcon,
   fields: [
     defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo',
+    }),
+    defineField({
       name: 'aboutText',
       title: 'About Text',
       type: 'object',

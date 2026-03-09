@@ -36,9 +36,7 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
     activeIndexRef.current = activeIndex
   }, [activeIndex])
 
-  const [currentSlug, setCurrentSlug] = useState<string | null>(
-    projects.length > 0 && projects[0] ? projects[0].slug?.current : null,
-  )
+  const currentSlug = projects[activeIndex]?.slug?.current ?? null
   const [isDesktop, setIsDesktop] = useState(false) // True for >= 768px
   const [isLargeDesktop, setIsLargeDesktop] = useState(false) // True for >= 1024px
 
@@ -83,8 +81,10 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
   useEffect(() => {
     const shouldPlayAnimation = isLargeDesktop && pathname === "/" && isFirstLoad
     if (shouldPlayAnimation) {
-      setOverlayOpacity(1)
-      setAnimationComplete(false)
+      requestAnimationFrame(() => {
+        setOverlayOpacity(1)
+        setAnimationComplete(false)
+      })
       const timer = setTimeout(() => {
         setAnimationComplete(true)
         sessionStorage.setItem("welcomeAnimationShown", "true")
@@ -92,8 +92,10 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
       }, 1000)
       return () => clearTimeout(timer)
     } else {
-      setOverlayOpacity(0)
-      setAnimationComplete(true)
+      requestAnimationFrame(() => {
+        setOverlayOpacity(0)
+        setAnimationComplete(true)
+      })
     }
   }, [pathname, isFirstLoad, isLargeDesktop])
 
@@ -103,7 +105,6 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
     const project = projects[activeIndex]
     if (!project?.slug?.current) return
 
-    setCurrentSlug(project.slug.current)
     const targetElement = containerRef.current.querySelector<HTMLElement>(`[data-slug="${project.slug.current}"]`)
 
     if (targetElement && containerRef.current) {
