@@ -5,6 +5,7 @@ import ProjectsIndex from "../components/ProjectsIndex";
 import { GetProjectsGridQueryResult } from "@/sanity.types";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
+import { getSeoText } from "@/sanity/lib/types";
 
 export const revalidate = 60;
 
@@ -12,8 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await client.fetch(settingsQuery);
   const seo = settings?.projectsPageSeo as SeoFields | null;
 
-  const title = seo?.seoTitle || "Índex de Projectes";
-  const description = seo?.seoDescription || undefined;
+  const title = getSeoText(seo?.seoTitle) || "Índex de Projectes";
+  const description = getSeoText(seo?.seoDescription);
   const ogImage = resolveOpenGraphImage(seo?.seoImage);
 
   return {

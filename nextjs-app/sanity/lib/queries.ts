@@ -4,7 +4,7 @@ export const getHomepageQuery = `*[_type == "home"][0]{
   seo{
     seoTitle,
     seoDescription,
-    seoImage{ ..., alt }
+    seoImage{ ..., altText }
   },
   featuredProjects[]->{
     title,
@@ -26,7 +26,7 @@ export const getAboutPageQuery = defineQuery(`
     seo{
       seoTitle,
       seoDescription,
-      seoImage{ ..., alt }
+      seoImage{ ..., altText }
     },
     aboutText,
     contact { titleTranslations, email, phone },
@@ -106,7 +106,7 @@ export const settingsQuery = defineQuery(`
     projectsPageSeo{
       seoTitle,
       seoDescription,
-      seoImage{ ..., alt }
+      seoImage{ ..., altText }
     }
   }
 `);

@@ -20,7 +20,8 @@ export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
   if (!image) return;
   const url = urlForImage(image)?.width(1200).height(627).fit("crop").url();
   if (!url) return;
-  return { url, alt: image?.alt as string, width, height };
+  const alt = image?.altText?.ca || image?.altText?.es || image?.altText?.en || image?.alt || "";
+  return { url, alt, width, height };
 }
 
 export function linkResolver(link: Link | undefined) {

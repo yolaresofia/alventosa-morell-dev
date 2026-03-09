@@ -4,15 +4,17 @@ import { getHomepageQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import HomePageClient from "./components/HomePageClient";
 import type { Metadata } from "next";
+import type { SeoFields } from "@/sanity/lib/types";
+import { getSeoText } from "@/sanity/lib/types";
 
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const homepage = await client.fetch(getHomepageQuery);
 
-  const seo = homepage?.seo;
-  const title = seo?.seoTitle || undefined;
-  const description = seo?.seoDescription || undefined;
+  const seo = homepage?.seo as SeoFields | null;
+  const title = getSeoText(seo?.seoTitle);
+  const description = getSeoText(seo?.seoDescription);
   const ogImage = resolveOpenGraphImage(seo?.seoImage);
 
   return {

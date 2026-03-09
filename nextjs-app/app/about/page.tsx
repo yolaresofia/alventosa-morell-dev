@@ -4,6 +4,7 @@ import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import AboutPageClient from "../components/AboutPageClient";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
+import { getSeoText } from "@/sanity/lib/types";
 
 export const revalidate = 60;
 
@@ -11,8 +12,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const about = await client.fetch(getAboutPageQuery);
   const seo = about?.seo as SeoFields | null;
 
-  const title = seo?.seoTitle || "Sobre Nosaltres";
-  const description = seo?.seoDescription || undefined;
+  const title = getSeoText(seo?.seoTitle) || "Sobre Nosaltres";
+  const description = getSeoText(seo?.seoDescription);
   const ogImage = resolveOpenGraphImage(seo?.seoImage);
 
   return {

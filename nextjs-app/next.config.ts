@@ -44,6 +44,19 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.sanity.io https://vercel.live https://*.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://cdn.sanity.io",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.sanity.io https://*.api.sanity.io wss://*.sanity.io https://vercel.live",
+              "frame-src 'self'",
+              "media-src 'self' https://cdn.sanity.io",
+            ].join('; '),
+          },
         ],
       },
       {

@@ -15,7 +15,7 @@ export default function AboutPageClient({ about }: { about: any }) {
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-16 flex flex-col">
-      <div className="md:text-2xl text-[20px] monitor:text-3xl font-medium leading-[1.5] tracking-wide pb-16">
+      <div className="md:text-2xl text-[20px] monitor:text-3xl font-medium tracking-wide pb-12">
         <PortableText
           value={
             getPortableTextTranslation(
@@ -127,6 +127,21 @@ export default function AboutPageClient({ about }: { about: any }) {
           </div>
         </div>
       </div>
+
+      <nav className="pt-2 text-sm monitor:text-xl flex gap-6 justify-end">
+        <Link href="/projects" className="underline">
+          {getTranslation(
+            { ca: "Veure projectes", es: "Ver proyectos", en: "View projects" },
+            language
+          )}
+        </Link>
+        <Link href="/" className="underline">
+          {getTranslation(
+            { ca: "Inici", es: "Inicio", en: "Home" },
+            language
+          )}
+        </Link>
+      </nav>
     </section>
   );
 }

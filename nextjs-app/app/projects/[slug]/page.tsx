@@ -5,6 +5,8 @@ import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { Metadata } from "next";
+import type { SeoFields } from "@/sanity/lib/types";
+import { getSeoText } from "@/sanity/lib/types";
 
 export const revalidate = 60;
 
@@ -13,7 +15,7 @@ const projectSeoQuery = `*[_type == "project" && slug.current == $slug][0]{
   seo{
     seoTitle,
     seoDescription,
-    seoImage{ ..., alt }
+    seoImage{ ..., altText }
   },
   "description": builder[_type == "projectInfo"][0].description
 }`;
@@ -39,9 +41,9 @@ export async function generateMetadata({
     };
   }
 
-  const seo = project.seo;
-  const title = seo?.seoTitle || project.title || "Projecte";
-  const description = seo?.seoDescription || undefined;
+  const seo = project.seo as SeoFields | null;
+  const title = getSeoText(seo?.seoTitle) || project.title || "Projecte";
+  const description = getSeoText(seo?.seoDescription);
   const ogImage = resolveOpenGraphImage(seo?.seoImage);
 
   return {
