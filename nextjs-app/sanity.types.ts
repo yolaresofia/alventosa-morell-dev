@@ -1012,7 +1012,7 @@ export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
-// Query: *[_type == "about"][0]{    seo{      seoTitle,      seoDescription,      seoImage{ ..., alt }    },    aboutText,    contact { titleTranslations, email, phone },    office  { titleTranslations, address, addressUrl },    social  { instagram },    team    {      titleTranslations,      coFounders[]{ name, role },      teammates[]{ name },      teammatesTitleTranslations,      pastTeammates[]{ name },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      titleTranslations,      list[]{        _key,        title      }    },    cv[]{      title,      file{ asset->{ url } }    }  }
+// Query: *[_type == "about"][0]{    seo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    },    aboutText,    contact { titleTranslations, email, phone },    office  { titleTranslations, address, addressUrl },    social  { instagram },    team    {      titleTranslations,      coFounders[]{ name, role },      teammates[]{ name },      teammatesTitleTranslations,      pastTeammates[]{ name },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      titleTranslations,      list[]{        _key,        title      }    },    cv[]{      title,      file{ asset->{ url } }    }  }
 export type GetAboutPageQueryResult = {
   seo: null;
   aboutText: {
@@ -1596,7 +1596,7 @@ export type GetSingleProjectQueryResult = {
   }> | null;
 } | null;
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., alt }    }  }
+// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    }  }
 export type SettingsQueryResult = {
   siteTitle: string | null;
   description: Array<{
@@ -1663,9 +1663,9 @@ export type SettingsQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n  *[_type == \"about\"][0]{\n    seo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., alt }\n    },\n    aboutText,\n    contact { titleTranslations, email, phone },\n    office  { titleTranslations, address, addressUrl },\n    social  { instagram },\n    team    {\n      titleTranslations,\n      coFounders[]{ name, role },\n      teammates[]{ name },\n      teammatesTitleTranslations,\n      pastTeammates[]{ name },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        _key,\n        title\n      }\n    },\n    cv[]{\n      title,\n      file{ asset->{ url } }\n    }\n  }\n": GetAboutPageQueryResult;
+    "\n  *[_type == \"about\"][0]{\n    seo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    aboutText,\n    contact { titleTranslations, email, phone },\n    office  { titleTranslations, address, addressUrl },\n    social  { instagram },\n    team    {\n      titleTranslations,\n      coFounders[]{ name, role },\n      teammates[]{ name },\n      teammatesTitleTranslations,\n      pastTeammates[]{ name },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        _key,\n        title\n      }\n    },\n    cv[]{\n      title,\n      file{ asset->{ url } }\n    }\n  }\n": GetAboutPageQueryResult;
     "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail{\n      ...,\n      altText\n    },\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
-    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., alt }\n    }\n  }\n": SettingsQueryResult;
+    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    }\n  }\n": SettingsQueryResult;
   }
 }
