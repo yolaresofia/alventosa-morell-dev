@@ -268,6 +268,7 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
                     alt={imageAlt}
                     width={isDesktop ? 1000 : 500}
                     height={isDesktop ? 1500 : 800}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className={`object-cover ${imageClass}`}
                     priority={index < 2}
                     draggable="false"

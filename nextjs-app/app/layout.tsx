@@ -116,7 +116,6 @@ export default async function RootLayout({
             </LanguageProvider>
           </FilterProvider>
         </ProjectCategoryProvider>
-        <SanityLive />
         </ReactLenis>
       </body>
     </html>

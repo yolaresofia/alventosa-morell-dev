@@ -55,6 +55,7 @@ export const MonoptychImage = ({ block }: Props) => {
             alt={altText}
             width={imageDimensions.width}
             height={imageDimensions.height}
+            sizes="(max-width: 768px) 100vw, 1024px"
             className="w-full h-auto object-contain cursor-pointer"
             onClick={handleClick}
           />

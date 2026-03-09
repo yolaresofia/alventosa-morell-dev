@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { getTranslation } from "../utils/translations"
 import { useLanguage } from "../context/LanguageContext"
 import { urlForImage } from "@/sanity/lib/utils"
@@ -16,8 +17,8 @@ export const CoverImage = ({ block }: CoverImageProps) => {
 
   const alt = getTranslation(block.altText, language)
   const bottomText = getTranslation(block.bottomText, language)
-  const desktopImageUrl = block.image ? urlForImage(block.image)?.url() : undefined
-  const mobileImageUrl = block.mobileImage ? urlForImage(block.mobileImage)?.url() : undefined
+  const desktopImageUrl = block.image ? urlForImage(block.image)?.width(1920).url() : undefined
+  const mobileImageUrl = block.mobileImage ? urlForImage(block.mobileImage)?.width(828).url() : undefined
   const hasPadding = block.hasPadding || false
 
   useEffect(() => {
@@ -35,8 +36,15 @@ export const CoverImage = ({ block }: CoverImageProps) => {
 
   return (
     <div className={containerClass}>
-      <div className="w-full h-screen bg-center bg-cover" style={{ backgroundImage: `url(${imageUrl})` }} role="img" aria-label={alt}>
-        <span className="sr-only">{alt}</span>
+      <div className="relative w-full h-screen">
+        <Image
+          src={imageUrl}
+          alt={alt || ""}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          unoptimized
+        />
       </div>
       {bottomText && (
         <div className="pt-4 px-6">
