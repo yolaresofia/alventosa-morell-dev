@@ -1,6 +1,5 @@
 import type React from "react";
 import "./globals.css";
-import Link from "next/link";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SanityLive } from "@/sanity/lib/live";
 import { client } from "@/sanity/lib/client";
@@ -91,7 +90,14 @@ export default async function RootLayout({
     <html lang="ca">
       <body className="font-soehne bg-white text-black overflow-x-hidden">
         <JsonLd data={organizationJsonLd} />
-                <ReactLenis root>
+        <nav className="sr-only" aria-label="Navegació principal">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/">Inici</a>
+          {navLinks.map((link: any) => (
+            <a key={link.href} href={link.href}>{link.label?.ca || link.href}</a>
+          ))}
+        </nav>
+        <ReactLenis root>
         <ProjectCategoryProvider>
           <FilterProvider>
             <LanguageProvider>
@@ -99,11 +105,6 @@ export default async function RootLayout({
               <div className="fixed top-0 left-0 w-full h-[60px] bg-white z-20 sm:hidden flex items-center"></div>
               {logoUrl && <TopLogo logoUrl={logoUrl} logoAltText={logoAltText} />}
               <MobileNav navLinks={navLinks} languages={languages} />
-              <nav className="sr-only" aria-label="Navegació principal">
-                {navLinks.map((link: any) => (
-                  <Link key={link.href} href={link.href}>{link.label?.ca || link.href}</Link>
-                ))}
-              </nav>
               <main className="min-h-screen flex flex-col">{children}</main>
               {(await draftMode()).isEnabled && (
                 <>
