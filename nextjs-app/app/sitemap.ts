@@ -3,7 +3,7 @@ import { client } from "@/sanity/lib/client";
 
 export const revalidate = 3600; // Refresh sitemap every hour
 
-const SITE_URL = "https://alventosamorell.com";
+const SITE_URL = "https://www.alventosamorell.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const slugs = await client.fetch<{ slug: string; _updatedAt: string }[]>(

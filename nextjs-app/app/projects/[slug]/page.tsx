@@ -94,19 +94,19 @@ export default async function ProjectPage({
         "@type": "ListItem",
         position: 1,
         name: "Inici",
-        item: "https://alventosamorell.com",
+        item: "https://www.alventosamorell.com",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Projectes",
-        item: "https://alventosamorell.com/projects",
+        item: "https://www.alventosamorell.com/projects",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: project.title,
-        item: `https://alventosamorell.com/projects/${slug}`,
+        item: `https://www.alventosamorell.com/projects/${slug}`,
       },
     ],
   };

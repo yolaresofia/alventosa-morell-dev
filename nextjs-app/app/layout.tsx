@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : undefined;
 
   return {
-    metadataBase: new URL("https://alventosamorell.com"),
+    metadataBase: new URL("https://www.alventosamorell.com"),
     alternates: {
       canonical: "/",
     },
@@ -82,7 +82,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "ArchitectureFirm",
     name: "Alventosa Morell Arquitectes",
-    url: "https://alventosamorell.com",
+    url: "https://www.alventosamorell.com",
     ...(logoUrl && { logo: logoUrl }),
     sameAs: [] as string[],
   };
