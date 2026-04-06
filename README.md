@@ -1,6 +1,6 @@
 # Alventosa Morell Arquitectes
 
-Portfolio website for Alventosa Morell Arquitectes, a Mallorca-based architecture firm. Built with Next.js 16 and Sanity CMS, deployed on Vercel.
+Portfolio website for [Alventosa Morell Arquitectes](https://www.alventosamorell.com), a Mallorca-based architecture firm. Built with Next.js 16 and Sanity CMS, deployed on Vercel.
 
 ## Tech Stack
 
@@ -14,6 +14,8 @@ Portfolio website for Alventosa Morell Arquitectes, a Mallorca-based architectur
 ## Architecture
 
 The app follows a monorepo structure with two workspaces:
+
+```
 ├── nextjs-app/          # Next.js frontend
 │   ├── app/
 │   │   ├── components/  # 29 UI components (block renderers, navigation, overlays)
@@ -25,10 +27,11 @@ The app follows a monorepo structure with two workspaces:
 │   │   └── robots.ts
 │   └── sanity/          # Client, queries, utils
 └── studio/              # Sanity Studio
-└── src/schemaTypes/
-├── documents/   # project
-├── singletons/  # home, about, settings
-└── objects/     # 12 block types (coverImage, diptychImage, etc.)
+    └── src/schemaTypes/
+        ├── documents/   # project
+        ├── singletons/  # home, about, settings
+        └── objects/     # 12 block types (coverImage, diptychImage, etc.)
+```
 
 ## Key Implementations
 
@@ -55,20 +58,20 @@ All pages are statically generated at build time and revalidate every 60 seconds
 
 ### SEO
 
-- Dynamic metadata per page from Sanity, with trilingual SEO title/description/image fields behind a collapsible Studio UI
-- Canonical URLs on every route to prevent duplicate content indexing
-- XML Sitemap generated from Sanity project data with `lastModified` timestamps
-- Google Image Sitemap — Custom route handler that queries all project builder blocks via GROQ, extracts every image reference (cover, diptych, monoptych, carousel, featured), converts Sanity asset `_ref` strings to CDN URLs, and serves a valid `<image:image>` sitemap with titles and captions
-- Schema.org JSON-LD — `ArchitectureFirm` on the root layout, `BreadcrumbList` on project pages
-- Server-rendered navigation — `<nav>` with internal links in the layout for crawler discoverability, independent of client-side JS hydration
-- `robots.txt` with sitemap references
+- **Dynamic metadata** per page from Sanity, with trilingual SEO title/description/image fields behind a collapsible Studio UI
+- **Canonical URLs** on every route to prevent duplicate content indexing
+- **XML Sitemap** generated from Sanity project data with `lastModified` timestamps
+- **Google Image Sitemap** — Custom route handler that queries all project builder blocks via GROQ, extracts every image reference (cover, diptych, monoptych, carousel, featured), converts Sanity asset `_ref` strings to CDN URLs, and serves a valid `<image:image>` sitemap with titles and captions
+- **Schema.org JSON-LD** — `ArchitectureFirm` on the root layout, `BreadcrumbList` on project pages
+- **Server-rendered navigation** — `<nav>` with internal links in the layout for crawler discoverability, independent of client-side JS hydration
+- **robots.txt** with sitemap references
 
 ### Security Headers
 
 Full security header suite via `next.config.ts`:
 
 - Content-Security-Policy (with allowlists for Sanity CDN, Vimeo player, Vercel)
-- `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`
+- X-Content-Type-Options, Referrer-Policy, X-Frame-Options, Permissions-Policy
 
 ### Image Optimization
 
@@ -89,13 +92,17 @@ The homepage features a custom horizontal scroll gallery with:
 - Responsive breakpoints: horizontal scroll on desktop, vertical snap scroll on mobile
 
 ## Development
+
 ```bash
 # From the root
 npm run dev     # Starts both Next.js (localhost:3000) and Studio (localhost:3333)
 ```
 
 ## Environment Variables
+
+```
 NEXT_PUBLIC_SANITY_PROJECT_ID=
 NEXT_PUBLIC_SANITY_DATASET=
 NEXT_PUBLIC_SANITY_API_VERSION=
 SANITY_API_READ_TOKEN=
+```
