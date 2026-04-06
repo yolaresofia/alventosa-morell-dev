@@ -1,104 +1,101 @@
-# Clean Next.js + Sanity app
+# Alventosa Morell Arquitectes
 
-This template includes a [Next.js](https://nextjs.org/) app with a [Sanity Studio](https://www.sanity.io/) – an open-source React application that connects to your Sanity project’s hosted dataset. The Studio is configured locally and can then be deployed for content collaboration.
+Portfolio website for Alventosa Morell Arquitectes, a Mallorca-based architecture firm. Built with Next.js 16 and Sanity CMS, deployed on Vercel.
 
-![Screenshot of Sanity Studio using Presentation Tool to do Visual Editing](https://cdn.sanity.io/images/fkfgfb3d/production/8f626d30c5c41a5d2d75f899645beada2b82826b-3248x2112.png?auto=format)
+## Tech Stack
 
-## Features
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **CMS:** Sanity v3 with GROQ, real-time visual editing, and Presentation Tool
+- **Styling:** Tailwind CSS v4
+- **Language:** TypeScript
+- **Deployment:** Vercel
+- **Smooth Scroll:** Lenis
 
-- **Next.js 15 for Performance:** Leverage the power of Next.js 15 App Router for blazing-fast performance and SEO-friendly static sites.
-- **Real-time Visual Editing:** Edit content live with Sanity's [Presentation Tool](https://www.sanity.io/docs/presentation) and see updates in real time.
-- **Live Content:** The [Live Content API](https://www.sanity.io/live) allows you to deliver live, dynamic experiences to your users without the complexity and scalability challenges that typically come with building real-time functionality.
-- **Customizable Pages with Drag-and-Drop:** Create and manage pages using a page builder with dynamic components and [Drag-and-Drop Visual Editing](https://www.sanity.io/visual-editing-for-structured-content).
-- **Powerful Content Management:** Collaborate with team members in real-time, with fine-grained revision history.
-- **AI-powered Media Support:** Auto-generate alt text with [Sanity AI Assist](https://www.sanity.io/ai-assist).
-- **On-demand Publishing:** No waiting for rebuilds—new content is live instantly with Incremental Static Revalidation.
-- **Easy Media Management:** [Integrated Unsplash support](https://www.sanity.io/plugins/sanity-plugin-asset-source-unsplash) for seamless media handling.
+## Architecture
 
-## Demo
+The app follows a monorepo structure with two workspaces:
+├── nextjs-app/          # Next.js frontend
+│   ├── app/
+│   │   ├── components/  # 29 UI components (block renderers, navigation, overlays)
+│   │   ├── context/     # Client-side state (language, filters, image slider, project category)
+│   │   ├── projects/    # Dynamic [slug] routes + grid/index views
+│   │   ├── about/
+│   │   ├── sitemap.ts
+│   │   ├── image-sitemap.xml/  # Google Image Sitemap (route handler)
+│   │   └── robots.ts
+│   └── sanity/          # Client, queries, utils
+└── studio/              # Sanity Studio
+└── src/schemaTypes/
+├── documents/   # project
+├── singletons/  # home, about, settings
+└── objects/     # 12 block types (coverImage, diptychImage, etc.)
 
-https://template-nextjs-clean.sanity.dev
+## Key Implementations
 
-## Getting Started
+### Block-Based Page Builder
 
-### Installing the template
+Project pages are composed from a modular `builder[]` array in Sanity, rendered via a `BlockRenderer` that maps `_type` strings to React components:
 
-#### 1. Initialize template with Sanity CLI
+- `coverImage` — Full-bleed hero with responsive desktop/mobile variants
+- `coverVideo` — Vimeo background video embed with autoplay
+- `diptychImage` — Two-column layout with optional hover states
+- `monoptychImage` — Single centered image with lightbox
+- `imageCarousel` — Multi-image slider
+- `projectSummary`, `projectInfo`, `textBlock` — Content blocks
 
-Run the command in your Terminal to initialize this template on your local computer.
+Each block type supports localized alt text (ca/es/en) and is clickable into a full-screen `PopupSlider` lightbox powered by a shared `ImageSliderContext`.
 
-See the documentation if you are [having issues with the CLI](https://www.sanity.io/help/cli-errors).
+### Trilingual Content (ca/es/en)
 
-```shell
-npm create sanity@latest -- --template sanity-io/sanity-template-nextjs-clean
+The site supports Catalan, Spanish, and English through a client-side `LanguageContext`. All text content — including navigation labels, project descriptions, alt text, and SEO fields — uses a `{ ca, es, en }` object pattern in Sanity, resolved at render time via a `getTranslation()` utility. Language preference persists in `localStorage`.
+
+### ISR (Incremental Static Regeneration)
+
+All pages are statically generated at build time and revalidate every 60 seconds. The architecture separates server components (pages with `generateMetadata` and data fetching) from client components (interactive UI), allowing full SSR metadata while keeping the interactive experience client-side.
+
+### SEO
+
+- Dynamic metadata per page from Sanity, with trilingual SEO title/description/image fields behind a collapsible Studio UI
+- Canonical URLs on every route to prevent duplicate content indexing
+- XML Sitemap generated from Sanity project data with `lastModified` timestamps
+- Google Image Sitemap — Custom route handler that queries all project builder blocks via GROQ, extracts every image reference (cover, diptych, monoptych, carousel, featured), converts Sanity asset `_ref` strings to CDN URLs, and serves a valid `<image:image>` sitemap with titles and captions
+- Schema.org JSON-LD — `ArchitectureFirm` on the root layout, `BreadcrumbList` on project pages
+- Server-rendered navigation — `<nav>` with internal links in the layout for crawler discoverability, independent of client-side JS hydration
+- `robots.txt` with sitemap references
+
+### Security Headers
+
+Full security header suite via `next.config.ts`:
+
+- Content-Security-Policy (with allowlists for Sanity CDN, Vimeo player, Vercel)
+- `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`
+
+### Image Optimization
+
+- Next.js `<Image>` with AVIF/WebP format negotiation
+- Responsive `sizes` attributes tuned per component (grid thumbnails, hero images, carousels)
+- Sanity CDN pre-sizing via `urlForImage().width()` to avoid serving full-resolution originals
+- 7-day CDN cache TTL for optimized variants
+- Immutable cache headers for static font and image assets
+
+### Custom Scroll & Animation
+
+The homepage features a custom horizontal scroll gallery with:
+
+- RAF-based cubic easing animation for snap-scrolling between featured projects
+- Wheel event interception with cooldown debouncing
+- Keyboard navigation (arrow keys)
+- Welcome overlay animation on first visit (stored in `sessionStorage`)
+- Responsive breakpoints: horizontal scroll on desktop, vertical snap scroll on mobile
+
+## Development
+```bash
+# From the root
+npm run dev     # Starts both Next.js (localhost:3000) and Studio (localhost:3333)
 ```
 
-#### 2. Run Studio and Next.js app locally
-
-Navigate to the template directory using `cd <your app name>`, and start the development servers by running the following command
-
-```shell
-npm run dev
-```
-
-#### 3. Open the app and sign in to the Studio
-
-Open the Next.js app running locally in your browser on [http://localhost:3000](http://localhost:3000).
-
-Open the Studio running locally in your browser on [http://localhost:3333](http://localhost:3333). You should now see a screen prompting you to log in to the Studio. Use the same service (Google, GitHub, or email) that you used when you logged in to the CLI.
-
-### Adding content with Sanity
-
-#### 1. Publish your first document
-
-The template comes pre-defined with a schema containing `Page`, `Post`, `Person`, and `Settings` document types.
-
-From the Studio, click "+ Create" and select the `Post` document type. Go ahead and create and publish the document.
-
-Your content should now appear in your Next.js app ([http://localhost:3000](http://localhost:3000)) as well as in the Studio on the "Presentation" Tab
-
-#### 2. Import Sample Data (optional)
-
-You may want to start with some sample content and we've got you covered. Run this command from the root of your project to import the provided dataset (sample-data.tar.gz) into your Sanity project. This step is optional but can be helpful for getting started quickly.
-
-```shell
-npm run import-sample-data
-```
-
-#### 3. Extending the Sanity schema
-
-The schema for the `Post` document type is defined in the `studio/src/schemaTypes/post.ts` file. You can [add more document types](https://www.sanity.io/docs/schema-types) to the schema to suit your needs.
-
-### Deploying your application and inviting editors
-
-#### 1. Deploy Sanity Studio
-
-Your Next.js frontend (`/nextjs-app`) and Sanity Studio (`/studio`) are still only running on your local computer. It's time to deploy and get it into the hands of other content editors.
-
-Back in your Studio directory (`/studio`), run the following command to deploy your Sanity Studio.
-
-```shell
-npx sanity deploy
-```
-
-#### 2. Deploy Next.js app to Vercel
-
-You have the freedom to deploy your Next.js app to your hosting provider of choice. With Vercel and GitHub being a popular choice, we'll cover the basics of that approach.
-
-1. Create a GitHub repository from this project. [Learn more](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github).
-2. Create a new Vercel project and connect it to your Github repository.
-3. Set the `Root Directory` to your Next.js app.
-4. Configure your Environment Variables.
-
-#### 3. Invite a collaborator
-
-Now that you’ve deployed your Next.js application and Sanity Studio, you can optionally invite a collaborator to your Studio. Open up [Manage](https://www.sanity.io/manage), select your project and click "Invite project members"
-
-They will be able to access the deployed Studio, where you can collaborate together on creating content.
-
-## Resources
-
-- [Sanity documentation](https://www.sanity.io/docs)
-- [Next.js documentation](https://nextjs.org/docs)
-- [Join the Sanity Community](https://slack.sanity.io)
-- [Learn Sanity](https://www.sanity.io/learn)
+## Environment Variables
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=
+NEXT_PUBLIC_SANITY_API_VERSION=
+SANITY_API_READ_TOKEN=
