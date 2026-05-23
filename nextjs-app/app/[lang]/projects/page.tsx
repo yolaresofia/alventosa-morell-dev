@@ -1,8 +1,6 @@
-import { client } from "@/sanity/lib/client";
-import { getProjectsGridQuery, settingsQuery } from "@/sanity/lib/queries";
+import { getProjectsGrid, getSettings } from "@/sanity/lib/fetchers";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import { ProjectsGrid } from "./components/ProjectsGrid";
-import { GetProjectsGridQueryResult } from "@/sanity.types";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
 import { getSeoText } from "@/sanity/lib/types";
@@ -27,7 +25,7 @@ export async function generateMetadata({
   if (!isLocale(lang)) return {};
   const locale = lang as Locale;
 
-  const settings = await client.fetch(settingsQuery);
+  const settings = await getSettings();
   const seo = settings?.projectsPageSeo as SeoFields | null;
 
   const title =
@@ -58,7 +56,7 @@ export default async function ProjectsPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const projects = await client.fetch<GetProjectsGridQueryResult>(getProjectsGridQuery);
+  const projects = await getProjectsGrid();
 
   return (
     <>

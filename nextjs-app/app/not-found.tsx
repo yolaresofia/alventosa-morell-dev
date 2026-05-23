@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { client } from "@/sanity/lib/client";
-import { settingsQuery } from "@/sanity/lib/queries";
+import { getSettings } from "@/sanity/lib/fetchers";
 import { DEFAULT_LOCALE } from "@/app/i18n/config";
 import { uiString } from "@/app/i18n/uiText";
 
 export default async function NotFound() {
-  const settings = await client.fetch(settingsQuery);
+  const settings = await getSettings();
   const ui = settings?.uiText;
   const locale = DEFAULT_LOCALE;
 

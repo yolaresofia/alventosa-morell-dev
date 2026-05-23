@@ -3,8 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { toPlainText } from "next-sanity";
 import type { Metadata } from "next";
-import { client } from "@/sanity/lib/client";
-import { settingsQuery } from "@/sanity/lib/queries";
+import { getSettings } from "@/sanity/lib/fetchers";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import { LanguageProvider } from "@/app/context/LanguageContext";
 import MobileNav from "@/app/components/MobileNav";
@@ -26,7 +25,7 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLocale(lang)) return {};
 
-  const settings = await client.fetch(settingsQuery);
+  const settings = await getSettings();
 
   const title = settings?.siteTitle || "Alventosa Morell";
   const description = settings?.description
@@ -74,7 +73,7 @@ export default async function LangLayout({
   if (!isLocale(lang)) notFound();
   const locale = lang as Locale;
 
-  const settings = await client.fetch(settingsQuery);
+  const settings = await getSettings();
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
   const logoAltText = settings?.logo?.altText || null;

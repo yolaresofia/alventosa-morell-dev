@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import ProjectPageClient from "@/app/components/ProjectPageClient";
 import JsonLd from "@/app/components/JsonLd";
 import { client } from "@/sanity/lib/client";
-import { settingsQuery } from "@/sanity/lib/queries";
+import { getSettings } from "@/sanity/lib/fetchers";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
@@ -104,7 +104,7 @@ export default async function ProjectPage({
         notClickableInIndex
       }`
     ),
-    client.fetch(settingsQuery),
+    getSettings(),
   ]);
 
   if (!project) {

@@ -1,5 +1,4 @@
-import { client } from "@/sanity/lib/client";
-import { getAboutPageQuery, settingsQuery } from "@/sanity/lib/queries";
+import { getAboutPage, getSettings } from "@/sanity/lib/fetchers";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import AboutPageClient from "@/app/components/AboutPageClient";
 import type { Metadata } from "next";
@@ -26,7 +25,7 @@ export async function generateMetadata({
   if (!isLocale(lang)) return {};
   const locale = lang as Locale;
 
-  const about = await client.fetch(getAboutPageQuery);
+  const about = await getAboutPage();
   const seo = about?.seo as SeoFields | null;
 
   const title = getSeoText(seo?.seoTitle, locale) || ABOUT_FALLBACK_TITLE[locale];
@@ -56,10 +55,7 @@ export default async function AboutPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const [about, settings] = await Promise.all([
-    client.fetch(getAboutPageQuery),
-    client.fetch(settingsQuery),
-  ]);
+  const [about, settings] = await Promise.all([getAboutPage(), getSettings()]);
 
   return (
     <>
