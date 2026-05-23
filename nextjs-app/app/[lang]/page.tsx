@@ -1,62 +1,42 @@
 import { getHomepage, getSettings } from "@/sanity/lib/fetchers";
-import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
+import { urlForImage } from "@/sanity/lib/utils";
 import HomePageClient from "@/app/components/HomePageClient";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
-import { getSeoText } from "@/sanity/lib/types";
-import { isLocale, type Locale } from "@/app/i18n/config";
-import { buildLanguageAlternates } from "@/app/i18n/metadata";
-import { notFound } from "next/navigation";
+import { localizedText } from "@/app/i18n/text";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLocale(lang)) return {};
-  const locale = lang as Locale;
+type RouteParams = { params: Promise<{ lang: string }> };
 
-  const homepage = await getHomepage();
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+  const locale = await resolveLocaleParamSafe(params);
+  if (!locale) return {};
 
-  const seo = homepage?.seo as SeoFields | null;
-  const title = getSeoText(seo?.seoTitle, locale);
-  const description = getSeoText(seo?.seoDescription, locale);
-  const ogImage = resolveOpenGraphImage(seo?.seoImage);
+  const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
-  return {
-    ...(title && { title }),
-    ...(description && { description }),
-    alternates: {
-      canonical: `/${locale}`,
-      languages: buildLanguageAlternates(""),
-    },
-    openGraph: {
-      ...(title && { title }),
-      ...(description && { description }),
-      images: ogImage ? [ogImage] : [],
-    },
-  };
+  return buildSeoMetadata({
+    locale,
+    path: "",
+    seo: homepage?.seo as SeoFields | null,
+    fallbackTitle: settings?.uiText?.pageTitles?.home,
+  });
 }
 
-export default async function Home({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
-  const { lang } = await params;
-  if (!isLocale(lang)) notFound();
+export default async function Home({ params }: RouteParams) {
+  const locale = await resolveLocaleParam(params);
 
   const [homepage, settings] = await Promise.all([getHomepage(), getSettings()]);
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() ?? null : null;
   const logoAltText = settings?.logo?.altText ?? null;
 
+  const h1 = localizedText(settings?.uiText?.pageTitles?.home, locale);
+
   return (
     <>
-      <h1 className="sr-only">Alventosa Morell Arquitectes</h1>
+      <h1 className="sr-only">{h1}</h1>
       <HomePageClient homepage={homepage} logoUrl={logoUrl} logoAltText={logoAltText} />
     </>
   );

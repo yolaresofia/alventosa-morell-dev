@@ -1,70 +1,42 @@
 import { getProjectsGrid, getSettings } from "@/sanity/lib/fetchers";
-import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import ProjectsIndex from "../components/ProjectsIndex";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
-import { getSeoText } from "@/sanity/lib/types";
-import { isLocale, type Locale } from "@/app/i18n/config";
-import { buildLanguageAlternates } from "@/app/i18n/metadata";
-import { notFound } from "next/navigation";
+import { localizedText } from "@/app/i18n/text";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
 
 export const revalidate = 60;
 
-const PROJECTS_INDEX_FALLBACK_TITLE: Record<Locale, string> = {
-  ca: "Índex de Projectes",
-  es: "Índice de Proyectos",
-  en: "Project Index",
-};
+type RouteParams = { params: Promise<{ lang: string }> };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLocale(lang)) return {};
-  const locale = lang as Locale;
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+  const locale = await resolveLocaleParamSafe(params);
+  if (!locale) return {};
 
   const settings = await getSettings();
-  const seo = settings?.projectsPageSeo as SeoFields | null;
 
-  const title =
-    getSeoText(seo?.seoTitle, locale) || PROJECTS_INDEX_FALLBACK_TITLE[locale];
-  const description = getSeoText(seo?.seoDescription, locale);
-  const ogImage = resolveOpenGraphImage(seo?.seoImage);
-
-  return {
-    title,
-    ...(description && { description }),
-    alternates: {
-      canonical: `/${locale}/projects/index`,
-      languages: buildLanguageAlternates("/projects/index"),
-    },
-    openGraph: {
-      title,
-      ...(description && { description }),
-      images: ogImage ? [ogImage] : [],
-    },
-  };
+  return buildSeoMetadata({
+    locale,
+    path: "/projects/index",
+    seo: settings?.projectsPageSeo as SeoFields | null,
+    fallbackTitle: settings?.uiText?.pageTitles?.projectsIndex,
+  });
 }
 
-export default async function ProjectsIndexPage({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
-  const { lang } = await params;
-  if (!isLocale(lang)) notFound();
+export default async function ProjectsIndexPage({ params }: RouteParams) {
+  const locale = await resolveLocaleParam(params);
 
-  const projects = await getProjectsGrid();
+  const [projects, settings] = await Promise.all([getProjectsGrid(), getSettings()]);
 
   if (!projects?.length) {
     return <div>No projects found</div>;
   }
 
+  const h1 = localizedText(settings?.uiText?.pageTitles?.projectsIndex, locale);
+
   return (
     <>
-      <h1 className="sr-only">{PROJECTS_INDEX_FALLBACK_TITLE[lang as Locale]} — Alventosa Morell Arquitectes</h1>
+      <h1 className="sr-only">{h1}</h1>
       <ProjectsIndex projects={projects} />
     </>
   );

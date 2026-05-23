@@ -1,65 +1,38 @@
 import { getAboutPage, getSettings } from "@/sanity/lib/fetchers";
-import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import AboutPageClient from "@/app/components/AboutPageClient";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
-import { getSeoText } from "@/sanity/lib/types";
-import { isLocale, type Locale } from "@/app/i18n/config";
-import { buildLanguageAlternates } from "@/app/i18n/metadata";
-import { notFound } from "next/navigation";
+import { localizedText } from "@/app/i18n/text";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
 
 export const revalidate = 60;
 
-const ABOUT_FALLBACK_TITLE: Record<Locale, string> = {
-  ca: "Sobre Nosaltres",
-  es: "Sobre Nosotros",
-  en: "About",
-};
+type RouteParams = { params: Promise<{ lang: string }> };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLocale(lang)) return {};
-  const locale = lang as Locale;
-
-  const about = await getAboutPage();
-  const seo = about?.seo as SeoFields | null;
-
-  const title = getSeoText(seo?.seoTitle, locale) || ABOUT_FALLBACK_TITLE[locale];
-  const description = getSeoText(seo?.seoDescription, locale);
-  const ogImage = resolveOpenGraphImage(seo?.seoImage);
-
-  return {
-    title,
-    ...(description && { description }),
-    alternates: {
-      canonical: `/${locale}/about`,
-      languages: buildLanguageAlternates("/about"),
-    },
-    openGraph: {
-      title,
-      ...(description && { description }),
-      images: ogImage ? [ogImage] : [],
-    },
-  };
-}
-
-export default async function AboutPage({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
-  const { lang } = await params;
-  if (!isLocale(lang)) notFound();
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+  const locale = await resolveLocaleParamSafe(params);
+  if (!locale) return {};
 
   const [about, settings] = await Promise.all([getAboutPage(), getSettings()]);
 
+  return buildSeoMetadata({
+    locale,
+    path: "/about",
+    seo: about?.seo as SeoFields | null,
+    fallbackTitle: settings?.uiText?.pageTitles?.about,
+  });
+}
+
+export default async function AboutPage({ params }: RouteParams) {
+  const locale = await resolveLocaleParam(params);
+
+  const [about, settings] = await Promise.all([getAboutPage(), getSettings()]);
+
+  const h1 = localizedText(settings?.uiText?.pageTitles?.about, locale);
+
   return (
     <>
-      <h1 className="sr-only">{ABOUT_FALLBACK_TITLE[lang as Locale]} — Alventosa Morell Arquitectes</h1>
+      <h1 className="sr-only">{h1}</h1>
       <AboutPageClient about={about} uiText={settings?.uiText} />
     </>
   );

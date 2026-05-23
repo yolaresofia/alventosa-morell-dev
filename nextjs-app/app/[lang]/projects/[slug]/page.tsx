@@ -3,27 +3,14 @@ import ProjectPageClient from "@/app/components/ProjectPageClient";
 import JsonLd from "@/app/components/JsonLd";
 import { client } from "@/sanity/lib/client";
 import { getSettings } from "@/sanity/lib/fetchers";
-import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
-import { getSeoText } from "@/sanity/lib/types";
-import { LOCALES, isLocale, type Locale } from "@/app/i18n/config";
-import { buildLanguageAlternates } from "@/app/i18n/metadata";
+import { LOCALES } from "@/app/i18n/config";
+import { localizedText } from "@/app/i18n/text";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
 import { SITE_URL } from "@/app/config";
 
 export const revalidate = 60;
-
-const BREADCRUMB_LABELS: Record<Locale, { home: string; projects: string }> = {
-  ca: { home: "Inici", projects: "Projectes" },
-  es: { home: "Inicio", projects: "Proyectos" },
-  en: { home: "Home", projects: "Projects" },
-};
-
-const NOT_FOUND_METADATA: Record<Locale, { title: string; description: string }> = {
-  ca: { title: "Projecte no trobat", description: "El projecte sol·licitat no s'ha pogut trobar." },
-  es: { title: "Proyecto no encontrado", description: "El proyecto solicitado no se pudo encontrar." },
-  en: { title: "Project Not Found", description: "The requested project could not be found." },
-};
 
 const projectSeoQuery = `*[_type == "project" && slug.current == $slug][0]{
   title,
@@ -35,6 +22,8 @@ const projectSeoQuery = `*[_type == "project" && slug.current == $slug][0]{
   "description": builder[_type == "projectInfo"][0].description
 }`;
 
+type RouteParams = { params: Promise<{ lang: string; slug: string }> };
+
 export async function generateStaticParams() {
   const slugs = await client.fetch(
     `*[_type == "project" && defined(slug.current)]{ "slug": slug.current }`
@@ -45,51 +34,40 @@ export async function generateStaticParams() {
   );
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string; slug: string }>;
-}): Promise<Metadata> {
-  const { lang, slug } = await params;
-  if (!isLocale(lang)) return {};
-  const locale = lang as Locale;
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+  const resolved = await params;
+  const locale = await resolveLocaleParamSafe(resolved.lang);
+  if (!locale) return {};
 
-  const project = await client.fetch(projectSeoQuery, { slug });
+  const [project, settings] = await Promise.all([
+    client.fetch(projectSeoQuery, { slug: resolved.slug }),
+    getSettings(),
+  ]);
 
   if (!project) {
-    return NOT_FOUND_METADATA[locale];
+    const ui = settings?.uiText?.notFound;
+    return {
+      title: localizedText(ui?.projectTitle, locale) || undefined,
+      description: localizedText(ui?.projectDescription, locale) || undefined,
+      robots: { index: false, follow: false },
+    };
   }
 
-  const seo = project.seo as SeoFields | null;
-  const title =
-    getSeoText(seo?.seoTitle, locale) || project.title || BREADCRUMB_LABELS[locale].projects;
-  const description = getSeoText(seo?.seoDescription, locale);
-  const ogImage = resolveOpenGraphImage(seo?.seoImage);
-
-  return {
-    title,
-    ...(description && { description }),
-    alternates: {
-      canonical: `/${locale}/projects/${slug}`,
-      languages: buildLanguageAlternates(`/projects/${slug}`),
-    },
-    openGraph: {
-      title,
-      ...(description && { description }),
-      images: ogImage ? [ogImage] : [],
-      type: "article",
-    },
-  };
+  return buildSeoMetadata({
+    locale,
+    path: `/projects/${resolved.slug}`,
+    seo: project.seo as SeoFields | null,
+    fallbackTitle: project.title
+      ? { ca: project.title, es: project.title, en: project.title }
+      : settings?.uiText?.pageTitles?.projects,
+    openGraphType: "article",
+  });
 }
 
-export default async function ProjectPage({
-  params,
-}: {
-  params: Promise<{ lang: string; slug: string }>;
-}) {
-  const { lang, slug } = await params;
-  if (!isLocale(lang)) notFound();
-  const locale = lang as Locale;
+export default async function ProjectPage({ params }: RouteParams) {
+  const resolved = await params;
+  const locale = await resolveLocaleParam(resolved.lang);
+  const slug = resolved.slug;
 
   const [project, allProjects, settings] = await Promise.all([
     client.fetch(`*[_type == "project" && slug.current == $slug][0]`, { slug }),
@@ -111,7 +89,9 @@ export default async function ProjectPage({
     notFound();
   }
 
-  const labels = BREADCRUMB_LABELS[locale];
+  const nav = settings?.uiText?.navigation;
+  const homeLabel = localizedText(nav?.home, locale);
+  const projectsLabel = localizedText(nav?.projects, locale);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -120,13 +100,13 @@ export default async function ProjectPage({
       {
         "@type": "ListItem",
         position: 1,
-        name: labels.home,
+        name: homeLabel,
         item: `${SITE_URL}/${locale}`,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: labels.projects,
+        name: projectsLabel,
         item: `${SITE_URL}/${locale}/projects`,
       },
       {

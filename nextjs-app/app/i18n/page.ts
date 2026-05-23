@@ -13,20 +13,24 @@ const OPEN_GRAPH_LOCALE: Record<Locale, string> = {
   en: "en_US",
 };
 
-/** Resolve and narrow `params.lang` to a `Locale`. Triggers `notFound()` on unsupported values. */
-export async function resolveLocaleParam(
-  params: Promise<{ lang: string }>,
-): Promise<Locale> {
-  const { lang } = await params;
+type LangInput = Promise<{ lang: string }> | { lang: string } | string;
+
+async function readLang(input: LangInput): Promise<string> {
+  if (typeof input === "string") return input;
+  const resolved = await input;
+  return resolved.lang;
+}
+
+/** Resolve and narrow `params.lang` to a `Locale`. Triggers `notFound()` on unsupported values. Accepts a params promise, a resolved params object, or a raw string. */
+export async function resolveLocaleParam(input: LangInput): Promise<Locale> {
+  const lang = await readLang(input);
   if (!isLocale(lang)) notFound();
   return lang;
 }
 
 /** Same as `resolveLocaleParam` but returns `null` instead of throwing, for use in `generateMetadata`. */
-export async function resolveLocaleParamSafe(
-  params: Promise<{ lang: string }>,
-): Promise<Locale | null> {
-  const { lang } = await params;
+export async function resolveLocaleParamSafe(input: LangInput): Promise<Locale | null> {
+  const lang = await readLang(input);
   return isLocale(lang) ? lang : null;
 }
 
