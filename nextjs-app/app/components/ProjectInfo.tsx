@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
 import { ProjectInfo as ProjectInfoType } from "@/sanity.types";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 
 export const ProjectInfo = ({ block }: Props) => {
   const { language } = useLanguage();
-  const translate = (field: any) => getTranslation(field, language);
+  const translate = (field: any) => localizedText(field, language);
 
   return (
     <section className="w-full px-6 sm:px-8 md:px-6 pb-12 font-soehne max-w-4xl">

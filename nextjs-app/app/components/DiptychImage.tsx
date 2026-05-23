@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { DiptychImage as DiptychImageType } from "@/sanity.types";
 import { urlForImage } from "@/sanity/lib/utils";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
 import { useImageSlider } from "../context/ImageSliderContext";
 
 type Props = {
@@ -43,10 +43,10 @@ export const DiptychImage = ({ block }: Props) => {
     ? urlForImage(block.rightImageOnHover)?.url()
     : undefined;
 
-  const leftAlt = getTranslation(block.leftAltText, language);
-  const rightAlt = getTranslation(block.rightAltText, language);
-  const leftAltHover = getTranslation(block.leftHoverAltText, language);
-  const rightAltHover = getTranslation(block.rightHoverAltText, language);
+  const leftAlt = localizedText(block.leftAltText, language);
+  const rightAlt = localizedText(block.rightAltText, language);
+  const leftAltHover = localizedText(block.leftHoverAltText, language);
+  const rightAltHover = localizedText(block.rightHoverAltText, language);
   const leftAltDefault = leftAlt || leftAltHover || "Imatge esquerra";
   const rightAltDefault = rightAlt || rightAltHover || "Imatge dreta";
   const leftHoverAltDefault = leftAltHover || leftAltDefault;

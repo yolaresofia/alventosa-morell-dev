@@ -6,11 +6,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { useLocale } from "@/app/i18n/client";
-import { getTranslation, LocalizedField } from "@/app/utils/translations";
+import { localizedText, type LocalizedString } from "@/app/i18n/text";
 
 type Props = {
   logoUrl: string;
-  logoAltText?: LocalizedField | null;
+  logoAltText?: LocalizedString | null;
 };
 
 export default function TopLogo({ logoUrl, logoAltText }: Props) {
@@ -20,7 +20,7 @@ export default function TopLogo({ logoUrl, logoAltText }: Props) {
 
   const [visible, setVisible] = useState(!isHomepage);
   const { language } = useLanguage();
-  const logoAlt = getTranslation(logoAltText || undefined, language) || "Alventosa Morell Arquitectes";
+  const logoAlt = localizedText(logoAltText || undefined, language) || "Alventosa Morell Arquitectes";
 
   useEffect(() => {
     if (!isHomepage) {

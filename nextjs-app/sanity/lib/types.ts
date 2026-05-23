@@ -1,10 +1,7 @@
 import { DEFAULT_LOCALE, type Locale } from "@/app/i18n/config";
+import { type LocalizedString } from "@/app/i18n/text";
 
-export type LocalizedString = {
-  ca?: string | null;
-  es?: string | null;
-  en?: string | null;
-};
+export type { LocalizedString };
 
 export type SeoFields = {
   seoTitle?: LocalizedString | null;

@@ -1,5 +1,4 @@
-import type { LocalizedString } from "@/sanity/lib/types";
-import type { Locale } from "./config";
+import type { LocalizedString } from "./text";
 
 export type UiText = {
   notFound?: {
@@ -30,12 +29,3 @@ export type UiText = {
     viewProjects?: LocalizedString | null;
   } | null;
 };
-
-/** Read a localized string with locale → ca → es → en fallback chain. Returns empty string when missing. */
-export function uiString(
-  field: LocalizedString | null | undefined,
-  locale: Locale,
-): string {
-  if (!field) return "";
-  return field[locale] || field.ca || field.es || field.en || "";
-}

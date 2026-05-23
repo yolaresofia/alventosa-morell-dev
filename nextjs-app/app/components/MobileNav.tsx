@@ -5,16 +5,10 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
-
-type LocalizedField = {
-  ca?: string;
-  es?: string;
-  en?: string;
-};
+import { localizedText, type LocalizedString } from "@/app/i18n/text";
 
 type NavLink = {
-  label?: string | LocalizedField;
+  label?: string | LocalizedString;
   href?: string;
 };
 
@@ -63,7 +57,7 @@ export default function MobileNav({
             const label =
               typeof link.label === "string"
                 ? link.label
-                : getTranslation(link.label, language);
+                : localizedText(link.label, language);
 
             return (
               <Link

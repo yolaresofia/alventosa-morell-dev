@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
-import { getTranslation } from "@/app/utils/translations"
+import { localizedText } from "@/app/i18n/text"
 import type { ImageCarousel as ImageCarouselType } from "@/sanity.types"
 import { LeftArrow } from "./LeftArrow"
 import { RightArrow } from "./RightArrow"
@@ -36,7 +36,7 @@ export const ImageCarousel = ({ block }: Props) => {
 
           if (!url) return null
 
-          const alt = getTranslation(img.altText, language)
+          const alt = localizedText(img.altText, language)
           return { url, alt }
         })
         .filter(Boolean) as { url: string; alt?: string }[]
@@ -75,7 +75,7 @@ export const ImageCarousel = ({ block }: Props) => {
     .auto("format")
     .url() || "/placeholder.svg"
 
-  const alt = getTranslation(currentImage.altText, language)
+  const alt = localizedText(currentImage.altText, language)
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1))

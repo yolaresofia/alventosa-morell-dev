@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import type { MonoptychImage as MonoptychImageType } from "@/sanity.types"
 import { urlForImage } from "@/sanity/lib/utils"
-import { getTranslation } from "@/app/utils/translations"
+import { localizedText } from "@/app/i18n/text"
 import { useImageSlider } from "../context/ImageSliderContext"
 
 type Props = {
@@ -16,7 +16,7 @@ export const MonoptychImage = ({ block }: Props) => {
   const { addImages, openSlider, getImageIndex } = useImageSlider()
 
   const imageUrl = block.image ? urlForImage(block.image)?.url() : undefined
-  const altText = getTranslation(block.altText, language)
+  const altText = localizedText(block.altText, language)
 
   const [imageIndex, setImageIndex] = useState<number | null>(null)
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null)

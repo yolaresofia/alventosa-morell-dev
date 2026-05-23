@@ -6,7 +6,7 @@ import Link from "next/link"
 import { urlForImage } from "@/sanity/lib/utils"
 import { useLanguage } from "@/app/context/LanguageContext"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
-import { getTranslation } from "@/app/utils/translations"
+import { localizedText } from "@/app/i18n/text"
 
 type ProjectsIndexProps = {
   projects: GetProjectsGridQueryResult
@@ -46,19 +46,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-12">
       <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black/70 pb-2 mb-4">
-        <div className="col-span-4 md:col-span-3">{getTranslation(columnTitles.project, language)}</div>
-        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.program, language)}</div>
-        <div className="hidden md:block md:col-span-2">{getTranslation(columnTitles.location, language)}</div>
-        <div className="hidden md:block md:col-span-1">{getTranslation(columnTitles.area, language)}</div>
-        <div className="col-span-1 md:col-span-1 text-right">{getTranslation(columnTitles.year, language)}</div>
+        <div className="col-span-4 md:col-span-3">{localizedText(columnTitles.project, language)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.program, language)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.location, language)}</div>
+        <div className="hidden md:block md:col-span-1">{localizedText(columnTitles.area, language)}</div>
+        <div className="col-span-1 md:col-span-1 text-right">{localizedText(columnTitles.year, language)}</div>
       </div>
 
       <div className="flex flex-col">
         {sortedProjects.map((project) => {
           const isExpanded = activeSlug === project.slug.current
-          const rawProgram = getTranslation(project.projectInfo?.program?.value, language)
+          const rawProgram = localizedText(project.projectInfo?.program?.value, language)
           const program = formatProgram(rawProgram)
-          const location = getTranslation(project.projectInfo?.location?.value, language) || "-"
+          const location = localizedText(project.projectInfo?.location?.value, language) || "-"
           const area = project.projectInfo?.area?.value || "-"
           const year = project.projectInfo?.year?.value || "-"
           const isClickable = !project.notClickableInIndex
@@ -66,7 +66,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
           const hasThumbnail = !!thumbnail
 
           const projectTitle = project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title
-          const thumbnailAltFromSanity = thumbnail ? getTranslation(thumbnail.altText, language) : undefined
+          const thumbnailAltFromSanity = thumbnail ? localizedText(thumbnail.altText, language) : undefined
           const thumbnailAlt =
             thumbnailAltFromSanity || project.title || project.projectNumber || "Project thumbnail"
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
 import { TextBlock as TextBlockType } from "@/sanity.types";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 
 export const TextBlock = ({ block }: Props) => {
   const { language } = useLanguage();
-  const text = getTranslation(block?.text, language);
+  const text = localizedText(block?.text, language);
   const alignment = block.alignment || "left";
   const hasPaddingBottom = block.hasPaddingBottom;
 

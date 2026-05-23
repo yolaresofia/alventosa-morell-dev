@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { getTranslation } from "../utils/translations"
+import { localizedText } from "@/app/i18n/text"
 import { useLanguage } from "../context/LanguageContext"
 import { urlForImage } from "@/sanity/lib/utils"
 import type { CoverImage as CoverImageType } from "@/sanity.types"
@@ -15,8 +15,8 @@ export const CoverImage = ({ block }: CoverImageProps) => {
   const { language } = useLanguage()
   const [isMobile, setIsMobile] = useState(false)
 
-  const alt = getTranslation(block.altText, language)
-  const bottomText = getTranslation(block.bottomText, language)
+  const alt = localizedText(block.altText, language)
+  const bottomText = localizedText(block.bottomText, language)
   const desktopImageUrl = block.image ? urlForImage(block.image)?.width(1920).url() : undefined
   const mobileImageUrl = block.mobileImage ? urlForImage(block.mobileImage)?.width(828).url() : undefined
   const hasPadding = block.hasPadding || false

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getTranslation } from "../utils/translations";
+import { localizedText } from "@/app/i18n/text";
 import type { CoverVideo as CoverVideoType } from "@/sanity.types";
 
 type CoverVideoProps = {
@@ -25,7 +25,7 @@ export const CoverVideo = ({ block }: CoverVideoProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const alt = getTranslation(block.altText, language);
+  const alt = localizedText(block.altText, language);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);

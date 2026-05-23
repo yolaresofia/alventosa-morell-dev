@@ -2,16 +2,11 @@
 
 import { PortableText, PortableTextBlock } from "next-sanity";
 import Link from "next/link";
-import { useLanguage } from "../context/LanguageContext";
 import { useLocale } from "../i18n/client";
-import { uiString, type UiText } from "../i18n/uiText";
-import {
-  getPortableTextTranslation,
-  getTranslation,
-} from "../utils/translations";
+import { localizedPortableText, localizedText } from "../i18n/text";
+import { type UiText } from "../i18n/uiText";
 
 export default function AboutPageClient({ about, uiText }: { about: any; uiText?: UiText | null }) {
-  const { language } = useLanguage();
   const locale = useLocale();
 
   if (!about) return <div>Loading...</div>;
@@ -21,9 +16,9 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
       <div className="md:text-2xl text-[20px] monitor:text-3xl font-medium tracking-wide pb-12">
         <PortableText
           value={
-            getPortableTextTranslation(
+            localizedPortableText(
               about.aboutText,
-              language
+              locale
             ) as PortableTextBlock[]
           }
         />
@@ -31,7 +26,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
 
       <div className="grid grid-cols-1 lg:grid-cols-8 md:grid-cols-6 gap-8 text-sm monitor:text-xl flex-grow">
         <div className="col-span-2">
-          <h2>{getTranslation(about.contact?.titleTranslations, language)}</h2>
+          <h2>{localizedText(about.contact?.titleTranslations, locale)}</h2>
           <a href={`mailto:${about.contact?.email || ""}`}>
             {about.contact?.email}
           </a>
@@ -41,7 +36,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
           </a>
 
           <h2 className="mt-4">
-            {getTranslation(about.office?.titleTranslations, language)}
+            {localizedText(about.office?.titleTranslations, locale)}
           </h2>
           <a href={about.office?.addressUrl?.href || ""} target="_blank" rel="noopener noreferrer">
             <PortableText
@@ -62,9 +57,9 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
           <div className="text-sm monitor:text-xl">
             <PortableText
               value={
-                getPortableTextTranslation(
+                localizedPortableText(
                   about.aboutInfo,
-                  language
+                  locale
                 ) as PortableTextBlock[]
               }
             />
@@ -72,11 +67,11 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
         </div>
 
         <div className="col-span-2">
-          <h2>{getTranslation(about.team?.titleTranslations, language)}</h2>
+          <h2>{localizedText(about.team?.titleTranslations, locale)}</h2>
           {about.team?.coFounders?.map((member: any) => (
             <div key={member._key || member.name} className="py-4">
               <p>{member.name}</p>
-              <p>{getTranslation(member.role, language)}</p>
+              <p>{localizedText(member.role, locale)}</p>
             </div>
           ))}
           {about.team?.teammates?.map((member: any) => (
@@ -85,9 +80,9 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
             </div>
           ))}
           <h2 className="pb-4 pt-8">
-            {getTranslation(
+            {localizedText(
               about.team?.pastTeammatesTitleTranslations,
-              language
+              locale
             )}
           </h2>
           {about.team?.pastTeammates?.map((member: any) => (
@@ -99,7 +94,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
 
         <div className="col-span-2">
           <h2 className="pb-4">
-            {getTranslation(about.awards?.titleTranslations, language)}
+            {localizedText(about.awards?.titleTranslations, locale)}
           </h2>
           {about.awards?.list?.map((award: any) => (
             <div key={award._key || award.title}>
@@ -108,7 +103,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
           ))}
           <div className="pt-4">
             {about.cv.map((entry: any) => {
-              const title = getTranslation(entry.title, language);
+              const title = localizedText(entry.title, locale);
               const fileUrl = entry.file?.asset?.url;
               return (
                 <div key={entry._key || title}>
@@ -133,10 +128,10 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
 
       <nav className="pt-2 text-sm monitor:text-xl flex gap-6 justify-end">
         <Link href={`/${locale}/projects`} className="underline">
-          {uiString(uiText?.common?.viewProjects, locale)}
+          {localizedText(uiText?.common?.viewProjects, locale)}
         </Link>
         <Link href={`/${locale}`} className="underline">
-          {uiString(uiText?.navigation?.home, locale)}
+          {localizedText(uiText?.navigation?.home, locale)}
         </Link>
       </nav>
     </section>

@@ -7,7 +7,7 @@ import { urlForImage } from "@/sanity/lib/utils"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
 import { useLanguage } from "@/app/context/LanguageContext"
-import { getTranslation } from "@/app/utils/translations"
+import { localizedText } from "@/app/i18n/text"
 
 export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
   const { category } = useProjectCategory()
@@ -62,7 +62,7 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
           const isActive = activeSlug === project.slug.current
           const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
           const titleOpacity = isActive ? "lg:opacity-100" : "lg:opacity-0"
-          const altFromSanity = getTranslation(thumbnailImage.altText, language)
+          const altFromSanity = localizedText(thumbnailImage.altText, language)
           const imageAlt = altFromSanity || project.title || "Project thumbnail"
 
           return (

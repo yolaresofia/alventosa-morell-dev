@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
 import { ProjectSummary as ProjectSummaryType } from "@/sanity.types";
 
 type ProjectSummaryProps = {
@@ -22,7 +22,7 @@ export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
         <div className="col-span-12 md:col-span-8 pt-24 lg:pt-0">
           {description && (
             <p className="md:text-base text-sm monitor:text-xl leading-[1.5]">
-              {getTranslation(description, language)}
+              {localizedText(description, language)}
             </p>
           )}
         </div>

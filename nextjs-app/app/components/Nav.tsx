@@ -3,18 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText, type LocalizedString } from "@/app/i18n/text";
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
-
-type LocalizedField = {
-  ca?: string;
-  es?: string;
-  en?: string;
-};
 
 type NavLink = {
   href: string;
-  label: LocalizedField | string;
+  label: LocalizedString | string;
 };
 
 type Props = {
@@ -23,7 +17,7 @@ type Props = {
   currentProjectCategory?: string;
 };
 
-const categoryLabels: Record<string, LocalizedField> = {
+const categoryLabels: Record<string, LocalizedString> = {
   all: { ca: "Tots", es: "Todos", en: "All" },
   uni: { ca: "Unifamiliar", es: "Unifamiliar", en: "Single-family" },
   pluri: { ca: "Plurifamiliar", es: "Plurifamiliar", en: "Multi-family" },
@@ -62,7 +56,7 @@ export default function Nav({ navLinks, languages = [] }: Props) {
           const translatedLabel =
             typeof link.label === "string"
               ? link.label
-              : getTranslation(link.label, language);
+              : localizedText(link.label, language);
 
           return (
             <span
@@ -84,7 +78,7 @@ export default function Nav({ navLinks, languages = [] }: Props) {
       {shouldShowFilters && (
         <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30">
           {categories.map((cat, idx) => {
-            const label = getTranslation(categoryLabels[cat.value], language);
+            const label = localizedText(categoryLabels[cat.value], language);
             const isActive = selectedCategory === cat.value;
 
             return (
