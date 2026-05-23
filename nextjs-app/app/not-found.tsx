@@ -1,7 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getSettings } from "@/sanity/lib/fetchers";
 import { DEFAULT_LOCALE } from "@/app/i18n/config";
 import { localizedText } from "@/app/i18n/text";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const title = localizedText(settings?.uiText?.notFound?.pageTitle, DEFAULT_LOCALE);
+  return {
+    ...(title && { title }),
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function NotFound() {
   const settings = await getSettings();

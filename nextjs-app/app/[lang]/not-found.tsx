@@ -1,7 +1,18 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getSettings } from "@/sanity/lib/fetchers";
 import { getLocaleFromHeaders } from "@/app/i18n/server";
 import { localizedText } from "@/app/i18n/text";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleFromHeaders();
+  const settings = await getSettings();
+  const title = localizedText(settings?.uiText?.notFound?.pageTitle, locale);
+  return {
+    ...(title && { title }),
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function NotFound() {
   const locale = await getLocaleFromHeaders();

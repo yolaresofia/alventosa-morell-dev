@@ -1,7 +1,21 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getSettings } from "@/sanity/lib/fetchers";
 import { getLocaleFromHeaders } from "@/app/i18n/server";
 import { localizedText } from "@/app/i18n/text";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleFromHeaders();
+  const settings = await getSettings();
+  const ui = settings?.uiText?.notFound;
+  const title = localizedText(ui?.projectTitle, locale);
+  const description = localizedText(ui?.projectDescription, locale);
+  return {
+    ...(title && { title }),
+    ...(description && { description }),
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function ProjectNotFound() {
   const locale = await getLocaleFromHeaders();
