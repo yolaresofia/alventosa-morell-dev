@@ -814,6 +814,13 @@ export type UiText = {
   notFound?: {
     pageTitle?: LocalizedString;
     projectTitle?: LocalizedString;
+    projectDescription?: LocalizedString;
+  };
+  pageTitles?: {
+    home?: LocalizedString;
+    about?: LocalizedString;
+    projects?: LocalizedString;
+    projectsIndex?: LocalizedString;
   };
   navigation?: {
     home?: LocalizedString;
@@ -1689,7 +1696,7 @@ export type GetSingleProjectQueryResult = {
   }> | null;
 } | null;
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    },    uiText{      notFound{ pageTitle, projectTitle },      navigation{ home, projects, projectsIndex, about, allProjects },      projectCategories{ all, uni, pluri, equip },      common{ viewProjects }    }  }
+// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    },    uiText{      notFound{ pageTitle, projectTitle, projectDescription },      pageTitles{ home, about, projects, projectsIndex },      navigation{ home, projects, projectsIndex, about, allProjects },      projectCategories{ all, uni, pluri, equip },      common{ viewProjects }    }  }
 export type SettingsQueryResult = {
   siteTitle: string | null;
   description: Array<{
@@ -1781,6 +1788,13 @@ export type SettingsQueryResult = {
     notFound: {
       pageTitle: LocalizedString | null;
       projectTitle: LocalizedString | null;
+      projectDescription: LocalizedString | null;
+    } | null;
+    pageTitles: {
+      home: LocalizedString | null;
+      about: LocalizedString | null;
+      projects: LocalizedString | null;
+      projectsIndex: LocalizedString | null;
     } | null;
     navigation: {
       home: LocalizedString | null;
@@ -1808,6 +1822,6 @@ declare module "@sanity/client" {
     "\n  *[_type == \"about\"][0]{\n    seo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    aboutText,\n    contact { titleTranslations, email, phone },\n    office  { titleTranslations, address, addressUrl },\n    social  { instagram },\n    team    {\n      titleTranslations,\n      coFounders[]{ name, role },\n      teammates[]{ name },\n      teammatesTitleTranslations,\n      pastTeammates[]{ name },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        _key,\n        title\n      }\n    },\n    cv[]{\n      title,\n      file{ asset->{ url } }\n    }\n  }\n": GetAboutPageQueryResult;
     "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail{\n      ...,\n      altText\n    },\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
-    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    uiText{\n      notFound{ pageTitle, projectTitle },\n      navigation{ home, projects, projectsIndex, about, allProjects },\n      projectCategories{ all, uni, pluri, equip },\n      common{ viewProjects }\n    }\n  }\n": SettingsQueryResult;
+    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    uiText{\n      notFound{ pageTitle, projectTitle, projectDescription },\n      pageTitles{ home, about, projects, projectsIndex },\n      navigation{ home, projects, projectsIndex, about, allProjects },\n      projectCategories{ all, uni, pluri, equip },\n      common{ viewProjects }\n    }\n  }\n": SettingsQueryResult;
   }
 }

@@ -5,6 +5,13 @@ export type UiText = {
   notFound?: {
     pageTitle?: LocalizedString | null;
     projectTitle?: LocalizedString | null;
+    projectDescription?: LocalizedString | null;
+  } | null;
+  pageTitles?: {
+    home?: LocalizedString | null;
+    about?: LocalizedString | null;
+    projects?: LocalizedString | null;
+    projectsIndex?: LocalizedString | null;
   } | null;
   navigation?: {
     home?: LocalizedString | null;

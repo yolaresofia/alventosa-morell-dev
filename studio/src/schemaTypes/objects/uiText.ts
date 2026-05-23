@@ -24,6 +24,45 @@ export const uiText = defineType({
           description: 'Ex.: "Projecte no trobat"',
           type: 'localizedString',
         }),
+        defineField({
+          name: 'projectDescription',
+          title: 'Descripció meta projecte no trobat',
+          description: 'Meta description quan el projecte no existeix (SEO). Ex.: "El projecte sol·licitat no s\'ha pogut trobar."',
+          type: 'localizedString',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'pageTitles',
+      title: 'Títols de pàgina (fallback)',
+      description: 'Títols utilitzats com a h1 i fallback SEO quan no hi ha un títol SEO específic configurat.',
+      type: 'object',
+      options: {collapsible: true, collapsed: true},
+      fields: [
+        defineField({
+          name: 'home',
+          title: 'Home (h1)',
+          description: 'h1 invisible de la home per a SEO i accessibilitat. Ex.: "Alventosa Morell Arquitectes"',
+          type: 'localizedString',
+        }),
+        defineField({
+          name: 'about',
+          title: 'About',
+          description: 'Títol SEO i h1 de /about. Ex.: "Sobre Nosaltres"',
+          type: 'localizedString',
+        }),
+        defineField({
+          name: 'projects',
+          title: 'Projectes',
+          description: 'Títol SEO i h1 de /projects quan no hi ha un seoTitle específic. Ex.: "Projectes"',
+          type: 'localizedString',
+        }),
+        defineField({
+          name: 'projectsIndex',
+          title: 'Índex de projectes',
+          description: 'Títol SEO i h1 de /projects/index. Ex.: "Índex de Projectes"',
+          type: 'localizedString',
+        }),
       ],
     }),
     defineField({

@@ -5492,6 +5492,55 @@
                   "name": "localizedString"
                 },
                 "optional": true
+              },
+              "projectDescription": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localizedString"
+                },
+                "optional": true
+              }
+            }
+          },
+          "optional": true
+        },
+        "pageTitles": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "object",
+            "attributes": {
+              "home": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localizedString"
+                },
+                "optional": true
+              },
+              "about": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localizedString"
+                },
+                "optional": true
+              },
+              "projects": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localizedString"
+                },
+                "optional": true
+              },
+              "projectsIndex": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localizedString"
+                },
+                "optional": true
               }
             }
           },
