@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/app/context/LanguageContext";
+import { useLocale } from "@/app/i18n/client";
 import { getTranslation, LocalizedField } from "@/app/utils/translations";
 
 type Props = {
@@ -14,7 +15,8 @@ type Props = {
 
 export default function TopLogo({ logoUrl, logoAltText }: Props) {
   const pathname = usePathname();
-  const isHomepage = pathname === "/";
+  const locale = useLocale();
+  const isHomepage = pathname === `/${locale}`;
 
   const [visible, setVisible] = useState(!isHomepage);
   const { language } = useLanguage();
@@ -41,7 +43,7 @@ export default function TopLogo({ logoUrl, logoAltText }: Props) {
       }`}
     >
       <Link
-        href="/"
+        href={`/${locale}`}
         className="relative block w-[200px] h-[44px] md:w-[250px] md:h-[55px] monitor:w-[300px] monitor:h-[66px]"
       >
         <Image

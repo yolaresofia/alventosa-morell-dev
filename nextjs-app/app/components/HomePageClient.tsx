@@ -7,6 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 import { useLanguage } from "@/app/context/LanguageContext"
+import { useLocale } from "@/app/i18n/client"
 import { getTranslation, LocalizedField } from "@/app/utils/translations"
 
 type Props = {
@@ -26,6 +27,7 @@ const CUSTOM_ANIMATION_DURATION = 600
 
 export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props) {
   const pathname = usePathname()
+  const locale = useLocale()
   const projects = useMemo(() => homepage?.featuredProjects || [], [homepage?.featuredProjects])
   const [activeIndex, setActiveIndex] = useState(0)
   const activeIndexRef = useRef(activeIndex)
@@ -79,7 +81,7 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
   }, [])
 
   useEffect(() => {
-    const shouldPlayAnimation = isLargeDesktop && pathname === "/" && isFirstLoad
+    const shouldPlayAnimation = isLargeDesktop && pathname === `/${locale}` && isFirstLoad
     if (shouldPlayAnimation) {
       requestAnimationFrame(() => {
         setOverlayOpacity(1)
@@ -251,7 +253,7 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
               (isDesktop ? featuredAltRaw : mobileAltRaw) || featuredAltRaw || mobileAltRaw || fallbackAlt
             return (
               <Link
-                href={`/projects/${slug}`}
+                href={`/${locale}/projects/${slug}`}
                 key={slug}
                 data-slug={slug}
                 className="flex-shrink-0 flex flex-col items-start"

@@ -1,5 +1,5 @@
 import { client } from "@/sanity/lib/client";
-import { getAboutPageQuery } from "@/sanity/lib/queries";
+import { getAboutPageQuery, settingsQuery } from "@/sanity/lib/queries";
 import { resolveOpenGraphImage } from "@/sanity/lib/utils";
 import AboutPageClient from "@/app/components/AboutPageClient";
 import type { Metadata } from "next";
@@ -56,12 +56,15 @@ export default async function AboutPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const about = await client.fetch(getAboutPageQuery);
+  const [about, settings] = await Promise.all([
+    client.fetch(getAboutPageQuery),
+    client.fetch(settingsQuery),
+  ]);
 
   return (
     <>
       <h1 className="sr-only">{ABOUT_FALLBACK_TITLE[lang as Locale]} — Alventosa Morell Arquitectes</h1>
-      <AboutPageClient about={about} />
+      <AboutPageClient about={about} uiText={settings?.uiText} />
     </>
   );
 }

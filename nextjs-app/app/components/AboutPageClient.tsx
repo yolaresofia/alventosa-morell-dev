@@ -3,13 +3,16 @@
 import { PortableText, PortableTextBlock } from "next-sanity";
 import Link from "next/link";
 import { useLanguage } from "../context/LanguageContext";
+import { useLocale } from "../i18n/client";
+import { uiString, type UiText } from "../i18n/uiText";
 import {
   getPortableTextTranslation,
   getTranslation,
 } from "../utils/translations";
 
-export default function AboutPageClient({ about }: { about: any }) {
+export default function AboutPageClient({ about, uiText }: { about: any; uiText?: UiText | null }) {
   const { language } = useLanguage();
+  const locale = useLocale();
 
   if (!about) return <div>Loading...</div>;
 
@@ -129,17 +132,11 @@ export default function AboutPageClient({ about }: { about: any }) {
       </div>
 
       <nav className="pt-2 text-sm monitor:text-xl flex gap-6 justify-end">
-        <Link href="/projects" className="underline">
-          {getTranslation(
-            { ca: "Veure projectes", es: "Ver proyectos", en: "View projects" },
-            language
-          )}
+        <Link href={`/${locale}/projects`} className="underline">
+          {uiString(uiText?.common?.viewProjects, locale)}
         </Link>
-        <Link href="/" className="underline">
-          {getTranslation(
-            { ca: "Inici", es: "Inicio", en: "Home" },
-            language
-          )}
+        <Link href={`/${locale}`} className="underline">
+          {uiString(uiText?.navigation?.home, locale)}
         </Link>
       </nav>
     </section>
