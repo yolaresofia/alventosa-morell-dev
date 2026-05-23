@@ -21,7 +21,9 @@ export function middleware(request: NextRequest) {
 
   const firstSegment = pathname.split("/")[1];
   if ((LOCALES as readonly string[]).includes(firstSegment)) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("x-pathname", pathname);
+    return response;
   }
 
   const url = request.nextUrl.clone();
