@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, type Locale } from "@/app/i18n/config";
+
 export type LocalizedString = {
   ca?: string | null;
   es?: string | null;
@@ -14,12 +16,10 @@ export type SeoFields = {
   } | null;
 };
 
-export type Locale = "ca" | "es" | "en";
-
-/** Pick the best available SEO string, preferring the given locale and falling back to Catalan, then Spanish, then English. */
+/** Pick the best available SEO string, preferring the given locale and falling back through ca → es → en. */
 export function getSeoText(
   field: LocalizedString | null | undefined,
-  locale: Locale = "ca",
+  locale: Locale = DEFAULT_LOCALE,
 ): string | undefined {
   if (!field) return undefined;
   return field[locale] || field.ca || field.es || field.en || undefined;
