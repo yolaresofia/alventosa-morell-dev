@@ -14,8 +14,13 @@ export type SeoFields = {
   } | null;
 };
 
-/** Pick the best available SEO string, defaulting to Catalan. */
-export function getSeoText(field: LocalizedString | null | undefined): string | undefined {
+export type Locale = "ca" | "es" | "en";
+
+/** Pick the best available SEO string, preferring the given locale and falling back to Catalan, then Spanish, then English. */
+export function getSeoText(
+  field: LocalizedString | null | undefined,
+  locale: Locale = "ca",
+): string | undefined {
   if (!field) return undefined;
-  return field.ca || field.es || field.en || undefined;
+  return field[locale] || field.ca || field.es || field.en || undefined;
 }
