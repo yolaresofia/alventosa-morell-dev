@@ -107,6 +107,12 @@ export const settingsQuery = defineQuery(`
       seoTitle,
       seoDescription,
       seoImage{ ..., altText }
+    },
+    uiText{
+      notFound{ pageTitle, projectTitle },
+      navigation{ home, projects, projectsIndex, about, allProjects },
+      projectCategories{ all, uni, pluri, equip },
+      common{ viewProjects }
     }
   }
 `);

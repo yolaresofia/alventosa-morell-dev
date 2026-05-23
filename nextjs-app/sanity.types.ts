@@ -83,6 +83,7 @@ export type Project = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  seo?: Seo;
   title: string;
   slug: Slug;
   featuredImage?: {
@@ -424,6 +425,7 @@ export type About = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  seo?: Seo;
   aboutText?: {
     ca?: Array<{
       children?: Array<{
@@ -722,6 +724,7 @@ export type Home = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  seo?: Seo;
   featuredProjects?: Array<{
     _ref: string;
     _type: "reference";
@@ -794,7 +797,70 @@ export type Settings = {
     href: string;
     _key: string;
   }>;
+  projectsPageSeo?: Seo;
   languages?: Array<string>;
+  uiText?: UiText;
+};
+
+export type LocalizedString = {
+  _type: "localizedString";
+  ca?: string;
+  es?: string;
+  en?: string;
+};
+
+export type UiText = {
+  _type: "uiText";
+  notFound?: {
+    pageTitle?: LocalizedString;
+    projectTitle?: LocalizedString;
+  };
+  navigation?: {
+    home?: LocalizedString;
+    projects?: LocalizedString;
+    projectsIndex?: LocalizedString;
+    about?: LocalizedString;
+    allProjects?: LocalizedString;
+  };
+  projectCategories?: {
+    all?: LocalizedString;
+    uni?: LocalizedString;
+    pluri?: LocalizedString;
+    equip?: LocalizedString;
+  };
+  common?: {
+    viewProjects?: LocalizedString;
+  };
+};
+
+export type Seo = {
+  _type: "seo";
+  seoTitle?: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
+  seoDescription?: {
+    ca?: string;
+    es?: string;
+    en?: string;
+  };
+  seoImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    altText?: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    };
+    _type: "image";
+  };
 };
 
 export type SanityImageCrop = {
@@ -1008,13 +1074,40 @@ export type SanityAssistSchemaTypeField = {
   } & SanityAssistInstruction>;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | SanityFileAsset | Link | BlockContent | Home | Settings | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | Geopoint | CoverVideo | MonoptychImage | Project | Slug | ProjectInfo | TextBlock | ImageCarousel | DiptychImage | ProjectSummary | CoverImage | About | SanityFileAsset | Link | BlockContent | Home | Settings | LocalizedString | UiText | Seo | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Color | RgbaColor | HsvaColor | HslaColor | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/queries.ts
 // Variable: getAboutPageQuery
 // Query: *[_type == "about"][0]{    seo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    },    aboutText,    contact { titleTranslations, email, phone },    office  { titleTranslations, address, addressUrl },    social  { instagram },    team    {      titleTranslations,      coFounders[]{ name, role },      teammates[]{ name },      teammatesTitleTranslations,      pastTeammates[]{ name },      pastTeammatesTitleTranslations    },    aboutInfo,    awards {      titleTranslations,      list[]{        _key,        title      }    },    cv[]{      title,      file{ asset->{ url } }    }  }
 export type GetAboutPageQueryResult = {
-  seo: null;
+  seo: {
+    seoTitle: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    seoDescription: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    seoImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      altText: {
+        ca?: string;
+        es?: string;
+        en?: string;
+      } | null;
+      _type: "image";
+    } | null;
+  } | null;
   aboutText: {
     ca?: Array<{
       children?: Array<{
@@ -1596,7 +1689,7 @@ export type GetSingleProjectQueryResult = {
   }> | null;
 } | null;
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    }  }
+// Query: *[_type == "settings"][0]{    siteTitle,    description,    ogImage,    logo{      ...,      altText    },    navLinks,    languages,    projectsPageSeo{      seoTitle,      seoDescription,      seoImage{ ..., altText }    },    uiText{      notFound{ pageTitle, projectTitle },      navigation{ home, projects, projectsIndex, about, allProjects },      projectCategories{ all, uni, pluri, equip },      common{ viewProjects }    }  }
 export type SettingsQueryResult = {
   siteTitle: string | null;
   description: Array<{
@@ -1656,7 +1749,56 @@ export type SettingsQueryResult = {
     _key: string;
   }> | null;
   languages: Array<string> | null;
-  projectsPageSeo: null;
+  projectsPageSeo: {
+    seoTitle: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    seoDescription: {
+      ca?: string;
+      es?: string;
+      en?: string;
+    } | null;
+    seoImage: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      altText: {
+        ca?: string;
+        es?: string;
+        en?: string;
+      } | null;
+      _type: "image";
+    } | null;
+  } | null;
+  uiText: {
+    notFound: {
+      pageTitle: LocalizedString | null;
+      projectTitle: LocalizedString | null;
+    } | null;
+    navigation: {
+      home: LocalizedString | null;
+      projects: LocalizedString | null;
+      projectsIndex: LocalizedString | null;
+      about: LocalizedString | null;
+      allProjects: LocalizedString | null;
+    } | null;
+    projectCategories: {
+      all: LocalizedString | null;
+      uni: LocalizedString | null;
+      pluri: LocalizedString | null;
+      equip: LocalizedString | null;
+    } | null;
+    common: {
+      viewProjects: LocalizedString | null;
+    } | null;
+  } | null;
 } | null;
 
 // Query TypeMap
@@ -1666,6 +1808,6 @@ declare module "@sanity/client" {
     "\n  *[_type == \"about\"][0]{\n    seo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    aboutText,\n    contact { titleTranslations, email, phone },\n    office  { titleTranslations, address, addressUrl },\n    social  { instagram },\n    team    {\n      titleTranslations,\n      coFounders[]{ name, role },\n      teammates[]{ name },\n      teammatesTitleTranslations,\n      pastTeammates[]{ name },\n      pastTeammatesTitleTranslations\n    },\n    aboutInfo,\n    awards {\n      titleTranslations,\n      list[]{\n        _key,\n        title\n      }\n    },\n    cv[]{\n      title,\n      file{ asset->{ url } }\n    }\n  }\n": GetAboutPageQueryResult;
     "\n  *[_type == \"project\"] | order(projectNumber asc) {\n    title,\n    slug,\n    projectNumber,\n    category,\n    notClickableInIndex,\n    thumbnail{\n      ...,\n      altText\n    },\n    \"projectInfo\": builder[_type == \"projectInfo\"][0]{\n      year,\n      location,\n      program,\n      area,\n    }\n  }\n": GetProjectsGridQueryResult;
     "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    title,\n    slug,\n    projectNumber,\n    builder[]{\n      ...,\n      _type == \"coverVideo\" => {\n        _type,\n        _key,\n        altText,\n        vimeoUrl\n      }\n    }\n  }\n": GetSingleProjectQueryResult;
-    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    }\n  }\n": SettingsQueryResult;
+    "\n  *[_type == \"settings\"][0]{\n    siteTitle,\n    description,\n    ogImage,\n    logo{\n      ...,\n      altText\n    },\n    navLinks,\n    languages,\n    projectsPageSeo{\n      seoTitle,\n      seoDescription,\n      seoImage{ ..., altText }\n    },\n    uiText{\n      notFound{ pageTitle, projectTitle },\n      navigation{ home, projects, projectsIndex, about, allProjects },\n      projectCategories{ all, uni, pluri, equip },\n      common{ viewProjects }\n    }\n  }\n": SettingsQueryResult;
   }
 }
