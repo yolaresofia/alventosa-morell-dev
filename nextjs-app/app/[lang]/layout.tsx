@@ -12,6 +12,7 @@ import Nav from "@/app/components/Nav";
 import TopLogo from "@/app/components/TopLogo";
 import JsonLd from "@/app/components/JsonLd";
 import { LOCALES, isLocale, type Locale } from "@/app/i18n/config";
+import { SITE_URL } from "@/app/config";
 
 export async function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
@@ -90,7 +91,7 @@ export default async function LangLayout({
     "@context": "https://schema.org",
     "@type": "ArchitectureFirm",
     name: "Alventosa Morell Arquitectes",
-    url: "https://www.alventosamorell.com",
+    url: SITE_URL,
     ...(logoUrl && { logo: logoUrl }),
     sameAs: [] as string[],
   };

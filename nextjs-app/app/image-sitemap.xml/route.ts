@@ -1,9 +1,8 @@
 import { client } from "@/sanity/lib/client";
 import { dataset, projectId } from "@/sanity/lib/api";
+import { SITE_URL } from "@/app/config";
 
 export const revalidate = 3600;
-
-const SITE_URL = "https://www.alventosamorell.com";
 
 type ImageBlock = {
   _type: string;

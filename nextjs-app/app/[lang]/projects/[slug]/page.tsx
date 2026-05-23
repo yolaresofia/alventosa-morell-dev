@@ -9,10 +9,9 @@ import type { SeoFields } from "@/sanity/lib/types";
 import { getSeoText } from "@/sanity/lib/types";
 import { LOCALES, isLocale, type Locale } from "@/app/i18n/config";
 import { buildLanguageAlternates } from "@/app/i18n/metadata";
+import { SITE_URL } from "@/app/config";
 
 export const revalidate = 60;
-
-const SITE_URL = "https://www.alventosamorell.com";
 
 const BREADCRUMB_LABELS: Record<Locale, { home: string; projects: string }> = {
   ca: { home: "Inici", projects: "Projectes" },

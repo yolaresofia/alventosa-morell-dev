@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
 import { client } from "@/sanity/lib/client";
+import { SITE_URL } from "@/app/config";
 
 export const revalidate = 3600; // Refresh sitemap every hour
-
-const SITE_URL = "https://www.alventosamorell.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const slugs = await client.fetch<{ slug: string; _updatedAt: string }[]>(

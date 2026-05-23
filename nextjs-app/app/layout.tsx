@@ -10,9 +10,10 @@ import { ProjectCategoryProvider } from "./context/ProjectCategoryContext";
 import { draftMode } from "next/headers";
 import { DisableDraftMode } from "./components/DisableDraftMode";
 import ReactLenis from "lenis/react";
+import { SITE_URL } from "./config";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.alventosamorell.com"),
+  metadataBase: new URL(SITE_URL),
 };
 
 export default async function RootLayout({
