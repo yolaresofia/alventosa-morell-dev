@@ -91,6 +91,20 @@ export const uiText = defineType({
       ],
     }),
     defineField({
+      name: 'projectsIndexColumns',
+      title: 'Columnes de l\'índex de projectes',
+      description: 'Capçaleres de la taula /projects/index.',
+      type: 'object',
+      options: {collapsible: true, collapsed: true},
+      fields: [
+        defineField({name: 'project', title: 'Projecte', type: 'localizedString'}),
+        defineField({name: 'program', title: 'Programa', type: 'localizedString'}),
+        defineField({name: 'location', title: 'Ubicació', type: 'localizedString'}),
+        defineField({name: 'area', title: 'Àrea', type: 'localizedString'}),
+        defineField({name: 'year', title: 'Any', type: 'localizedString'}),
+      ],
+    }),
+    defineField({
       name: 'common',
       title: 'Comú',
       type: 'object',

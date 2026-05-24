@@ -25,6 +25,13 @@ export type UiText = {
     pluri?: LocalizedString | null;
     equip?: LocalizedString | null;
   } | null;
+  projectsIndexColumns?: {
+    project?: LocalizedString | null;
+    program?: LocalizedString | null;
+    location?: LocalizedString | null;
+    area?: LocalizedString | null;
+    year?: LocalizedString | null;
+  } | null;
   common?: {
     viewProjects?: LocalizedString | null;
   } | null;

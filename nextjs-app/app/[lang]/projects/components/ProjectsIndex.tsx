@@ -7,22 +7,18 @@ import { urlForImage } from "@/sanity/lib/utils"
 import { useLocale } from "@/app/i18n/client"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
 import { localizedText } from "@/app/i18n/text"
+import type { UiText } from "@/app/i18n/uiText"
 
 type ProjectsIndexProps = {
   projects: GetProjectsGridQueryResult
+  uiText?: UiText | null
 }
 
-export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
+export default function ProjectsIndex({ projects, uiText }: ProjectsIndexProps) {
   const locale = useLocale()
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
-  const columnTitles = {
-    project: { ca: "Projecte", es: "Proyecto", en: "Project" },
-    program: { ca: "Programa", es: "Programa", en: "Program" },
-    location: { ca: "Ubicació", es: "Ubicación", en: "Location" },
-    area: { ca: "Àrea", es: "Área", en: "Area" },
-    year: { ca: "Any", es: "Año", en: "Year" },
-  }
+  const columnTitles = uiText?.projectsIndexColumns
 
   const formatProgram = (value: string | null | undefined) => {
     if (!value) return "-"
@@ -46,11 +42,11 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-12">
       <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black/70 pb-2 mb-4">
-        <div className="col-span-4 md:col-span-3">{localizedText(columnTitles.project, locale)}</div>
-        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.program, locale)}</div>
-        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.location, locale)}</div>
-        <div className="hidden md:block md:col-span-1">{localizedText(columnTitles.area, locale)}</div>
-        <div className="col-span-1 md:col-span-1 text-right">{localizedText(columnTitles.year, locale)}</div>
+        <div className="col-span-4 md:col-span-3">{localizedText(columnTitles?.project, locale)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles?.program, locale)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles?.location, locale)}</div>
+        <div className="hidden md:block md:col-span-1">{localizedText(columnTitles?.area, locale)}</div>
+        <div className="col-span-1 md:col-span-1 text-right">{localizedText(columnTitles?.year, locale)}</div>
       </div>
 
       <div className="flex flex-col">

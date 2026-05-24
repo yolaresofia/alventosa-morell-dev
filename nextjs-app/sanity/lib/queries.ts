@@ -113,6 +113,7 @@ export const settingsQuery = defineQuery(`
       pageTitles{ home, about, projects, projectsIndex },
       navigation{ home, projects, projectsIndex, about, allProjects },
       projectCategories{ all, uni, pluri, equip },
+      projectsIndexColumns{ project, program, location, area, year },
       common{ viewProjects }
     }
   }
