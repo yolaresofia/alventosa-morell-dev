@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
-import { useLanguage } from "@/app/context/LanguageContext"
 import { useLocale } from "@/app/i18n/client"
 import { localizedText, type LocalizedString } from "@/app/i18n/text"
 
@@ -31,8 +30,7 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
   const projects = useMemo(() => homepage?.featuredProjects || [], [homepage?.featuredProjects])
   const [activeIndex, setActiveIndex] = useState(0)
   const activeIndexRef = useRef(activeIndex)
-  const { language } = useLanguage()
-  const logoAlt = localizedText(logoAltText || undefined, language) || "Alventosa Morell Arquitectes"
+  const logoAlt = localizedText(logoAltText || undefined, locale) || "Alventosa Morell Arquitectes"
 
   useEffect(() => {
     activeIndexRef.current = activeIndex
@@ -246,8 +244,8 @@ export default function HomePageClient({ homepage, logoUrl, logoAltText }: Props
               (isDesktop ? desktopImageUrl : mobileImageUrl || desktopImageUrl) ??
               `/placeholder.svg?width=1000&height=1500&query=project+image+${index}`
             const imageClass = isDesktop ? "h-[85vh] w-auto" : "h-[85vh] w-screen"
-            const featuredAltRaw = localizedText(project.featuredImage?.altText, language)
-            const mobileAltRaw = localizedText(project.mobileFeaturedImage?.altText, language)
+            const featuredAltRaw = localizedText(project.featuredImage?.altText, locale)
+            const mobileAltRaw = localizedText(project.mobileFeaturedImage?.altText, locale)
             const fallbackAlt = project.title || `Projecte destacat ${index + 1}`
             const imageAlt =
               (isDesktop ? featuredAltRaw : mobileAltRaw) || featuredAltRaw || mobileAltRaw || fallbackAlt

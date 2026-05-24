@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
 import { useLocale } from "@/app/i18n/client";
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
 
@@ -19,8 +18,7 @@ export default function TopLogo({ logoUrl, logoAltText }: Props) {
   const isHomepage = pathname === `/${locale}`;
 
   const [visible, setVisible] = useState(!isHomepage);
-  const { language } = useLanguage();
-  const logoAlt = localizedText(logoAltText || undefined, language) || "Alventosa Morell Arquitectes";
+  const logoAlt = localizedText(logoAltText || undefined, locale) || "Alventosa Morell Arquitectes";
 
   useEffect(() => {
     if (!isHomepage) {

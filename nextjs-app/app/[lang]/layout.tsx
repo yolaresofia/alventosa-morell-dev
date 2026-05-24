@@ -5,7 +5,6 @@ import { toPlainText } from "next-sanity";
 import type { Metadata } from "next";
 import { getSettings } from "@/sanity/lib/fetchers";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
-import { LanguageProvider } from "@/app/context/LanguageContext";
 import MobileNav from "@/app/components/MobileNav";
 import Nav from "@/app/components/Nav";
 import TopLogo from "@/app/components/TopLogo";
@@ -98,7 +97,7 @@ export default async function LangLayout({
   };
 
   return (
-    <LanguageProvider initialLanguage={lang}>
+    <>
       <JsonLd data={organizationJsonLd} />
       <nav className="sr-only" aria-label={homeLabel}>
         <Link href={`/${lang}`}>{homeLabel}</Link>
@@ -112,6 +111,6 @@ export default async function LangLayout({
       <MobileNav navLinks={navLinks} languages={languages} />
       {children}
       <Nav navLinks={navLinks} uiText={uiText} />
-    </LanguageProvider>
+    </>
   );
 }
