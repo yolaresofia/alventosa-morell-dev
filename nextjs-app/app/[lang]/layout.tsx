@@ -10,7 +10,8 @@ import MobileNav from "@/app/components/MobileNav";
 import Nav from "@/app/components/Nav";
 import TopLogo from "@/app/components/TopLogo";
 import JsonLd from "@/app/components/JsonLd";
-import { LOCALES, isLocale, type Locale } from "@/app/i18n/config";
+import { LOCALES, isLocale } from "@/app/i18n/config";
+import { localizedText } from "@/app/i18n/text";
 import { SITE_URL } from "@/app/config";
 
 export async function generateStaticParams() {
@@ -71,7 +72,6 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  const locale = lang as Locale;
 
   const settings = await getSettings();
 
@@ -85,6 +85,8 @@ export default async function LangLayout({
     }));
 
   const languages = settings?.languages || ["ca", "es", "en"];
+  const uiText = settings?.uiText ?? null;
+  const homeLabel = localizedText(uiText?.navigation?.home, lang);
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
@@ -96,20 +98,20 @@ export default async function LangLayout({
   };
 
   return (
-    <LanguageProvider initialLanguage={locale}>
+    <LanguageProvider initialLanguage={lang}>
       <JsonLd data={organizationJsonLd} />
-      <nav className="sr-only" aria-label="Navegació principal">
-        <Link href={`/${locale}`}>Inici</Link>
+      <nav className="sr-only" aria-label={homeLabel}>
+        <Link href={`/${lang}`}>{homeLabel}</Link>
         {navLinks.map((link: any) => (
-          <Link key={link.href} href={`/${locale}${link.href}`}>
-            {link.label?.[locale] || link.label?.ca || link.href}
+          <Link key={link.href} href={`/${lang}${link.href}`}>
+            {localizedText(link.label, lang) || link.href}
           </Link>
         ))}
       </nav>
       {logoUrl && <TopLogo logoUrl={logoUrl} logoAltText={logoAltText} />}
       <MobileNav navLinks={navLinks} languages={languages} />
       {children}
-      <Nav navLinks={navLinks} languages={languages} />
+      <Nav navLinks={navLinks} uiText={uiText} />
     </LanguageProvider>
   );
 }

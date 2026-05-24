@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
+import { useLocale } from "@/app/i18n/client";
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
+import type { UiText } from "@/app/i18n/uiText";
 
 type NavLink = {
   href: string;
@@ -13,58 +14,51 @@ type NavLink = {
 
 type Props = {
   navLinks: NavLink[];
-  languages: string[];
-  currentProjectCategory?: string;
+  uiText?: UiText | null;
 };
 
-const categoryLabels: Record<string, LocalizedString> = {
-  all: { ca: "Tots", es: "Todos", en: "All" },
-  uni: { ca: "Unifamiliar", es: "Unifamiliar", en: "Single-family" },
-  pluri: { ca: "Plurifamiliar", es: "Plurifamiliar", en: "Multi-family" },
-  equip: { ca: "Equipaments", es: "Equipamientos", en: "Facilities" },
-};
+const CATEGORY_ORDER = ["all", "uni", "pluri", "equip"] as const;
+type CategoryKey = (typeof CATEGORY_ORDER)[number];
 
-const categories = [
-  { value: "all" },
-  { value: "uni" },
-  { value: "pluri" },
-  { value: "equip" },
-];
+/** True only on the projects listing route (e.g. /ca/projects). Excludes /projects/index and /projects/[slug]. */
+function isProjectsListingPath(pathname: string): boolean {
+  return /^\/[a-z]{2}\/projects\/?$/i.test(pathname);
+}
 
-export default function Nav({ navLinks, languages = [] }: Props) {
+/** True on any project detail route (e.g. /ca/projects/villa-x). Excludes /projects, /projects/index. */
+function isProjectDetailPath(pathname: string): boolean {
+  return /^\/[a-z]{2}\/projects\/[^/]+\/?$/i.test(pathname) && !pathname.endsWith("/index");
+}
+
+export default function Nav({ navLinks, uiText }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const { language, setLanguage } = useLanguage();
+  const locale = useLocale();
   const { category: selectedCategory, setCategory } = useProjectCategory();
-  const availableLanguages = languages.filter((lang) => lang !== language);
 
-  const isProjectDetailPage =
-    pathname.startsWith("/projects/") &&
-    pathname !== "/projects" &&
-    pathname !== "/projects/index";
+  const isOnProjectsListing = isProjectsListingPath(pathname);
+  const isOnProjectDetail = isProjectDetailPath(pathname);
+  const shouldShowFilters = isOnProjectsListing || isOnProjectDetail;
 
-  const shouldShowFilters =
-    (pathname === "/projects" || pathname.startsWith("/projects/")) &&
-    pathname !== "/projects/index";
+  const categoryLabels = uiText?.projectCategories;
 
   return (
     <>
       <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 monitor:h-14 bg-white z-30" />
       <nav className="hidden md:flex fixed bottom-3 left-6 z-40 items-center">
         {navLinks.map((link, idx) => {
-          const isActive = pathname === link.href;
+          const href = `/${locale}${link.href}`;
+          const isActive = pathname === href;
           const translatedLabel =
-            typeof link.label === "string"
-              ? link.label
-              : localizedText(link.label, language);
+            typeof link.label === "string" ? link.label : localizedText(link.label, locale);
 
           return (
             <span
-              key={idx}
+              key={link.href}
               className="flex items-center md:text-base text-sm monitor:text-xl"
             >
               <Link
-                href={link.href}
+                href={href}
                 className={`md:text-base text-sm monitor:text-xl ${isActive ? "text-red-500" : ""}`}
               >
                 {translatedLabel}
@@ -77,47 +71,34 @@ export default function Nav({ navLinks, languages = [] }: Props) {
 
       {shouldShowFilters && (
         <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30">
-          {categories.map((cat, idx) => {
-            const label = localizedText(categoryLabels[cat.value], language);
-            const isActive = selectedCategory === cat.value;
+          {CATEGORY_ORDER.map((key, idx) => {
+            const label = localizedText(categoryLabels?.[key], locale);
+            const isActive = selectedCategory === key;
 
             return (
               <span
-                key={cat.value}
+                key={key}
                 className="flex items-center md:text-base text-sm monitor:text-xl"
               >
                 <button
                   onClick={() => {
-                    if (!isProjectDetailPage) {
-                      setCategory(cat.value as typeof selectedCategory);
+                    if (!isOnProjectDetail) {
+                      setCategory(key as CategoryKey);
                     }
-                    router.push(`/projects?cat=${cat.value}`);
+                    router.push(`/${locale}/projects?cat=${key}`);
                   }}
                   className={`font-medium md:text-base text-sm monitor:text-xl ${
                     isActive ? "text-red-500" : "text-black"
-                  } ${isProjectDetailPage ? "hover:text-red-500" : ""}`}
+                  } ${isOnProjectDetail ? "hover:text-red-500" : ""}`}
                 >
                   {label}
                 </button>
-                {idx < categories.length - 1 && <span>,</span>}
+                {idx < CATEGORY_ORDER.length - 1 && <span>,</span>}
               </span>
             );
           })}
         </div>
       )}
-      <div className="fixed bottom-3 right-6 items-center space-x-1 z-30 hidden md:flex md:text-base text-sm monitor:text-xl">
-        {availableLanguages.map((lang, idx) => (
-          <div key={lang} className="flex items-center space-x-1">
-            <button
-              className="uppercase"
-              onClick={() => setLanguage(lang as "ca" | "es" | "en")}
-            >
-              {lang}
-            </button>
-            {idx < availableLanguages.length - 1 && <span>/</span>}
-          </div>
-        ))}
-      </div>
     </>
   );
 }
