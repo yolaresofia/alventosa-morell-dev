@@ -1,49 +1,63 @@
 import type { MetadataRoute } from "next";
 import { client } from "@/sanity/lib/client";
 import { SITE_URL } from "@/app/config";
+import { LOCALES } from "@/app/i18n/config";
+import { buildLanguageAlternates } from "@/app/i18n/metadata";
 
 export const revalidate = 3600; // Refresh sitemap every hour
+
+type StaticEntry = {
+  /** Path without locale prefix and without leading SITE_URL (e.g. "/about", ""). */
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+};
+
+const STATIC_ENTRIES: StaticEntry[] = [
+  { path: "", changeFrequency: "weekly", priority: 1 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/projects", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/projects/index", changeFrequency: "weekly", priority: 0.6 },
+];
+
+function expandToLocales(
+  path: string,
+  lastModified: Date,
+  changeFrequency: StaticEntry["changeFrequency"],
+  priority: number,
+): MetadataRoute.Sitemap {
+  const languages = buildLanguageAlternates(path, SITE_URL);
+  return LOCALES.map((locale) => ({
+    url: `${SITE_URL}/${locale}${path}`,
+    lastModified,
+    changeFrequency,
+    priority,
+    alternates: { languages },
+  }));
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const slugs = await client.fetch<{ slug: string; _updatedAt: string }[]>(
     `*[_type == "project" && defined(slug.current)]{
       "slug": slug.current,
       _updatedAt
-    }`
+    }`,
   );
 
-  const projectUrls: MetadataRoute.Sitemap = slugs.map((p) => ({
-    url: `${SITE_URL}/projects/${p.slug}`,
-    lastModified: new Date(p._updatedAt),
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
+  const now = new Date();
 
-  return [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${SITE_URL}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/projects`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/projects/index`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    ...projectUrls,
-  ];
+  const staticUrls = STATIC_ENTRIES.flatMap((entry) =>
+    expandToLocales(entry.path, now, entry.changeFrequency, entry.priority),
+  );
+
+  const projectUrls = slugs.flatMap((p) =>
+    expandToLocales(
+      `/projects/${p.slug}`,
+      new Date(p._updatedAt),
+      "monthly",
+      0.7,
+    ),
+  );
+
+  return [...staticUrls, ...projectUrls];
 }
