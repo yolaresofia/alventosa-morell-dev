@@ -122,7 +122,7 @@ export default async function ProjectPage({ params }: RouteParams) {
     <>
       <JsonLd data={breadcrumbJsonLd} />
       <h1 className="sr-only">{project.title}</h1>
-      <ProjectPageClient project={project} allProjects={allProjects} settings={settings} />
+      <ProjectPageClient project={project} allProjects={allProjects} />
     </>
   );
 }

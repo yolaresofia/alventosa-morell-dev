@@ -6,12 +6,12 @@ import Image from "next/image"
 import { urlForImage } from "@/sanity/lib/utils"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
-import { useLanguage } from "@/app/context/LanguageContext"
+import { useLocale } from "@/app/i18n/client"
 import { localizedText } from "@/app/i18n/text"
 
 export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
   const { category } = useProjectCategory()
-  const { language } = useLanguage()
+  const locale = useLocale()
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
   const [hasInteracted, setHasInteracted] = useState(false)
 
@@ -62,12 +62,12 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
           const isActive = activeSlug === project.slug.current
           const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
           const titleOpacity = isActive ? "lg:opacity-100" : "lg:opacity-0"
-          const altFromSanity = localizedText(thumbnailImage.altText, language)
+          const altFromSanity = localizedText(thumbnailImage.altText, locale)
           const imageAlt = altFromSanity || project.title || "Project thumbnail"
 
           return (
             <Link
-              href={`/projects/${project.slug.current}`}
+              href={`/${locale}/projects/${project.slug.current}`}
               key={project.slug.current}
               onMouseEnter={() => handleMouseEnter(project.slug.current)}
               onMouseLeave={handleMouseLeave}

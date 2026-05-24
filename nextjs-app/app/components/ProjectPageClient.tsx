@@ -2,24 +2,24 @@
 
 import { useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Head from "next/head";
 import Link from "next/link";
 
 import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
 import { ImageSliderProvider } from "@/app/context/ImageSliderContext";
 import PageBuilderPage from "@/app/components/PageBuilder";
 import PopupSlider from "@/app/components/PopupSlider";
+import { useLocale } from "@/app/i18n/client";
 
 type Props = {
   project: any;
   allProjects: any[];
-  settings: any;
 };
 
 export default function ProjectPageClient({ project, allProjects }: Props) {
   const { setCategory } = useProjectCategory();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("cat") || "all";
+  const locale = useLocale();
 
   useEffect(() => {
     if (project?.category) {
@@ -59,10 +59,6 @@ export default function ProjectPageClient({ project, allProjects }: Props) {
 
   return (
     <div className="bg-white min-h-screen relative">
-      <Head>
-        <title>{project.title}</title>
-      </Head>
-
       <ImageSliderProvider>
         <PageBuilderPage page={project} />
         <PopupSlider />
@@ -70,7 +66,7 @@ export default function ProjectPageClient({ project, allProjects }: Props) {
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">
           {prevProject && (
             <Link
-              href={`/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
+              href={`/${locale}/projects/${normalizeSlug(prevProject.slug)}${catQuery}`}
               className="flex items-center pr-8 group"
             >
               <span className="group-hover:text-red-500 transition-colors mr-2">
@@ -83,7 +79,7 @@ export default function ProjectPageClient({ project, allProjects }: Props) {
           )}
           {nextProject && (
             <Link
-              href={`/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
+              href={`/${locale}/projects/${normalizeSlug(nextProject.slug)}${catQuery}`}
               className="flex items-center group"
             >
               <span className="group-hover:text-red-500 transition-colors mr-2">

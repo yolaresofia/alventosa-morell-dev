@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { urlForImage } from "@/sanity/lib/utils"
-import { useLanguage } from "@/app/context/LanguageContext"
+import { useLocale } from "@/app/i18n/client"
 import type { GetProjectsGridQueryResult } from "@/sanity.types"
 import { localizedText } from "@/app/i18n/text"
 
@@ -13,7 +13,7 @@ type ProjectsIndexProps = {
 }
 
 export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
-  const { language } = useLanguage()
+  const locale = useLocale()
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
   const columnTitles = {
@@ -46,19 +46,19 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-12">
       <div className="grid grid-cols-5 md:grid-cols-9 font-medium text-xs border-b-[0.5px] border-black/70 pb-2 mb-4">
-        <div className="col-span-4 md:col-span-3">{localizedText(columnTitles.project, language)}</div>
-        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.program, language)}</div>
-        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.location, language)}</div>
-        <div className="hidden md:block md:col-span-1">{localizedText(columnTitles.area, language)}</div>
-        <div className="col-span-1 md:col-span-1 text-right">{localizedText(columnTitles.year, language)}</div>
+        <div className="col-span-4 md:col-span-3">{localizedText(columnTitles.project, locale)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.program, locale)}</div>
+        <div className="hidden md:block md:col-span-2">{localizedText(columnTitles.location, locale)}</div>
+        <div className="hidden md:block md:col-span-1">{localizedText(columnTitles.area, locale)}</div>
+        <div className="col-span-1 md:col-span-1 text-right">{localizedText(columnTitles.year, locale)}</div>
       </div>
 
       <div className="flex flex-col">
         {sortedProjects.map((project) => {
           const isExpanded = activeSlug === project.slug.current
-          const rawProgram = localizedText(project.projectInfo?.program?.value, language)
+          const rawProgram = localizedText(project.projectInfo?.program?.value, locale)
           const program = formatProgram(rawProgram)
-          const location = localizedText(project.projectInfo?.location?.value, language) || "-"
+          const location = localizedText(project.projectInfo?.location?.value, locale) || "-"
           const area = project.projectInfo?.area?.value || "-"
           const year = project.projectInfo?.year?.value || "-"
           const isClickable = !project.notClickableInIndex
@@ -66,7 +66,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
           const hasThumbnail = !!thumbnail
 
           const projectTitle = project.projectNumber ? `${project.projectNumber} ${project.title}` : project.title
-          const thumbnailAltFromSanity = thumbnail ? localizedText(thumbnail.altText, language) : undefined
+          const thumbnailAltFromSanity = thumbnail ? localizedText(thumbnail.altText, locale) : undefined
           const thumbnailAlt =
             thumbnailAltFromSanity || project.title || project.projectNumber || "Project thumbnail"
 
@@ -92,7 +92,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
                 onMouseLeave={() => setActiveSlug(null)}
               >
                 {isClickable ? (
-                  <Link href={`/projects/${project.slug.current}`}>
+                  <Link href={`/${locale}/projects/${project.slug.current}`}>
                     <DesktopRow />
                   </Link>
                 ) : (
@@ -132,7 +132,7 @@ export default function ProjectsIndex({ projects }: ProjectsIndexProps) {
               <div className="block md:hidden">
                 {isClickable ? (
                   <Link
-                    href={`/projects/${project.slug.current}`}
+                    href={`/${locale}/projects/${project.slug.current}`}
                     className="grid grid-cols-5 text-sm monitor:text-xl items-center py-1.5"
                   >
                     <div className="col-span-4 font-medium">{projectTitle}</div>
