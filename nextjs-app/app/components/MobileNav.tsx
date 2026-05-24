@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useLanguage } from "@/app/context/LanguageContext";
+import { useLocale } from "@/app/i18n/client";
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
 
 type NavLink = {
@@ -21,7 +21,7 @@ export default function MobileNav({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { language } = useLanguage();
+  const locale = useLocale();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
@@ -53,16 +53,17 @@ export default function MobileNav({
       >
         <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const href = link.href ? `/${locale}${link.href}` : `/${locale}`;
+            const isActive = pathname === href;
             const label =
               typeof link.label === "string"
                 ? link.label
-                : localizedText(link.label, language);
+                : localizedText(link.label, locale);
 
             return (
               <Link
-                key={link.href}
-                href={link.href || "/"}
+                key={link.href ?? "/"}
+                href={href}
                 className={`transition-colors ${
                   isActive ? "text-red-500" : "hover:text-red-500"
                 }`}
