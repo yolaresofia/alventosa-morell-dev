@@ -4,7 +4,7 @@ import HomePageClient from "@/app/components/HomePageClient";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
 import { localizedText } from "@/app/i18n/text";
-import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/seo";
 
 export const revalidate = 60;
 

@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
 import { LOCALES } from "@/app/i18n/config";
 import { localizedText } from "@/app/i18n/text";
-import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/page";
+import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/seo";
 import { SITE_URL } from "@/app/config";
 
 export const revalidate = 60;
