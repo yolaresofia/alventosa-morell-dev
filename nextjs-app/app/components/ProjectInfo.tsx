@@ -1,15 +1,13 @@
-"use client";
-
-import { useLocale } from "@/app/i18n/client";
 import { localizedText } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
 import { ProjectInfo as ProjectInfoType } from "@/sanity.types";
 
 type Props = {
   block: ProjectInfoType;
+  locale: Locale;
 };
 
-export const ProjectInfo = ({ block }: Props) => {
-  const locale = useLocale();
+export const ProjectInfo = ({ block, locale }: Props) => {
   const translate = (field: any) => localizedText(field, locale);
 
   return (

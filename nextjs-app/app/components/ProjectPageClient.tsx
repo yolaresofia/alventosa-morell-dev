@@ -60,7 +60,7 @@ export default function ProjectPageClient({ project, allProjects }: Props) {
   return (
     <div className="bg-white min-h-screen relative">
       <ImageSliderProvider>
-        <PageBuilderPage page={project} />
+        <PageBuilderPage page={project} locale={locale} />
         <PopupSlider />
 
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">

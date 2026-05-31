@@ -7,9 +7,11 @@ import Link from "next/link";
 import BlockRenderer from "@/app/components/BlockRenderer";
 import { dataAttr } from "@/sanity/lib/utils";
 import { studioUrl } from "@/sanity/lib/api";
+import type { Locale } from "@/app/i18n/config";
 
 type PageBuilderProps = {
   page: SanityDocument;
+  locale: Locale;
 };
 
 type BuilderSection = {
@@ -27,7 +29,8 @@ type PageData = {
 function renderSections(
   sections: BuilderSection[],
   page: PageData,
-  builderKey: "pageBuilder" | "builder"
+  builderKey: "pageBuilder" | "builder",
+  locale: Locale
 ) {
   return (
     <div
@@ -37,13 +40,13 @@ function renderSections(
         path: builderKey,
       }).toString()}
     >
-      {sections.map((block: any, index: number) => (
+      {sections.map((block: any) => (
         <BlockRenderer
           key={block._key}
-          index={index}
           block={block}
           pageId={page._id}
           pageType={page._type}
+          locale={locale}
         />
       ))}
     </div>
@@ -73,7 +76,7 @@ function renderEmptyState(page: PageData, builderKey: "pageBuilder" | "builder")
   );
 }
 
-export default function PageBuilder({ page }: PageBuilderProps) {
+export default function PageBuilder({ page, locale }: PageBuilderProps) {
   const builderKey: "pageBuilder" | "builder" =
     page._type === "project" ? "builder" : "pageBuilder";
 
@@ -97,6 +100,6 @@ export default function PageBuilder({ page }: PageBuilderProps) {
   });
 
   return pageBuilderSections && pageBuilderSections.length > 0
-    ? renderSections(pageBuilderSections, page as PageData, builderKey)
+    ? renderSections(pageBuilderSections, page as PageData, builderKey, locale)
     : renderEmptyState(page as PageData, builderKey);
 }

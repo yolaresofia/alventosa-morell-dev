@@ -1,17 +1,15 @@
-"use client";
-
-import { useLocale } from "@/app/i18n/client";
 import { localizedText } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
 import { ProjectSummary as ProjectSummaryType } from "@/sanity.types";
 
 type ProjectSummaryProps = {
   block: ProjectSummaryType;
+  locale: Locale;
 };
 
-export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
-  const locale = useLocale();
+export const ProjectSummary = ({ block, locale }: ProjectSummaryProps) => {
   const { number, title, description } = block;
-  
+
   return (
     <section className="w-full px-6 pt-4 pb-24 text-black font-soehne">
       <div className="grid grid-cols-12">
