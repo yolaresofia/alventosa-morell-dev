@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import ProjectPageClient from "@/app/components/ProjectPageClient";
+import ProjectPageContent from "@/app/components/ProjectPageContent";
 import JsonLd from "@/app/components/JsonLd";
 import { client } from "@/sanity/lib/client";
 import { getSettings } from "@/sanity/lib/fetchers";
@@ -22,7 +22,8 @@ const projectSeoQuery = `*[_type == "project" && slug.current == $slug][0]{
   "description": builder[_type == "projectInfo"][0].description
 }`;
 
-type RouteParams = { params: Promise<{ lang: string; slug: string }> };
+type PageParams = Promise<{ lang: string; slug: string }>;
+type PageSearchParams = Promise<{ cat?: string }>;
 
 export async function generateStaticParams() {
   const slugs = await client.fetch(
@@ -34,7 +35,7 @@ export async function generateStaticParams() {
   );
 }
 
-export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const resolved = await params;
   const locale = await resolveLocaleParamSafe(resolved.lang);
   if (!locale) return {};
@@ -64,8 +65,16 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   });
 }
 
-export default async function ProjectPage({ params }: RouteParams) {
+export default async function ProjectPage({
+  params,
+  searchParams,
+}: {
+  params: PageParams;
+  searchParams: PageSearchParams;
+}) {
   const resolved = await params;
+  const { cat } = await searchParams;
+  const selectedCategory = cat || "all";
   const locale = await resolveLocaleParam(resolved.lang);
   const slug = resolved.slug;
 
@@ -122,7 +131,12 @@ export default async function ProjectPage({ params }: RouteParams) {
     <>
       <JsonLd data={breadcrumbJsonLd} />
       <h1 className="sr-only">{project.title}</h1>
-      <ProjectPageClient project={project} allProjects={allProjects} />
+      <ProjectPageContent
+        project={project}
+        allProjects={allProjects}
+        locale={locale}
+        selectedCategory={selectedCategory}
+      />
     </>
   );
 }

@@ -1,7 +1,4 @@
-"use client";
-
 import { SanityDocument } from "next-sanity";
-import { useOptimistic } from "next-sanity/hooks";
 import Link from "next/link";
 
 import BlockRenderer from "@/app/components/BlockRenderer";
@@ -30,7 +27,7 @@ function renderSections(
   sections: BuilderSection[],
   page: PageData,
   builderKey: "pageBuilder" | "builder",
-  locale: Locale
+  locale: Locale,
 ) {
   return (
     <div
@@ -76,30 +73,18 @@ function renderEmptyState(page: PageData, builderKey: "pageBuilder" | "builder")
   );
 }
 
+/**
+ * Server component that renders a page's builder sections. Draft mode visual
+ * feedback still works through SanityLive + VisualEditing wired in the root
+ * layout — the optimistic-section-merge hook that used to live here was the
+ * only reason this needed to be a client component.
+ */
 export default function PageBuilder({ page, locale }: PageBuilderProps) {
   const builderKey: "pageBuilder" | "builder" =
     page._type === "project" ? "builder" : "pageBuilder";
+  const sections = page?.[builderKey] as BuilderSection[] | undefined;
 
-  const pageBuilderSections = useOptimistic<
-    BuilderSection[] | undefined,
-    SanityDocument<PageData>
-  >(page?.[builderKey], (currentSections, action) => {
-    if (action.id !== page._id) {
-      return currentSections;
-    }
-
-    const updatedSections = action.document?.[builderKey];
-    if (updatedSections) {
-      return updatedSections.map(
-        (section) =>
-          currentSections?.find((s) => s._key === section?._key) || section
-      );
-    }
-
-    return currentSections;
-  });
-
-  return pageBuilderSections && pageBuilderSections.length > 0
-    ? renderSections(pageBuilderSections, page as PageData, builderKey, locale)
+  return sections && sections.length > 0
+    ? renderSections(sections, page as PageData, builderKey, locale)
     : renderEmptyState(page as PageData, builderKey);
 }
