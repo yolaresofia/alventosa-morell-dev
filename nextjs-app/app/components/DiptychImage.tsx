@@ -1,176 +1,104 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { DiptychImage as DiptychImageType } from "@/sanity.types";
 import { urlForImage } from "@/sanity/lib/utils";
 import { localizedText } from "@/app/i18n/text";
-import { useImageSlider } from "../context/ImageSliderContext";
+import type { Locale } from "@/app/i18n/config";
+import DiptychImageTrigger from "./DiptychImageTrigger";
 
 type Props = {
   block: DiptychImageType & { _key?: string };
+  locale: Locale;
 };
 
-export const DiptychImage = ({ block }: Props) => {
-  const language: "ca" | "es" | "en" = "ca";
-  const { addImages, openSlider, getImageIndex } = useImageSlider();
-
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [hoverLeft, setHoverLeft] = useState(false);
-  const [hoverRight, setHoverRight] = useState(false);
-  const [leftLoaded, setLeftLoaded] = useState(false);
-  const [rightLoaded, setRightLoaded] = useState(false);
-  const [registered, setRegistered] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  const leftImageUrl = block.leftImage
-    ? urlForImage(block.leftImage)?.url()
-    : undefined;
+/**
+ * Server-rendered diptych image. Both images, alt text and (optional) hover
+ * variants ship in the initial HTML. Hover swap is pure CSS (Tailwind
+ * group-hover). Each side's popup-slider trigger is a tiny client island.
+ */
+export const DiptychImage = ({ block, locale }: Props) => {
+  const leftImageUrl = block.leftImage ? urlForImage(block.leftImage)?.url() : undefined;
   const leftHoverUrl = block.leftImageOnHover
     ? urlForImage(block.leftImageOnHover)?.url()
     : undefined;
 
-  const rightImageUrl = block.rightImage
-    ? urlForImage(block.rightImage)?.url()
-    : undefined;
+  const rightImageUrl = block.rightImage ? urlForImage(block.rightImage)?.url() : undefined;
   const rightHoverUrl = block.rightImageOnHover
     ? urlForImage(block.rightImageOnHover)?.url()
     : undefined;
 
-  const leftAlt = localizedText(block.leftAltText, language);
-  const rightAlt = localizedText(block.rightAltText, language);
-  const leftAltHover = localizedText(block.leftHoverAltText, language);
-  const rightAltHover = localizedText(block.rightHoverAltText, language);
+  const leftAlt = localizedText(block.leftAltText, locale);
+  const rightAlt = localizedText(block.rightAltText, locale);
+  const leftAltHover = localizedText(block.leftHoverAltText, locale);
+  const rightAltHover = localizedText(block.rightHoverAltText, locale);
   const leftAltDefault = leftAlt || leftAltHover || "Imatge esquerra";
   const rightAltDefault = rightAlt || rightAltHover || "Imatge dreta";
   const leftHoverAltDefault = leftAltHover || leftAltDefault;
   const rightHoverAltDefault = rightAltHover || rightAltDefault;
 
-  useEffect(() => {
-    const imagesToAdd = [];
+  if (!leftImageUrl || !rightImageUrl) return null;
 
-    if (leftImageUrl) {
-      imagesToAdd.push({ url: leftImageUrl, alt: leftAltDefault });
-      if (leftHoverUrl) {
-        imagesToAdd.push({ url: leftHoverUrl, alt: `${leftHoverAltDefault} (hover)` });
-      }
-    }
-
-    if (rightImageUrl) {
-      imagesToAdd.push({ url: rightImageUrl, alt: rightAltDefault });
-      if (rightHoverUrl) {
-        imagesToAdd.push({
-          url: rightHoverUrl,
-          alt: `${rightHoverAltDefault} (hover)`,
-        });
-      }
-    }
-
-    if (imagesToAdd.length) {
-      const componentId = `diptych-${block._key || Math.random().toString(36).substr(2, 9)}`;
-      addImages(imagesToAdd, componentId);
-      requestAnimationFrame(() => setRegistered(true));
-    }
-  }, [
-    leftImageUrl,
-    rightImageUrl,
-    leftHoverUrl,
-    rightHoverUrl,
-    leftAlt,
-    rightAlt,
-    leftAltHover,
-    rightAltHover,
-    addImages,
-    block._key,
-  ]);
-
-  const handleLeftClick = () => {
-    if (leftImageUrl) {
-      const currentIndex = getImageIndex(leftImageUrl);
-      if (currentIndex >= 0) openSlider(currentIndex);
-    }
-  };
-
-  const handleRightClick = () => {
-    if (rightImageUrl) {
-      const currentIndex = getImageIndex(rightImageUrl);
-      if (currentIndex >= 0) openSlider(currentIndex);
-    }
-  };
-
-  if (!leftImageUrl || !rightImageUrl || !registered) return null;
+  const sliderImages = [
+    { url: leftImageUrl, alt: leftAltDefault },
+    ...(leftHoverUrl ? [{ url: leftHoverUrl, alt: `${leftHoverAltDefault} (hover)` }] : []),
+    { url: rightImageUrl, alt: rightAltDefault },
+    ...(rightHoverUrl ? [{ url: rightHoverUrl, alt: `${rightHoverAltDefault} (hover)` }] : []),
+  ];
 
   return (
     <section className="w-full px-6 sm:px-16 md:px-24 lg:px-32 xl:px-48 py-32">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          <div
-            className="relative w-full aspect-[3/4] cursor-pointer"
-            onClick={handleLeftClick}
-            onMouseEnter={() => isDesktop && setHoverLeft(true)}
-            onMouseLeave={() => isDesktop && setHoverLeft(false)}
-          >
+          <div className="relative w-full aspect-[3/4] group">
             <Image
               src={leftImageUrl}
               alt={leftAltDefault}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              onLoad={() => setLeftLoaded(true)}
               className={`object-cover transition-opacity duration-700 ease-in-out ${
-                isDesktop && hoverLeft && leftHoverUrl
-                  ? "opacity-0"
-                  : "opacity-100"
-              } ${leftLoaded ? "blur-0" : "blur-md"}`}
+                leftHoverUrl ? "md:group-hover:opacity-0" : ""
+              }`}
             />
-
-            {isDesktop && leftHoverUrl && (
+            {leftHoverUrl && (
               <Image
                 src={leftHoverUrl}
                 alt={leftHoverAltDefault}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className={`object-cover absolute top-0 left-0 transition-opacity duration-700 ease-in-out ${
-                  hoverLeft ? "opacity-100" : "opacity-0"
-                }`}
+                className="object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700 ease-in-out hidden md:block md:group-hover:opacity-100"
               />
             )}
+            <DiptychImageTrigger
+              imageUrl={leftImageUrl}
+              altText={leftAltDefault}
+              sliderImages={sliderImages}
+              componentId={`diptych-${block._key}-left`}
+            />
           </div>
-          <div
-            className="relative w-full aspect-[3/4] cursor-pointer"
-            onClick={handleRightClick}
-            onMouseEnter={() => isDesktop && setHoverRight(true)}
-            onMouseLeave={() => isDesktop && setHoverRight(false)}
-          >
+          <div className="relative w-full aspect-[3/4] group">
             <Image
               src={rightImageUrl}
               alt={rightAltDefault}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              onLoad={() => setRightLoaded(true)}
               className={`object-cover transition-opacity duration-300 ease-in-out ${
-                isDesktop && hoverRight && rightHoverUrl
-                  ? "opacity-0"
-                  : "opacity-100"
-              } ${rightLoaded ? "blur-0" : "blur-md"}`}
+                rightHoverUrl ? "md:group-hover:opacity-0" : ""
+              }`}
             />
-
-            {isDesktop && rightHoverUrl && (
+            {rightHoverUrl && (
               <Image
                 src={rightHoverUrl}
                 alt={rightHoverAltDefault}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className={`object-cover absolute top-0 left-0 transition-opacity duration-300 ease-in-out ${
-                  hoverRight ? "opacity-100" : "opacity-0"
-                }`}
+                className="object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out hidden md:block md:group-hover:opacity-100"
               />
             )}
+            <DiptychImageTrigger
+              imageUrl={rightImageUrl}
+              altText={rightAltDefault}
+              sliderImages={sliderImages}
+              componentId={`diptych-${block._key}-right`}
+            />
           </div>
         </div>
       </div>

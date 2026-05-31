@@ -49,15 +49,15 @@ export default function BlockRenderer({ block, pageId, pageType, locale }: Block
     case "projectInfo":
       return wrap(<ProjectInfo block={block as any} locale={locale} />);
     case "coverImage":
-      return wrap(<CoverImage block={block as any} />);
+      return wrap(<CoverImage block={block as any} locale={locale} />);
     case "coverVideo":
-      return wrap(<CoverVideo block={block as any} />);
+      return wrap(<CoverVideo block={block as any} locale={locale} />);
     case "diptychImage":
-      return wrap(<DiptychImage block={block as any} />);
+      return wrap(<DiptychImage block={block as any} locale={locale} />);
     case "monoptychImage":
-      return wrap(<MonoptychImage block={block as any} />);
+      return wrap(<MonoptychImage block={block as any} locale={locale} />);
     case "imageCarousel":
-      return wrap(<ImageCarousel block={block as any} />);
+      return wrap(<ImageCarousel block={block as any} locale={locale} />);
     default:
       return (
         <div className="w-full bg-gray-100 text-center text-gray-500 p-20 rounded">
