@@ -1,79 +1,70 @@
-"use client"
+import Link from "next/link";
+import Image from "next/image";
+import { urlForImage } from "@/sanity/lib/utils";
+import type { GetProjectsGridQueryResult } from "@/sanity.types";
+import type { Locale } from "@/app/i18n/config";
+import { localizedText } from "@/app/i18n/text";
+import ProjectsGridHoverState from "./ProjectsGridHoverState";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { urlForImage } from "@/sanity/lib/utils"
-import type { GetProjectsGridQueryResult } from "@/sanity.types"
-import { useProjectCategory } from "@/app/context/ProjectCategoryContext"
-import { useLocale } from "@/app/i18n/client"
-import { localizedText } from "@/app/i18n/text"
+type Props = {
+  projects: GetProjectsGridQueryResult;
+  locale: Locale;
+  /** Filter category coming from ?cat=... search param. Defaults to "all". */
+  selectedCategory?: string;
+};
 
-export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResult }) {
-  const { category } = useProjectCategory()
-  const locale = useLocale()
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null)
-  const [hasInteracted, setHasInteracted] = useState(false)
-
+/**
+ * Projects grid rendered server-side. The list, links, images and titles ship
+ * in the initial HTML so crawlers index every project under /[lang]/projects
+ * (and per category when ?cat=... is set). Hover dimming is delegated to a
+ * small client island.
+ */
+export function ProjectsGrid({ projects, locale, selectedCategory = "all" }: Props) {
   const filteredProjects = projects
-    .filter((project) => category === "all" || project.category === category)
+    .filter((project) => selectedCategory === "all" || project.category === selectedCategory)
     .filter((project) => !!project.thumbnail)
     .filter((project) => !project.notClickableInIndex)
     .sort((a, b) => {
-      const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10)
-      const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10)
-    
-      if (yearA !== yearB) {
-        return yearB - yearA
-      }
-    
-      const numA = Number(a.projectNumber) || 0
-      const numB = Number(b.projectNumber) || 0
-      return numB - numA 
-    })
+      const yearA = Number.parseInt(a.projectInfo?.year?.value || "0", 10);
+      const yearB = Number.parseInt(b.projectInfo?.year?.value || "0", 10);
 
-  const firstProjectSlug = filteredProjects[0]?.slug.current || null
+      if (yearA !== yearB) return yearB - yearA;
 
-  const handleMouseEnter = (slug: string) => {
-    setHasInteracted(true)
-    setHoveredSlug(slug)
-  }
+      const numA = Number(a.projectNumber) || 0;
+      const numB = Number(b.projectNumber) || 0;
+      return numB - numA;
+    });
 
-  const handleMouseLeave = () => {
-    setHoveredSlug(null)
-  }
-
-  // When the category changes, reset interaction
-  useEffect(() => {
-    setHasInteracted(false)
-    setHoveredSlug(null)
-  }, [category])
-
-  const activeSlug = hasInteracted ? hoveredSlug : firstProjectSlug
+  const firstProjectSlug = filteredProjects[0]?.slug.current || null;
 
   return (
     <section className="relative w-full min-h-screen px-16 py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16">
+      <ProjectsGridHoverState defaultActiveSlug={firstProjectSlug} />
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-16 gap-y-16"
+        data-projects-grid
+      >
         {filteredProjects.map((project) => {
-          const thumbnailImage = project.thumbnail
-          if (!thumbnailImage) return null
+          const thumbnailImage = project.thumbnail;
+          if (!thumbnailImage) return null;
 
-          const imageUrl = urlForImage(thumbnailImage)?.url()
-          const isActive = activeSlug === project.slug.current
-          const imageOpacity = isActive ? "lg:opacity-100" : "lg:opacity-20"
-          const titleOpacity = isActive ? "lg:opacity-100" : "lg:opacity-0"
-          const altFromSanity = localizedText(thumbnailImage.altText, locale)
-          const imageAlt = altFromSanity || project.title || "Project thumbnail"
+          const imageUrl = urlForImage(thumbnailImage)?.url();
+          const slug = project.slug.current;
+          const altFromSanity = localizedText(thumbnailImage.altText, locale);
+          const imageAlt = altFromSanity || project.title || "Project thumbnail";
 
           return (
             <Link
-              href={`/${locale}/projects/${project.slug.current}`}
-              key={project.slug.current}
-              onMouseEnter={() => handleMouseEnter(project.slug.current)}
-              onMouseLeave={handleMouseLeave}
+              href={`/${locale}/projects/${slug}`}
+              key={slug}
+              data-project-card
+              data-slug={slug}
               className="flex flex-col items-start transition-opacity duration-300"
             >
-              <div className={`relative w-full aspect-[3/4] transition-opacity duration-300 ${imageOpacity}`}>
+              <div
+                data-project-image
+                className="relative w-full aspect-[3/4] transition-opacity duration-300 lg:opacity-20"
+              >
                 {imageUrl && (
                   <Image
                     src={imageUrl || "/placeholder.svg"}
@@ -85,23 +76,18 @@ export function ProjectsGrid({ projects }: { projects: GetProjectsGridQueryResul
                 )}
               </div>
               <div
-                className={`mt-2 min-h-[24px] text-sm monitor:text-xl font-medium leading-tight transition-opacity duration-300 ${titleOpacity}`}
+                data-project-title
+                className="mt-2 min-h-[24px] text-sm monitor:text-xl font-medium leading-tight transition-opacity duration-300 lg:opacity-0"
               >
-                <div className="flex lg:hidden">
+                <div className="flex">
                   <div className="pr-2">{project.projectNumber || "-"}</div>
                   <div>{project.title}</div>
                 </div>
-                {isActive && (
-                  <div className="hidden lg:flex">
-                    <div className="pr-2">{project.projectNumber || "-"}</div>
-                    <div>{project.title}</div>
-                  </div>
-                )}
               </div>
             </Link>
-          )
+          );
         })}
       </div>
     </section>
-  )
+  );
 }

@@ -7,9 +7,16 @@ import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/
 
 export const revalidate = 60;
 
-type RouteParams = { params: Promise<{ lang: string }> };
+type RouteParams = {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ cat?: string }>;
+};
 
-export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
   const locale = await resolveLocaleParamSafe(params);
   if (!locale) return {};
 
@@ -23,8 +30,9 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   });
 }
 
-export default async function ProjectsPage({ params }: RouteParams) {
+export default async function ProjectsPage({ params, searchParams }: RouteParams) {
   const locale = await resolveLocaleParam(params);
+  const { cat } = await searchParams;
 
   const [projects, settings] = await Promise.all([getProjectsGrid(), getSettings()]);
 
@@ -33,7 +41,7 @@ export default async function ProjectsPage({ params }: RouteParams) {
   return (
     <>
       <h1 className="sr-only">{h1}</h1>
-      <ProjectsGrid projects={projects} />
+      <ProjectsGrid projects={projects} locale={locale} selectedCategory={cat} />
     </>
   );
 }
