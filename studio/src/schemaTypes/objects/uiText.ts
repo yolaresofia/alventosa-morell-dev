@@ -76,6 +76,12 @@ export const uiText = defineType({
         defineField({name: 'projectsIndex', title: 'Índex de projectes', type: 'localizedString'}),
         defineField({name: 'about', title: 'Sobre nosaltres', type: 'localizedString'}),
         defineField({name: 'allProjects', title: 'Tots els projectes', type: 'localizedString'}),
+        defineField({
+          name: 'menuToggle',
+          title: 'Etiqueta del botó de menú mòbil',
+          description: 'Etiqueta d\'accessibilitat (aria-label) per al botó hamburguer. Ex.: "Menú".',
+          type: 'localizedString',
+        }),
       ],
     }),
     defineField({

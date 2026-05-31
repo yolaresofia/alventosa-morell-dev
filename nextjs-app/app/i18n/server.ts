@@ -5,10 +5,15 @@ export function resolveLocale(value: string | undefined): Locale {
   return isLocale(value) ? value : DEFAULT_LOCALE;
 }
 
-/** Extract the locale from the current request URL via the `x-pathname` header set by middleware. Useful in not-found.tsx and other places that don't receive params. */
-export async function getLocaleFromHeaders(): Promise<Locale> {
+/** Read the request pathname from the `x-pathname` header set by the proxy. Returns "" if unavailable (e.g. excluded routes). */
+export async function getPathnameFromHeaders(): Promise<string> {
   const h = await headers();
-  const pathname = h.get("x-pathname") || "";
+  return h.get("x-pathname") || "";
+}
+
+/** Extract the locale from the current request URL via the `x-pathname` header set by the proxy. Useful in not-found.tsx and other places that don't receive params. */
+export async function getLocaleFromHeaders(): Promise<Locale> {
+  const pathname = await getPathnameFromHeaders();
   const segment = pathname.split("/").filter(Boolean)[0];
   return isLocale(segment) ? (segment as Locale) : DEFAULT_LOCALE;
 }

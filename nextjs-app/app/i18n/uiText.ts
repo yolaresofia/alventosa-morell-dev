@@ -18,6 +18,7 @@ export type UiText = {
     projectsIndex?: LocalizedString | null;
     about?: LocalizedString | null;
     allProjects?: LocalizedString | null;
+    menuToggle?: LocalizedString | null;
   } | null;
   projectCategories?: {
     all?: LocalizedString | null;

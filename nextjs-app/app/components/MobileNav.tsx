@@ -1,84 +1,46 @@
-"use client";
-
-import { useState } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useLocale } from "@/app/i18n/client";
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
+import MobileNavLink from "./MobileNavLink";
+import MobileNavShell from "./MobileNavShell";
 
 type NavLink = {
   label?: string | LocalizedString;
   href?: string;
 };
 
+type Props = {
+  navLinks?: NavLink[];
+  languages?: string[];
+  locale: Locale;
+  /** Current request pathname (passed from the layout so this component stays sync). */
+  pathname: string;
+  /** Localized aria-label for the menu toggle button, e.g. "Menú". */
+  toggleLabel: string;
+};
+
+/**
+ * Server component that pre-renders all nav links so their labels and hrefs are
+ * in the initial HTML for SEO. The open/close interaction lives in
+ * MobileNavShell (a small client island).
+ */
 export default function MobileNav({
   navLinks = [],
   languages = [],
-}: {
-  navLinks?: NavLink[];
-  languages?: string[];
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const locale = useLocale();
-
-  const toggleMenu = () => setIsOpen((prev) => !prev);
-
+  locale,
+  pathname,
+  toggleLabel,
+}: Props) {
   return (
-    <div className="md:hidden">
-      <div
-        className="fixed top-0 right-0 h-[60px] flex items-center pr-4 z-50 cursor-pointer"
-        onClick={toggleMenu}
-      >
-        <div className="relative w-8 h-6">
-          <span
-            className={`absolute w-8 h-[1px] bg-black transition-transform duration-300 ${
-              isOpen ? "rotate-45 top-2.5" : "top-2"
-            }`}
-            style={{ zIndex: 50 }}
-          />
-          <span
-            className={`absolute w-8 h-[1px] bg-black transition-transform duration-300 ${
-              isOpen ? "-rotate-45 top-2.5" : "top-3.5"
-            }`}
-            style={{ zIndex: 50 }}
-          />
-        </div>
-      </div>
-      <div
-        className={`fixed inset-0 bg-white opacity-90 z-40 ${
-          isOpen ? "block" : "hidden"
-        }`}
-      >
-        <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">
-          {navLinks.map((link) => {
-            const href = link.href ? `/${locale}${link.href}` : `/${locale}`;
-            const isActive = pathname === href;
-            const label =
-              typeof link.label === "string"
-                ? link.label
-                : localizedText(link.label, locale);
+    <MobileNavShell languages={languages} toggleLabel={toggleLabel}>
+      {navLinks.map((link) => {
+        const href = link.href ? `/${locale}${link.href}` : `/${locale}`;
+        const label =
+          typeof link.label === "string"
+            ? link.label
+            : localizedText(link.label, locale);
 
-            return (
-              <Link
-                key={link.href ?? "/"}
-                href={href}
-                className={`transition-colors ${
-                  isActive ? "text-red-500" : "hover:text-red-500"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="w-full text-center mt-8">
-          <LanguageSwitcher languages={languages} mobile />
-        </div>
-      </div>
-    </div>
+        return <MobileNavLink key={href} href={href} label={label} isActive={pathname === href} />;
+      })}
+    </MobileNavShell>
   );
 }

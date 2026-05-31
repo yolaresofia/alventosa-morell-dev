@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { toPlainText } from "next-sanity";
 import type { Metadata } from "next";
 import { getSettings } from "@/sanity/lib/fetchers";
+import { getPathnameFromHeaders } from "@/app/i18n/server";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import MobileNav from "@/app/components/MobileNav";
 import Nav from "@/app/components/Nav";
@@ -72,7 +73,7 @@ export default async function LangLayout({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const settings = await getSettings();
+  const [settings, pathname] = await Promise.all([getSettings(), getPathnameFromHeaders()]);
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
   const logoAltText = settings?.logo?.altText || null;
@@ -86,6 +87,7 @@ export default async function LangLayout({
   const languages = settings?.languages || ["ca", "es", "en"];
   const uiText = settings?.uiText ?? null;
   const homeLabel = localizedText(uiText?.navigation?.home, lang);
+  const menuToggleLabel = localizedText(uiText?.navigation?.menuToggle, lang) || homeLabel;
 
   const organizationJsonLd = {
     "@context": "https://schema.org",
@@ -108,7 +110,13 @@ export default async function LangLayout({
         ))}
       </nav>
       {logoUrl && <TopLogo logoUrl={logoUrl} logoAltText={logoAltText} />}
-      <MobileNav navLinks={navLinks} languages={languages} />
+      <MobileNav
+        navLinks={navLinks}
+        languages={languages}
+        locale={lang}
+        pathname={pathname}
+        toggleLabel={menuToggleLabel}
+      />
       {children}
       <Nav navLinks={navLinks} uiText={uiText} />
     </>

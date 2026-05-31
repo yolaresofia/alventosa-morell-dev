@@ -111,7 +111,7 @@ export const settingsQuery = defineQuery(`
     uiText{
       notFound{ pageTitle, projectTitle, projectDescription },
       pageTitles{ home, about, projects, projectsIndex },
-      navigation{ home, projects, projectsIndex, about, allProjects },
+      navigation{ home, projects, projectsIndex, about, allProjects, menuToggle },
       projectCategories{ all, uni, pluri, equip },
       projectsIndexColumns{ project, program, location, area, year },
       common{ viewProjects }
