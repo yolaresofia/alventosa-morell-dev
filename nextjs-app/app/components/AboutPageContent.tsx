@@ -1,47 +1,47 @@
-"use client";
-
-import { PortableText, PortableTextBlock } from "next-sanity";
+import { PortableText, type PortableTextBlock } from "next-sanity";
 import Link from "next/link";
-import { useLocale } from "../i18n/client";
-import { localizedPortableText, localizedText } from "../i18n/text";
-import { type UiText } from "../i18n/uiText";
+import { localizedPortableText, localizedText } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
+import type { UiText } from "@/app/i18n/uiText";
 
-export default function AboutPageClient({ about, uiText }: { about: any; uiText?: UiText | null }) {
-  const locale = useLocale();
+type Props = {
+  about: any;
+  uiText?: UiText | null;
+  locale: Locale;
+};
 
-  if (!about) return <div>Loading...</div>;
+/**
+ * About page content. Pure server component — everything in this page is static
+ * text and links pulled from sanity, so all of it ships in the initial HTML
+ * for crawlers.
+ */
+export default function AboutPageContent({ about, uiText, locale }: Props) {
+  if (!about) return null;
 
   return (
     <section className="relative w-full min-h-screen bg-white text-black px-6 pt-24 pb-16 flex flex-col">
       <div className="md:text-2xl text-[20px] monitor:text-3xl font-medium tracking-wide pb-12">
         <PortableText
-          value={
-            localizedPortableText(
-              about.aboutText,
-              locale
-            ) as PortableTextBlock[]
-          }
+          value={localizedPortableText(about.aboutText, locale) as PortableTextBlock[]}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-8 md:grid-cols-6 gap-8 text-sm monitor:text-xl flex-grow">
         <div className="col-span-2">
           <h2>{localizedText(about.contact?.titleTranslations, locale)}</h2>
-          <a href={`mailto:${about.contact?.email || ""}`}>
-            {about.contact?.email}
-          </a>
+          <a href={`mailto:${about.contact?.email || ""}`}>{about.contact?.email}</a>
           <br />
-          <a href={`tel:${about.contact?.phone || ""}`}>
-            {about.contact?.phone}
-          </a>
+          <a href={`tel:${about.contact?.phone || ""}`}>{about.contact?.phone}</a>
 
           <h2 className="mt-4">
             {localizedText(about.office?.titleTranslations, locale)}
           </h2>
-          <a href={about.office?.addressUrl?.href || ""} target="_blank" rel="noopener noreferrer">
-            <PortableText
-              value={about.office?.address as PortableTextBlock[]}
-            />
+          <a
+            href={about.office?.addressUrl?.href || ""}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <PortableText value={about.office?.address as PortableTextBlock[]} />
           </a>
 
           <div className="flex flex-col py-4">
@@ -57,10 +57,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
           <div className="text-sm monitor:text-xl">
             <PortableText
               value={
-                localizedPortableText(
-                  about.aboutInfo,
-                  locale
-                ) as PortableTextBlock[]
+                localizedPortableText(about.aboutInfo, locale) as PortableTextBlock[]
               }
             />
           </div>
@@ -80,10 +77,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
             </div>
           ))}
           <h2 className="pb-4 pt-8">
-            {localizedText(
-              about.team?.pastTeammatesTitleTranslations,
-              locale
-            )}
+            {localizedText(about.team?.pastTeammatesTitleTranslations, locale)}
           </h2>
           {about.team?.pastTeammates?.map((member: any) => (
             <div key={member._key || member.name}>
@@ -102,7 +96,7 @@ export default function AboutPageClient({ about, uiText }: { about: any; uiText?
             </div>
           ))}
           <div className="pt-4">
-            {about.cv.map((entry: any) => {
+            {about.cv?.map((entry: any) => {
               const title = localizedText(entry.title, locale);
               const fileUrl = entry.file?.asset?.url;
               return (
