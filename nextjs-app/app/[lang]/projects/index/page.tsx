@@ -37,7 +37,7 @@ export default async function ProjectsIndexPage({ params }: RouteParams) {
   return (
     <>
       <h1 className="sr-only">{h1}</h1>
-      <ProjectsIndex projects={projects} uiText={settings?.uiText} />
+      <ProjectsIndex projects={projects} uiText={settings?.uiText} locale={locale} />
     </>
   );
 }
