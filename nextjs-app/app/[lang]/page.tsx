@@ -1,6 +1,6 @@
 import { getHomepage, getSettings } from "@/sanity/lib/fetchers";
 import { urlForImage } from "@/sanity/lib/utils";
-import HomePageClient from "@/app/components/HomePageClient";
+import HomePageContent from "@/app/components/HomePageContent";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
 import { localizedText } from "@/app/i18n/text";
@@ -37,7 +37,12 @@ export default async function Home({ params }: RouteParams) {
   return (
     <>
       <h1 className="sr-only">{h1}</h1>
-      <HomePageClient homepage={homepage} logoUrl={logoUrl} logoAltText={logoAltText} />
+      <HomePageContent
+        homepage={homepage}
+        logoUrl={logoUrl}
+        logoAltText={logoAltText}
+        locale={locale}
+      />
     </>
   );
 }
