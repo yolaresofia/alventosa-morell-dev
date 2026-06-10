@@ -85,8 +85,8 @@ export function ProjectCategoryProvider({ children }: { children: ReactNode }) {
         <Suspense fallback={null}>
           <CategoryConsumer onCategoryChange={setCategory} />
         </Suspense>
-        {children}
       </ClientOnly>
+      {children}
     </ProjectCategoryContext.Provider>
   )
 }
