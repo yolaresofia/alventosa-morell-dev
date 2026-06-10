@@ -21,9 +21,9 @@ export function proxy(request: NextRequest) {
 
   const firstSegment = pathname.split("/")[1];
   if ((LOCALES as readonly string[]).includes(firstSegment)) {
-    const response = NextResponse.next();
-    response.headers.set("x-pathname", pathname);
-    return response;
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-pathname", pathname);
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   const url = request.nextUrl.clone();

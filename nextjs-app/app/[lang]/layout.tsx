@@ -9,6 +9,7 @@ import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import MobileNav from "@/app/components/MobileNav";
 import Nav from "@/app/components/Nav";
 import TopLogo from "@/app/components/TopLogo";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import JsonLd from "@/app/components/JsonLd";
 import { LOCALES, isLocale } from "@/app/i18n/config";
 import { localizedText } from "@/app/i18n/text";
@@ -126,6 +127,11 @@ export default async function LangLayout({
       />
       {children}
       <Nav navLinks={navLinks} uiText={uiText} locale={lang} pathname={pathname} />
+      <LanguageSwitcher
+        languages={languages}
+        currentLocale={lang}
+        pathname={pathname}
+      />
     </>
   );
 }

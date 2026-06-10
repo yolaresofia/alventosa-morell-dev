@@ -11,15 +11,13 @@ type Props = {
   locale: Locale;
   /** Localized labels for each category, keyed by CategoryKey. Pre-resolved in the server component so they ship in the initial HTML. */
   labels: Record<CategoryKey, string>;
-  /** Whether the current route is a project detail page — disables setCategory, keeps push behavior. */
-  isOnProjectDetail: boolean;
 };
 
 /**
  * Client island for the category filter buttons. Server renders the labels and
  * order; this component just owns the click handlers and active-state styling.
  */
-export default function NavFilters({ locale, labels, isOnProjectDetail }: Props) {
+export default function NavFilters({ locale, labels }: Props) {
   const router = useRouter();
   const { category: selectedCategory, setCategory } = useProjectCategory();
 
@@ -34,14 +32,12 @@ export default function NavFilters({ locale, labels, isOnProjectDetail }: Props)
           >
             <button
               onClick={() => {
-                if (!isOnProjectDetail) {
-                  setCategory(key as CategoryKey);
-                }
+                setCategory(key as CategoryKey);
                 router.push(`/${locale}/projects?cat=${key}`);
               }}
               className={`font-medium md:text-base text-sm monitor:text-xl ${
                 isActive ? "text-red-500" : "text-black"
-              } ${isOnProjectDetail ? "hover:text-red-500" : ""}`}
+              }`}
             >
               {labels[key]}
             </button>

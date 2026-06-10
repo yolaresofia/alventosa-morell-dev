@@ -20,14 +20,12 @@ type Props = {
 const CATEGORY_ORDER = ["all", "uni", "pluri", "equip"] as const;
 type CategoryKey = (typeof CATEGORY_ORDER)[number];
 
-/** True only on the projects listing route (e.g. /ca/projects). Excludes /projects/index and /projects/[slug]. */
-function isProjectsListingPath(pathname: string): boolean {
-  return /^\/[a-z]{2}\/projects\/?$/i.test(pathname);
-}
-
-/** True on any project detail route (e.g. /ca/projects/villa-x). Excludes /projects, /projects/index. */
-function isProjectDetailPath(pathname: string): boolean {
-  return /^\/[a-z]{2}\/projects\/[^/]+\/?$/i.test(pathname) && !pathname.endsWith("/index");
+/** True on the projects grid route (e.g. /ca/projects) or the projects index route (/ca/projects/index). Excludes /projects/[slug]. */
+function shouldShowCategoryFilters(pathname: string): boolean {
+  return (
+    /^\/[a-z]{2}\/projects\/?$/i.test(pathname) ||
+    /^\/[a-z]{2}\/projects\/index\/?$/i.test(pathname)
+  );
 }
 
 /**
@@ -36,9 +34,7 @@ function isProjectDetailPath(pathname: string): boolean {
  * context) live in NavFilters, a small client island.
  */
 export default function Nav({ navLinks, uiText, locale, pathname }: Props) {
-  const isOnProjectsListing = isProjectsListingPath(pathname);
-  const isOnProjectDetail = isProjectDetailPath(pathname);
-  const shouldShowFilters = isOnProjectsListing || isOnProjectDetail;
+  const shouldShowFilters = shouldShowCategoryFilters(pathname);
 
   const categoryLabels = uiText?.projectCategories;
   const resolvedFilterLabels = CATEGORY_ORDER.reduce(
@@ -72,11 +68,7 @@ export default function Nav({ navLinks, uiText, locale, pathname }: Props) {
       </nav>
 
       {shouldShowFilters && (
-        <NavFilters
-          locale={locale}
-          labels={resolvedFilterLabels}
-          isOnProjectDetail={isOnProjectDetail}
-        />
+        <NavFilters locale={locale} labels={resolvedFilterLabels} />
       )}
     </>
   );
