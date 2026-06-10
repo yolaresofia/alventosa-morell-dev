@@ -11,6 +11,7 @@ import { draftMode } from "next/headers";
 import { DisableDraftMode } from "./components/DisableDraftMode";
 import ReactLenis from "lenis/react";
 import { SITE_URL } from "./config";
+import { getLocaleFromHeaders } from "./i18n/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,8 +22,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocaleFromHeaders();
   return (
-    <html lang="ca">
+    <html lang={locale}>
       <body className="font-soehne bg-white text-black overflow-x-hidden">
         <ReactLenis root>
           <ProjectCategoryProvider>
