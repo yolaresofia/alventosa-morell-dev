@@ -109,7 +109,14 @@ export default async function LangLayout({
           </Link>
         ))}
       </nav>
-      {logoUrl && <TopLogo logoUrl={logoUrl} logoAltText={logoAltText} />}
+      {logoUrl && (
+        <TopLogo
+          logoUrl={logoUrl}
+          logoAltText={logoAltText}
+          locale={lang}
+          pathname={pathname}
+        />
+      )}
       <MobileNav
         navLinks={navLinks}
         languages={languages}
@@ -118,7 +125,7 @@ export default async function LangLayout({
         toggleLabel={menuToggleLabel}
       />
       {children}
-      <Nav navLinks={navLinks} uiText={uiText} />
+      <Nav navLinks={navLinks} uiText={uiText} locale={lang} pathname={pathname} />
     </>
   );
 }

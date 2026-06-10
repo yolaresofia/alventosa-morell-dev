@@ -1,20 +1,20 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useLocale } from "@/app/i18n/client";
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
-import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
+import type { Locale } from "@/app/i18n/config";
 import type { UiText } from "@/app/i18n/uiText";
+import NavLink from "./NavLink";
+import NavFilters from "./NavFilters";
 
-type NavLink = {
+type NavLinkItem = {
   href: string;
   label: LocalizedString | string;
 };
 
 type Props = {
-  navLinks: NavLink[];
+  navLinks: NavLinkItem[];
   uiText?: UiText | null;
+  locale: Locale;
+  /** Current request pathname (passed from the layout so this component stays sync). */
+  pathname: string;
 };
 
 const CATEGORY_ORDER = ["all", "uni", "pluri", "equip"] as const;
@@ -30,17 +30,24 @@ function isProjectDetailPath(pathname: string): boolean {
   return /^\/[a-z]{2}\/projects\/[^/]+\/?$/i.test(pathname) && !pathname.endsWith("/index");
 }
 
-export default function Nav({ navLinks, uiText }: Props) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
-  const { category: selectedCategory, setCategory } = useProjectCategory();
-
+/**
+ * Server component that pre-renders desktop nav links so they ship in the
+ * initial HTML for crawlers. The category filter buttons (which need router and
+ * context) live in NavFilters, a small client island.
+ */
+export default function Nav({ navLinks, uiText, locale, pathname }: Props) {
   const isOnProjectsListing = isProjectsListingPath(pathname);
   const isOnProjectDetail = isProjectDetailPath(pathname);
   const shouldShowFilters = isOnProjectsListing || isOnProjectDetail;
 
   const categoryLabels = uiText?.projectCategories;
+  const resolvedFilterLabels = CATEGORY_ORDER.reduce(
+    (acc, key) => {
+      acc[key] = localizedText(categoryLabels?.[key], locale) || key;
+      return acc;
+    },
+    {} as Record<CategoryKey, string>,
+  );
 
   return (
     <>
@@ -49,55 +56,27 @@ export default function Nav({ navLinks, uiText }: Props) {
         {navLinks.map((link, idx) => {
           const href = `/${locale}${link.href}`;
           const isActive = pathname === href;
-          const translatedLabel =
+          const label =
             typeof link.label === "string" ? link.label : localizedText(link.label, locale);
 
           return (
-            <span
+            <NavLink
               key={link.href}
-              className="flex items-center md:text-base text-sm monitor:text-xl"
-            >
-              <Link
-                href={href}
-                className={`md:text-base text-sm monitor:text-xl ${isActive ? "text-red-500" : ""}`}
-              >
-                {translatedLabel}
-              </Link>
-              {idx !== navLinks.length - 1 && <span>,&nbsp;</span>}
-            </span>
+              href={href}
+              label={label}
+              isActive={isActive}
+              isLast={idx === navLinks.length - 1}
+            />
           );
         })}
       </nav>
 
       {shouldShowFilters && (
-        <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30">
-          {CATEGORY_ORDER.map((key, idx) => {
-            const label = localizedText(categoryLabels?.[key], locale);
-            const isActive = selectedCategory === key;
-
-            return (
-              <span
-                key={key}
-                className="flex items-center md:text-base text-sm monitor:text-xl"
-              >
-                <button
-                  onClick={() => {
-                    if (!isOnProjectDetail) {
-                      setCategory(key as CategoryKey);
-                    }
-                    router.push(`/${locale}/projects?cat=${key}`);
-                  }}
-                  className={`font-medium md:text-base text-sm monitor:text-xl ${
-                    isActive ? "text-red-500" : "text-black"
-                  } ${isOnProjectDetail ? "hover:text-red-500" : ""}`}
-                >
-                  {label}
-                </button>
-                {idx < CATEGORY_ORDER.length - 1 && <span>,</span>}
-              </span>
-            );
-          })}
-        </div>
+        <NavFilters
+          locale={locale}
+          labels={resolvedFilterLabels}
+          isOnProjectDetail={isOnProjectDetail}
+        />
       )}
     </>
   );

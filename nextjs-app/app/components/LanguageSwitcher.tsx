@@ -1,9 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import { LOCALES, type Locale } from "@/app/i18n/config";
-import { useLocale } from "@/app/i18n/client";
 
 /** Replace the leading locale segment of the current pathname with `target`. Falls back to `/{target}` if the current pathname has no recognizable locale prefix. */
 function replaceLocaleInPath(pathname: string, target: Locale): string {
@@ -15,24 +11,33 @@ function replaceLocaleInPath(pathname: string, target: Locale): string {
   return `/${segments.join("/")}`;
 }
 
+type Props = {
+  languages: string[];
+  currentLocale: Locale;
+  /** Current request pathname (passed from the layout so this component stays sync). */
+  pathname: string;
+  /** Raw query string (without the leading "?"), or empty. Passed from layout so we keep ?cat=... etc. */
+  search?: string;
+  mobile?: boolean;
+};
+
+/**
+ * Server component: renders locale-switching links in the initial HTML so
+ * crawlers see hreflang siblings without depending on client JS.
+ */
 export default function LanguageSwitcher({
   languages,
+  currentLocale,
+  pathname,
+  search = "",
   mobile = false,
-}: {
-  languages: string[];
-  mobile?: boolean;
-}) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentLocale = useLocale();
-
+}: Props) {
   const otherLocales = languages.filter(
     (lang): lang is Locale =>
       (LOCALES as readonly string[]).includes(lang) && lang !== currentLocale,
   );
 
-  const query = searchParams.toString();
-  const suffix = query ? `?${query}` : "";
+  const suffix = search ? `?${search}` : "";
 
   return (
     <div

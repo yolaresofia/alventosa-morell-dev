@@ -1,5 +1,6 @@
 import { localizedText, type LocalizedString } from "@/app/i18n/text";
 import type { Locale } from "@/app/i18n/config";
+import LanguageSwitcher from "./LanguageSwitcher";
 import MobileNavLink from "./MobileNavLink";
 import MobileNavShell from "./MobileNavShell";
 
@@ -31,7 +32,17 @@ export default function MobileNav({
   toggleLabel,
 }: Props) {
   return (
-    <MobileNavShell languages={languages} toggleLabel={toggleLabel}>
+    <MobileNavShell
+      toggleLabel={toggleLabel}
+      languageSwitcher={
+        <LanguageSwitcher
+          languages={languages}
+          currentLocale={locale}
+          pathname={pathname}
+          mobile
+        />
+      }
+    >
       {navLinks.map((link) => {
         const href = link.href ? `/${locale}${link.href}` : `/${locale}`;
         const label =

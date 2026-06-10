@@ -1,24 +1,23 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import LanguageSwitcher from "./LanguageSwitcher";
 
 type Props = {
   /** Server-rendered nav links (one MobileNavLink per item). */
   children: ReactNode;
-  /** Available locales passed through to LanguageSwitcher. */
-  languages: string[];
+  /** Server-rendered LanguageSwitcher (passed in so it stays in the initial HTML). */
+  languageSwitcher: ReactNode;
   /** Localized aria-label for the toggle button. */
   toggleLabel: string;
 };
 
 /**
- * Client wrapper that owns the open/close state of the mobile menu. The actual
- * link list is passed in as `children` (server-rendered) so the link labels and
- * hrefs ship in the initial HTML for crawlers; only the open/close interaction
- * runs on the client.
+ * Client wrapper that owns the open/close state of the mobile menu. The link
+ * list and the language switcher are passed in (server-rendered) so their
+ * labels and hrefs ship in the initial HTML for crawlers; only the open/close
+ * interaction runs on the client.
  */
-export default function MobileNavShell({ children, languages, toggleLabel }: Props) {
+export default function MobileNavShell({ children, languageSwitcher, toggleLabel }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
@@ -55,9 +54,7 @@ export default function MobileNavShell({ children, languages, toggleLabel }: Pro
         <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">
           {children}
         </div>
-        <div className="w-full text-center mt-8">
-          <LanguageSwitcher languages={languages} mobile />
-        </div>
+        <div className="w-full text-center mt-8">{languageSwitcher}</div>
       </div>
     </div>
   );
