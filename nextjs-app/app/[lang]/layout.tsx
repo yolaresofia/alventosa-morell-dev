@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { toPlainText } from "next-sanity";
 import type { Metadata } from "next";
-import { getSettings } from "@/sanity/lib/fetchers";
+import { getSettings, getAboutPage } from "@/sanity/lib/fetchers";
 import { getPathnameFromHeaders } from "@/app/i18n/server";
 import { resolveOpenGraphImage, urlForImage } from "@/sanity/lib/utils";
 import MobileNav from "@/app/components/MobileNav";
@@ -74,7 +74,11 @@ export default async function LangLayout({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const [settings, pathname] = await Promise.all([getSettings(), getPathnameFromHeaders()]);
+  const [settings, about, pathname] = await Promise.all([
+    getSettings(),
+    getAboutPage(),
+    getPathnameFromHeaders(),
+  ]);
 
   const logoUrl = settings?.logo ? urlForImage(settings.logo)?.url() : null;
   const logoAltText = settings?.logo?.altText || null;
@@ -90,13 +94,32 @@ export default async function LangLayout({
   const homeLabel = localizedText(uiText?.navigation?.home, lang);
   const menuToggleLabel = localizedText(uiText?.navigation?.menuToggle, lang) || homeLabel;
 
+  const addressText = about?.office?.address
+    ? toPlainText(about.office.address).replace(/\s+/g, " ").trim()
+    : null;
+  const instagramUrl =
+    about?.social?.instagram?.href || "https://www.instagram.com/alventosamorell/";
+  const sameAs = [
+    instagramUrl,
+    "https://www.linkedin.com/company/alventosa-morell-arquitectes/",
+  ];
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ArchitectureFirm",
     name: "Alventosa Morell Arquitectes",
     url: SITE_URL,
     ...(logoUrl && { logo: logoUrl }),
-    sameAs: [] as string[],
+    ...(addressText && {
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: addressText,
+        addressCountry: "ES",
+      },
+    }),
+    ...(about?.contact?.phone && { telephone: about.contact.phone }),
+    ...(about?.contact?.email && { email: about.contact.email }),
+    sameAs,
   };
 
   return (
