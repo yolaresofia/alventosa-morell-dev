@@ -39,7 +39,7 @@ export default function HomePageContent({ homepage, logoUrl, logoAltText, locale
       <div className="w-full h-full flex flex-col overflow-hidden z-10">
         <div
           data-home-deck-scroller
-          className="flex pt-0 w-full h-full snap-x snap-mandatory scroll-smooth overflow-x-auto lg:overflow-x-hidden lg:snap-none"
+          className="flex pt-0 w-full h-full snap-x snap-mandatory scroll-smooth overflow-x-auto lg:overflow-x-hidden lg:snap-none lg:scroll-auto"
         >
           {projects.map((project: any, index: number) => {
             const desktopImageUrl = project.featuredImage
