@@ -1,17 +1,15 @@
-"use client";
-
-import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
 import { ProjectSummary as ProjectSummaryType } from "@/sanity.types";
 
 type ProjectSummaryProps = {
   block: ProjectSummaryType;
+  locale: Locale;
 };
 
-export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
-  const { language } = useLanguage();
+export const ProjectSummary = ({ block, locale }: ProjectSummaryProps) => {
   const { number, title, description } = block;
-  
+
   return (
     <section className="w-full px-6 pt-4 pb-24 text-black font-soehne">
       <div className="grid grid-cols-12">
@@ -22,7 +20,7 @@ export const ProjectSummary = ({ block }: ProjectSummaryProps) => {
         <div className="col-span-12 md:col-span-8 pt-24 lg:pt-0">
           {description && (
             <p className="md:text-base text-sm monitor:text-xl leading-[1.5]">
-              {getTranslation(description, language)}
+              {localizedText(description, locale)}
             </p>
           )}
         </div>

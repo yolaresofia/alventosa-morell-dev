@@ -13,6 +13,8 @@ import { home } from './singletons/home'
 import { monoptychImage } from './objects/monoptychImage'
 import { coverVideo } from './objects/coverVideo'
 import { seo } from './objects/seo'
+import { localizedString } from './objects/localizedString'
+import { uiText } from './objects/uiText'
 
 export const schemaTypes = [
   // Singletons
@@ -31,5 +33,7 @@ export const schemaTypes = [
   projectInfo,
   project,
   monoptychImage,
-  coverVideo
+  coverVideo,
+  localizedString,
+  uiText,
 ]

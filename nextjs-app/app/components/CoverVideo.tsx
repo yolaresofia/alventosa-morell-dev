@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getTranslation } from "../utils/translations";
+import { useEffect, useState } from "react";
+import { localizedText } from "@/app/i18n/text";
 import type { CoverVideo as CoverVideoType } from "@/sanity.types";
+import type { Locale } from "@/app/i18n/config";
 
 type CoverVideoProps = {
   block: CoverVideoType;
+  locale: Locale;
 };
 
 function getVimeoEmbedUrl(vimeoUrl: string): string | null {
@@ -20,12 +22,16 @@ function getVimeoEmbedUrl(vimeoUrl: string): string | null {
   }
 }
 
-export const CoverVideo = ({ block }: CoverVideoProps) => {
-  const [language] = useState<"ca" | "es" | "en">("ca");
+/**
+ * Vimeo background video. Stays a client component because of the iframe load
+ * fade-in and the desktop/mobile URL swap. The alt text is rendered in a
+ * sr-only span so crawlers still get the localized caption.
+ */
+export const CoverVideo = ({ block, locale }: CoverVideoProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const alt = getTranslation(block.altText, language);
+  const alt = localizedText(block.altText, locale);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -35,7 +41,7 @@ export const CoverVideo = ({ block }: CoverVideoProps) => {
   }, []);
 
   const embedUrl = getVimeoEmbedUrl(
-    (isMobile ? block.mobileVimeoUrl : block.vimeoUrl) ?? ""
+    (isMobile ? block.mobileVimeoUrl : block.vimeoUrl) ?? "",
   );
 
   if (!embedUrl) return null;
@@ -43,7 +49,10 @@ export const CoverVideo = ({ block }: CoverVideoProps) => {
   return (
     <div className="w-full h-screen relative overflow-hidden bg-white">
       <div className="absolute inset-0 bg-white z-10" />
-      <div className="absolute inset-0 z-20 transition-opacity duration-500" style={{ opacity: isLoaded ? 1 : 0 }}>
+      <div
+        className="absolute inset-0 z-20 transition-opacity duration-500"
+        style={{ opacity: isLoaded ? 1 : 0 }}
+      >
         <iframe
           src={embedUrl}
           onLoad={() => setIsLoaded(true)}

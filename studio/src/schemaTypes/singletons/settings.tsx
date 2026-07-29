@@ -141,5 +141,11 @@ export const settings = defineType({
       of: [{type: 'string'}],
       initialValue: ['ca', 'es', 'en'],
     }),
+    defineField({
+      name: 'uiText',
+      title: 'Textos d\'interfície',
+      description: 'Textos curts de la interfície (navegació, pàgines 404, categories) en cada idioma.',
+      type: 'uiText',
+    }),
   ],
 })

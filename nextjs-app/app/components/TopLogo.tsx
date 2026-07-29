@@ -1,47 +1,31 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation, LocalizedField } from "@/app/utils/translations";
+import { localizedText, type LocalizedString } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
+import TopLogoVisibility from "./TopLogoVisibility";
 
 type Props = {
   logoUrl: string;
-  logoAltText?: LocalizedField | null;
+  logoAltText?: LocalizedString | null;
+  locale: Locale;
+  /** Current request pathname (passed from the layout so this component stays sync). */
+  pathname: string;
 };
 
-export default function TopLogo({ logoUrl, logoAltText }: Props) {
-  const pathname = usePathname();
-  const isHomepage = pathname === "/";
-
-  const [visible, setVisible] = useState(!isHomepage);
-  const { language } = useLanguage();
-  const logoAlt = getTranslation(logoAltText || undefined, language) || "Alventosa Morell Arquitectes";
-
-  useEffect(() => {
-    if (!isHomepage) {
-      setVisible(true);
-      return;
-    }
-    setVisible(false);
-
-    const timer = setTimeout(() => {
-      setVisible(true);
-    }, 1100);
-
-    return () => clearTimeout(timer);
-  }, [isHomepage]);
+/**
+ * Server component that renders the top logo with alt text in the initial HTML.
+ * The homepage fade-in animation is delegated to the TopLogoVisibility client
+ * island; on every other route the logo is visible immediately.
+ */
+export default function TopLogo({ logoUrl, logoAltText, locale, pathname }: Props) {
+  const isHomepage = pathname === `/${locale}`;
+  const logoAlt =
+    localizedText(logoAltText || undefined, locale) || "Alventosa Morell Arquitectes";
 
   return (
-    <div
-      className={`fixed top-0 w-full h-[60px] z-30 flex justify-center items-center px-4 transition-opacity duration-300 ease-in ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
-    >
+    <TopLogoVisibility delayedReveal={isHomepage}>
       <Link
-        href="/"
+        href={`/${locale}`}
         className="relative block w-[200px] h-[44px] md:w-[250px] md:h-[55px] monitor:w-[300px] monitor:h-[66px]"
       >
         <Image
@@ -52,6 +36,6 @@ export default function TopLogo({ logoUrl, logoAltText }: Props) {
           fill
         />
       </Link>
-    </div>
+    </TopLogoVisibility>
   );
 }

@@ -1,16 +1,14 @@
-"use client";
-
-import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
+import { localizedText } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
 import { ProjectInfo as ProjectInfoType } from "@/sanity.types";
 
 type Props = {
   block: ProjectInfoType;
+  locale: Locale;
 };
 
-export const ProjectInfo = ({ block }: Props) => {
-  const { language } = useLanguage();
-  const translate = (field: any) => getTranslation(field, language);
+export const ProjectInfo = ({ block, locale }: Props) => {
+  const translate = (field: any) => localizedText(field, locale);
 
   return (
     <section className="w-full px-6 sm:px-8 md:px-6 pb-12 font-soehne max-w-4xl">
@@ -69,19 +67,20 @@ export const ProjectInfo = ({ block }: Props) => {
             <div>{block.photographer.value}</div>
           </>
         )}
-        {block.awards?.value?.[language] &&
-          block.awards.value[language].length > 0 && (
+        {(() => {
+          const awards = block.awards?.value?.[locale] ?? [];
+          if (awards.length === 0) return null;
+          return (
             <>
-              <div>{translate(block.awards.label)}</div>
+              <div>{translate(block.awards?.label)}</div>
               <div className="flex flex-col gap-0.5">
-                {block.awards.value[language].map(
-                  (award: string, idx: number) => (
-                    <div key={idx}>{award}</div>
-                  )
-                )}
+                {awards.map((award: string, idx: number) => (
+                  <div key={idx}>{award}</div>
+                ))}
               </div>
             </>
-          )}
+          );
+        })()}
       </div>
     </section>
   );

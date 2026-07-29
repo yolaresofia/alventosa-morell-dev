@@ -1,26 +1,28 @@
 import { client } from "@/sanity/lib/client";
 import { dataset, projectId } from "@/sanity/lib/api";
+import { SITE_URL } from "@/app/config";
+import { LOCALES, DEFAULT_LOCALE, type Locale } from "@/app/i18n/config";
 
 export const revalidate = 3600;
 
-const SITE_URL = "https://www.alventosamorell.com";
+type LocalizedAlt = { ca?: string; es?: string; en?: string };
 
 type ImageBlock = {
   _type: string;
   imageRef?: string;
-  altText?: { ca?: string; es?: string; en?: string };
+  altText?: LocalizedAlt;
   leftImageRef?: string;
-  leftAlt?: { ca?: string; es?: string; en?: string };
+  leftAlt?: LocalizedAlt;
   rightImageRef?: string;
-  rightAlt?: { ca?: string; es?: string; en?: string };
-  carouselImages?: { ref?: string; alt?: { ca?: string; es?: string; en?: string } }[];
+  rightAlt?: LocalizedAlt;
+  carouselImages?: { ref?: string; alt?: LocalizedAlt }[];
 };
 
 type ProjectData = {
   title: string;
   slug: string;
   featuredImageRef?: string;
-  featuredAlt?: { ca?: string; es?: string; en?: string };
+  featuredAlt?: LocalizedAlt;
   blocks: ImageBlock[];
 };
 
@@ -32,9 +34,9 @@ function sanityRefToUrl(ref: string): string {
   return `https://cdn.sanity.io/images/${projectId}/${dataset}/${rest}.${ext}?w=1200&auto=format`;
 }
 
-function getAlt(altText?: { ca?: string; es?: string; en?: string }): string {
+function getAlt(altText: LocalizedAlt | undefined, locale: Locale): string {
   if (!altText) return "";
-  return altText.ca || altText.es || altText.en || "";
+  return altText[locale] || altText[DEFAULT_LOCALE] || altText.es || altText.en || "";
 }
 
 function escapeXml(str: string): string {
@@ -44,6 +46,60 @@ function escapeXml(str: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+type ProjectImage = { ref: string; alt?: LocalizedAlt };
+
+function collectProjectImages(project: ProjectData): ProjectImage[] {
+  const images: ProjectImage[] = [];
+
+  if (project.featuredImageRef) {
+    images.push({ ref: project.featuredImageRef, alt: project.featuredAlt });
+  }
+
+  for (const block of project.blocks ?? []) {
+    if ((block._type === "coverImage" || block._type === "monoptychImage") && block.imageRef) {
+      images.push({ ref: block.imageRef, alt: block.altText });
+    }
+
+    if (block._type === "diptychImage") {
+      if (block.leftImageRef) images.push({ ref: block.leftImageRef, alt: block.leftAlt });
+      if (block.rightImageRef) images.push({ ref: block.rightImageRef, alt: block.rightAlt });
+    }
+
+    if (block._type === "imageCarousel" && block.carouselImages) {
+      for (const img of block.carouselImages) {
+        if (img.ref) images.push({ ref: img.ref, alt: img.alt });
+      }
+    }
+  }
+
+  return images;
+}
+
+function renderProjectUrl(
+  project: ProjectData,
+  images: ProjectImage[],
+  locale: Locale,
+): string {
+  const loc = `${SITE_URL}/${locale}/projects/${project.slug}`;
+  const imageNodes = images
+    .map((img) => {
+      const url = sanityRefToUrl(img.ref);
+      const caption = getAlt(img.alt, locale) || project.title;
+      return `
+    <image:image>
+      <image:loc>${escapeXml(url)}</image:loc>
+      <image:title>${escapeXml(project.title)}</image:title>
+      <image:caption>${escapeXml(caption)}</image:caption>
+    </image:image>`;
+    })
+    .join("");
+
+  return `
+  <url>
+    <loc>${escapeXml(loc)}</loc>${imageNodes}
+  </url>`;
 }
 
 export async function GET() {
@@ -63,7 +119,7 @@ export async function GET() {
         "rightAlt": rightAltText,
         "carouselImages": images[]{ "ref": image.asset._ref, "alt": altText }
       }
-    }`
+    }`,
   );
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -71,84 +127,12 @@ export async function GET() {
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
   for (const project of projects) {
-    const images: { url: string; title: string; caption: string }[] = [];
-
-    // Featured image
-    if (project.featuredImageRef) {
-      images.push({
-        url: sanityRefToUrl(project.featuredImageRef),
-        title: `${project.title}`,
-        caption: getAlt(project.featuredAlt) || project.title,
-      });
-    }
-
-    // Builder block images
-    if (project.blocks) {
-      for (const block of project.blocks) {
-        if (block._type === "coverImage" && block.imageRef) {
-          images.push({
-            url: sanityRefToUrl(block.imageRef),
-            title: project.title,
-            caption: getAlt(block.altText) || project.title,
-          });
-        }
-
-        if (block._type === "monoptychImage" && block.imageRef) {
-          images.push({
-            url: sanityRefToUrl(block.imageRef),
-            title: project.title,
-            caption: getAlt(block.altText) || project.title,
-          });
-        }
-
-        if (block._type === "diptychImage") {
-          if (block.leftImageRef) {
-            images.push({
-              url: sanityRefToUrl(block.leftImageRef),
-              title: project.title,
-              caption: getAlt(block.leftAlt) || project.title,
-            });
-          }
-          if (block.rightImageRef) {
-            images.push({
-              url: sanityRefToUrl(block.rightImageRef),
-              title: project.title,
-              caption: getAlt(block.rightAlt) || project.title,
-            });
-          }
-        }
-
-        if (block._type === "imageCarousel" && block.carouselImages) {
-          for (const img of block.carouselImages) {
-            if (img.ref) {
-              images.push({
-                url: sanityRefToUrl(img.ref),
-                title: project.title,
-                caption: getAlt(img.alt) || project.title,
-              });
-            }
-          }
-        }
-      }
-    }
-
+    const images = collectProjectImages(project);
     if (images.length === 0) continue;
 
-    xml += `
-  <url>
-    <loc>${SITE_URL}/projects/${escapeXml(project.slug)}</loc>`;
-
-    for (const img of images) {
-      xml += `
-    <image:image>
-      <image:loc>${escapeXml(img.url)}</image:loc>
-      <image:title>${escapeXml(img.title)}</image:title>
-      <image:caption>${escapeXml(img.caption)}</image:caption>
-    </image:image>`;
+    for (const locale of LOCALES) {
+      xml += renderProjectUrl(project, images, locale);
     }
-
-    xml += `
-  </url>`;
   }
 
   xml += `

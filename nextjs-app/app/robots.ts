@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const SITE_URL = "https://www.alventosamorell.com";
+import { SITE_URL } from "@/app/config";
 
 export default function robots(): MetadataRoute.Robots {
   return {

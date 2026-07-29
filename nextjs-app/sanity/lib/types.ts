@@ -1,8 +1,7 @@
-export type LocalizedString = {
-  ca?: string | null;
-  es?: string | null;
-  en?: string | null;
-};
+import { DEFAULT_LOCALE, type Locale } from "@/app/i18n/config";
+import { type LocalizedString } from "@/app/i18n/text";
+
+export type { LocalizedString };
 
 export type SeoFields = {
   seoTitle?: LocalizedString | null;
@@ -14,8 +13,11 @@ export type SeoFields = {
   } | null;
 };
 
-/** Pick the best available SEO string, defaulting to Catalan. */
-export function getSeoText(field: LocalizedString | null | undefined): string | undefined {
+/** Pick the best available SEO string, preferring the given locale and falling back through ca → es → en. */
+export function getSeoText(
+  field: LocalizedString | null | undefined,
+  locale: Locale = DEFAULT_LOCALE,
+): string | undefined {
   if (!field) return undefined;
-  return field.ca || field.es || field.en || undefined;
+  return field[locale] || field.ca || field.es || field.en || undefined;
 }

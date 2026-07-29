@@ -1,129 +1,75 @@
-"use client";
+import { localizedText, type LocalizedString } from "@/app/i18n/text";
+import type { Locale } from "@/app/i18n/config";
+import type { UiText } from "@/app/i18n/uiText";
+import NavLink from "./NavLink";
+import NavFilters from "./NavFilters";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
-import { getTranslation } from "@/app/utils/translations";
-import { useProjectCategory } from "@/app/context/ProjectCategoryContext";
-
-type LocalizedField = {
-  ca?: string;
-  es?: string;
-  en?: string;
-};
-
-type NavLink = {
+type NavLinkItem = {
   href: string;
-  label: LocalizedField | string;
+  label: LocalizedString | string;
 };
 
 type Props = {
-  navLinks: NavLink[];
-  languages: string[];
-  currentProjectCategory?: string;
+  navLinks: NavLinkItem[];
+  uiText?: UiText | null;
+  locale: Locale;
+  /** Current request pathname (passed from the layout so this component stays sync). */
+  pathname: string;
 };
 
-const categoryLabels: Record<string, LocalizedField> = {
-  all: { ca: "Tots", es: "Todos", en: "All" },
-  uni: { ca: "Unifamiliar", es: "Unifamiliar", en: "Single-family" },
-  pluri: { ca: "Plurifamiliar", es: "Plurifamiliar", en: "Multi-family" },
-  equip: { ca: "Equipaments", es: "Equipamientos", en: "Facilities" },
-};
+const CATEGORY_ORDER = ["all", "uni", "pluri", "equip"] as const;
+type CategoryKey = (typeof CATEGORY_ORDER)[number];
 
-const categories = [
-  { value: "all" },
-  { value: "uni" },
-  { value: "pluri" },
-  { value: "equip" },
-];
+/** True on the projects grid route (e.g. /ca/projects) or the projects index route (/ca/projects/index). Excludes /projects/[slug]. */
+function shouldShowCategoryFilters(pathname: string): boolean {
+  return (
+    /^\/[a-z]{2}\/projects\/?$/i.test(pathname) ||
+    /^\/[a-z]{2}\/projects\/index\/?$/i.test(pathname)
+  );
+}
 
-export default function Nav({ navLinks, languages = [] }: Props) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { language, setLanguage } = useLanguage();
-  const { category: selectedCategory, setCategory } = useProjectCategory();
-  const availableLanguages = languages.filter((lang) => lang !== language);
+/**
+ * Server component that pre-renders desktop nav links so they ship in the
+ * initial HTML for crawlers. The category filter buttons (which need router and
+ * context) live in NavFilters, a small client island.
+ */
+export default function Nav({ navLinks, uiText, locale, pathname }: Props) {
+  const shouldShowFilters = shouldShowCategoryFilters(pathname);
 
-  const isProjectDetailPage =
-    pathname.startsWith("/projects/") &&
-    pathname !== "/projects" &&
-    pathname !== "/projects/index";
-
-  const shouldShowFilters =
-    (pathname === "/projects" || pathname.startsWith("/projects/")) &&
-    pathname !== "/projects/index";
+  const categoryLabels = uiText?.projectCategories;
+  const resolvedFilterLabels = CATEGORY_ORDER.reduce(
+    (acc, key) => {
+      acc[key] = localizedText(categoryLabels?.[key], locale) || key;
+      return acc;
+    },
+    {} as Record<CategoryKey, string>,
+  );
 
   return (
     <>
       <div className="hidden md:block fixed bottom-0 left-0 w-full h-11 monitor:h-14 bg-white z-30" />
       <nav className="hidden md:flex fixed bottom-3 left-6 z-40 items-center">
         {navLinks.map((link, idx) => {
-          const isActive = pathname === link.href;
-          const translatedLabel =
-            typeof link.label === "string"
-              ? link.label
-              : getTranslation(link.label, language);
+          const href = `/${locale}${link.href}`;
+          const isActive = pathname === href;
+          const label =
+            typeof link.label === "string" ? link.label : localizedText(link.label, locale);
 
           return (
-            <span
-              key={idx}
-              className="flex items-center md:text-base text-sm monitor:text-xl"
-            >
-              <Link
-                href={link.href}
-                className={`md:text-base text-sm monitor:text-xl ${isActive ? "text-red-500" : ""}`}
-              >
-                {translatedLabel}
-              </Link>
-              {idx !== navLinks.length - 1 && <span>,&nbsp;</span>}
-            </span>
+            <NavLink
+              key={link.href}
+              href={href}
+              label={label}
+              isActive={isActive}
+              isLast={idx === navLinks.length - 1}
+            />
           );
         })}
       </nav>
 
       {shouldShowFilters && (
-        <div className="hidden md:flex fixed bottom-3 left-1/2 transform -translate-x-1/2 items-center gap-0.5 z-30">
-          {categories.map((cat, idx) => {
-            const label = getTranslation(categoryLabels[cat.value], language);
-            const isActive = selectedCategory === cat.value;
-
-            return (
-              <span
-                key={cat.value}
-                className="flex items-center md:text-base text-sm monitor:text-xl"
-              >
-                <button
-                  onClick={() => {
-                    if (!isProjectDetailPage) {
-                      setCategory(cat.value as typeof selectedCategory);
-                    }
-                    router.push(`/projects?cat=${cat.value}`);
-                  }}
-                  className={`font-medium md:text-base text-sm monitor:text-xl ${
-                    isActive ? "text-red-500" : "text-black"
-                  } ${isProjectDetailPage ? "hover:text-red-500" : ""}`}
-                >
-                  {label}
-                </button>
-                {idx < categories.length - 1 && <span>,</span>}
-              </span>
-            );
-          })}
-        </div>
+        <NavFilters locale={locale} labels={resolvedFilterLabels} />
       )}
-      <div className="fixed bottom-3 right-6 items-center space-x-1 z-30 hidden md:flex md:text-base text-sm monitor:text-xl">
-        {availableLanguages.map((lang, idx) => (
-          <div key={lang} className="flex items-center space-x-1">
-            <button
-              className="uppercase"
-              onClick={() => setLanguage(lang as "ca" | "es" | "en")}
-            >
-              {lang}
-            </button>
-            {idx < availableLanguages.length - 1 && <span>/</span>}
-          </div>
-        ))}
-      </div>
     </>
   );
 }
