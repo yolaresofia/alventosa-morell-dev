@@ -107,24 +107,39 @@ export default async function LangLayout({
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ArchitectureFirm",
+    "@id": `${SITE_URL}/#organization`,
     name: "Alventosa Morell Arquitectes",
     url: SITE_URL,
-    ...(logoUrl && { logo: logoUrl }),
-    ...(addressText && {
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: addressText,
-        addressCountry: "ES",
-      },
-    }),
+    ...(logoUrl && { logo: logoUrl, image: logoUrl }),
+    address: {
+      "@type": "PostalAddress",
+      // streetAddress keeps the full text from Sanity; the discrete fields below
+      // let parsers extract city/postcode/region for local SEO and Maps matching.
+      ...(addressText && { streetAddress: addressText }),
+      postalCode: "08015",
+      addressLocality: "Barcelona",
+      addressRegion: "Catalunya",
+      addressCountry: "ES",
+    },
     ...(about?.contact?.phone && { telephone: about.contact.phone }),
     ...(about?.contact?.email && { email: about.contact.email }),
     sameAs,
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: "Alventosa Morell Arquitectes",
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    inLanguage: ["ca", "es", "en"],
+  };
+
   return (
     <>
       <JsonLd data={organizationJsonLd} />
+      <JsonLd data={websiteJsonLd} />
       <nav className="sr-only" aria-label={homeLabel}>
         <Link href={`/${lang}`}>{homeLabel}</Link>
         {navLinks.map((link: any) => (
