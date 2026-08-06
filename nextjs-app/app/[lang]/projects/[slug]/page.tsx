@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ProjectPageContent from "@/app/components/ProjectPageContent";
 import JsonLd from "@/app/components/JsonLd";
 import { client } from "@/sanity/lib/client";
+import { urlForImage } from "@/sanity/lib/utils";
 import { getSettings } from "@/sanity/lib/fetchers";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
@@ -54,6 +55,13 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     };
   }
 
+  const projectDescription = localizedText(project.description, locale);
+  const fallbackDescription = projectDescription
+    ? projectDescription.length > 155
+      ? projectDescription.slice(0, 152).trimEnd() + "…"
+      : projectDescription
+    : undefined;
+
   return buildSeoMetadata({
     locale,
     path: `/projects/${resolved.slug}`,
@@ -61,6 +69,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     fallbackTitle: project.title
       ? { ca: project.title, es: project.title, en: project.title }
       : settings?.uiText?.pageTitles?.projects,
+    fallbackDescription,
     openGraphType: "article",
   });
 }
@@ -127,9 +136,44 @@ export default async function ProjectPage({
     ],
   };
 
+  const info = project.builder?.find((b: any) => b._type === "projectInfo");
+  const projectDesc = localizedText(info?.description, locale);
+  const projectLocation = localizedText(info?.location?.value, locale);
+  const projectYear = info?.year?.value;
+  const coverBlock = project.builder?.find(
+    (b: any) => b._type === "coverImage" && b.image,
+  );
+  const heroImageUrl = coverBlock?.image
+    ? urlForImage(coverBlock.image)?.width(1200).url()
+    : null;
+
+  const creativeWorkJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": `${SITE_URL}/${locale}/projects/${slug}#project`,
+    name: project.title,
+    url: `${SITE_URL}/${locale}/projects/${slug}`,
+    ...(projectDesc && { description: projectDesc }),
+    creator: { "@id": `${SITE_URL}/#organization` },
+    ...(projectLocation && {
+      locationCreated: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: projectLocation,
+          addressCountry: "ES",
+        },
+      },
+    }),
+    ...(heroImageUrl && { image: heroImageUrl }),
+    ...(projectYear && { dateCreated: String(projectYear) }),
+    inLanguage: locale,
+  };
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={creativeWorkJsonLd} />
       <h1 className="sr-only">{project.title}</h1>
       <ProjectPageContent
         project={project}

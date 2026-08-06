@@ -42,6 +42,8 @@ type BuildSeoMetadataInput = {
   seo?: SeoFields | null;
   /** Fallback title when seo.seoTitle is missing. Usually pulled from settings.uiText.pageTitles. */
   fallbackTitle?: LocalizedString | null;
+  /** Fallback description (already resolved to a plain string) when seo.seoDescription is missing. */
+  fallbackDescription?: string | null;
   /** Open Graph `type` (defaults to "website"). */
   openGraphType?: "website" | "article";
 };
@@ -52,11 +54,19 @@ export function buildSeoMetadata({
   path,
   seo,
   fallbackTitle,
+  fallbackDescription,
   openGraphType = "website",
 }: BuildSeoMetadataInput): Metadata {
   const title =
     getSeoText(seo?.seoTitle, locale) || localizedText(fallbackTitle, locale) || undefined;
-  const description = getSeoText(seo?.seoDescription, locale);
+  // Treat a seoDescription that merely repeats the title as "not a real description"
+  // (many docs have it auto-filled with the page/project name) and fall back to the
+  // richer description instead.
+  const seoDescription = getSeoText(seo?.seoDescription, locale);
+  const description =
+    seoDescription && seoDescription !== title
+      ? seoDescription
+      : fallbackDescription || seoDescription || undefined;
   const ogImage = resolveOpenGraphImage(seo?.seoImage);
 
   return {

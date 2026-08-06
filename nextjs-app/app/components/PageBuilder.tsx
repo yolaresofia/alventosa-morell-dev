@@ -37,13 +37,14 @@ function renderSections(
         path: builderKey,
       }).toString()}
     >
-      {sections.map((block: any) => (
+      {sections.map((block: any, index: number) => (
         <BlockRenderer
           key={block._key}
           block={block}
           pageId={page._id}
           pageType={page._type}
           locale={locale}
+          index={index}
         />
       ))}
     </div>

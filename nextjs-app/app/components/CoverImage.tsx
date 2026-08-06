@@ -7,9 +7,11 @@ import type { CoverImage as CoverImageType } from "@/sanity.types";
 type CoverImageProps = {
   block: CoverImageType;
   locale: Locale;
+  /** When true, eager-loads with fetchpriority=high — set for the above-the-fold hero (first block) to fix LCP. */
+  priority?: boolean;
 };
 
-export const CoverImage = ({ block, locale }: CoverImageProps) => {
+export const CoverImage = ({ block, locale, priority = false }: CoverImageProps) => {
   const alt = localizedText(block.altText, locale);
   const bottomText = localizedText(block.bottomText, locale);
   const desktopImageUrl = block.image ? urlForImage(block.image)?.width(1920).url() : undefined;
@@ -32,6 +34,7 @@ export const CoverImage = ({ block, locale }: CoverImageProps) => {
             fill
             sizes="100vw"
             className="object-cover md:hidden"
+            priority={priority}
             unoptimized
           />
         )}
@@ -42,6 +45,7 @@ export const CoverImage = ({ block, locale }: CoverImageProps) => {
             fill
             sizes="100vw"
             className={`object-cover ${mobileImageUrl ? "hidden md:block" : ""}`}
+            priority={priority}
             unoptimized
           />
         )}
