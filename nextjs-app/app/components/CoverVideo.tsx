@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { localizedText } from "@/app/i18n/text";
 import type { CoverVideo as CoverVideoType } from "@/sanity.types";
@@ -8,6 +9,10 @@ import type { Locale } from "@/app/i18n/config";
 type CoverVideoProps = {
   block: CoverVideoType;
   locale: Locale;
+  /** Vimeo thumbnail URL, painted immediately behind the iframe so the hero has a real LCP element. */
+  poster?: string;
+  /** Eager-load the poster (set for the above-the-fold hero) to fix LCP. */
+  priority?: boolean;
 };
 
 function getVimeoEmbedUrl(vimeoUrl: string): string | null {
@@ -27,7 +32,7 @@ function getVimeoEmbedUrl(vimeoUrl: string): string | null {
  * fade-in and the desktop/mobile URL swap. The alt text is rendered in a
  * sr-only span so crawlers still get the localized caption.
  */
-export const CoverVideo = ({ block, locale }: CoverVideoProps) => {
+export const CoverVideo = ({ block, locale, poster, priority = false }: CoverVideoProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -48,7 +53,19 @@ export const CoverVideo = ({ block, locale }: CoverVideoProps) => {
 
   return (
     <div className="w-full h-screen relative overflow-hidden bg-white">
-      <div className="absolute inset-0 bg-white z-10" />
+      {poster ? (
+        <Image
+          src={poster}
+          alt={alt || ""}
+          fill
+          sizes="100vw"
+          className="object-cover z-0"
+          priority={priority}
+          unoptimized
+        />
+      ) : (
+        <div className="absolute inset-0 bg-white z-10" />
+      )}
       <div
         className="absolute inset-0 z-20 transition-opacity duration-500"
         style={{ opacity: isLoaded ? 1 : 0 }}

@@ -23,6 +23,8 @@ type BlockProps = {
   locale: Locale;
   /** Position of this block in the builder; the first block (0) is the above-the-fold hero. */
   index?: number;
+  /** Vimeo thumbnail for the hero, fetched server-side upstream; used only when the hero is a coverVideo. */
+  heroPoster?: string | null;
 };
 
 /**
@@ -30,7 +32,7 @@ type BlockProps = {
  * ProjectInfo) receive locale as a prop. Client-side blocks (image / video
  * components with sliders) still consume useLocale() internally for now.
  */
-export default function BlockRenderer({ block, pageId, pageType, locale, index = 0 }: BlockProps) {
+export default function BlockRenderer({ block, pageId, pageType, locale, index = 0, heroPoster = null }: BlockProps) {
   const isHero = index === 0;
   const dataSanity = dataAttr({
     id: pageId,
@@ -54,7 +56,14 @@ export default function BlockRenderer({ block, pageId, pageType, locale, index =
     case "coverImage":
       return wrap(<CoverImage block={block as any} locale={locale} priority={isHero} />);
     case "coverVideo":
-      return wrap(<CoverVideo block={block as any} locale={locale} />);
+      return wrap(
+        <CoverVideo
+          block={block as any}
+          locale={locale}
+          poster={isHero ? heroPoster ?? undefined : undefined}
+          priority={isHero}
+        />,
+      );
     case "diptychImage":
       return wrap(<DiptychImage block={block as any} locale={locale} />);
     case "monoptychImage":

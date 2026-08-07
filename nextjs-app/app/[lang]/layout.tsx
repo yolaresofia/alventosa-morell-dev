@@ -94,9 +94,6 @@ export default async function LangLayout({
   const homeLabel = localizedText(uiText?.navigation?.home, lang);
   const menuToggleLabel = localizedText(uiText?.navigation?.menuToggle, lang) || homeLabel;
 
-  const addressText = about?.office?.address
-    ? toPlainText(about.office.address).replace(/\s+/g, " ").trim()
-    : null;
   const instagramUrl =
     about?.social?.instagram?.href || "https://www.instagram.com/alventosamorell/";
   const sameAs = [
@@ -113,9 +110,10 @@ export default async function LangLayout({
     ...(logoUrl && { logo: logoUrl, image: logoUrl }),
     address: {
       "@type": "PostalAddress",
-      // streetAddress keeps the full text from Sanity; the discrete fields below
-      // let parsers extract city/postcode/region for local SEO and Maps matching.
-      ...(addressText && { streetAddress: addressText }),
+      // Structured NAP for local SEO / Maps matching. Kept as discrete fields
+      // (the Sanity office.address is one free-text block, so it can't be split
+      // reliably — these values are stable and rarely change).
+      streetAddress: "Carrer Rocafort 67-69, Local C9",
       postalCode: "08015",
       addressLocality: "Barcelona",
       addressRegion: "Catalunya",

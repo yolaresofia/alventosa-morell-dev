@@ -25,6 +25,11 @@ export default async function RootLayout({
   const locale = await getLocaleFromHeaders();
   return (
     <html lang={locale}>
+      <head>
+        {/* Warm up connections to Vimeo so the background-video heroes on project pages boot faster. */}
+        <link rel="preconnect" href="https://player.vimeo.com" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
+      </head>
       <body className="font-soehne bg-white text-black overflow-x-hidden">
         <ReactLenis root>
           <ProjectCategoryProvider>

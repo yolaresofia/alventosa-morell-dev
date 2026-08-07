@@ -3,6 +3,7 @@ import ProjectPageContent from "@/app/components/ProjectPageContent";
 import JsonLd from "@/app/components/JsonLd";
 import { client } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/utils";
+import { getVimeoThumbnail } from "@/app/utils/vimeo";
 import { getSettings } from "@/sanity/lib/fetchers";
 import type { Metadata } from "next";
 import type { SeoFields } from "@/sanity/lib/types";
@@ -147,6 +148,14 @@ export default async function ProjectPage({
     ? urlForImage(coverBlock.image)?.width(1200).url()
     : null;
 
+  // If the first builder block is a background video, fetch its Vimeo thumbnail
+  // so CoverVideo can paint a real (LCP-eligible) poster behind the iframe.
+  const firstBlock = project.builder?.[0];
+  const heroPoster =
+    firstBlock?._type === "coverVideo"
+      ? await getVimeoThumbnail(firstBlock.vimeoUrl || firstBlock.mobileVimeoUrl || "")
+      : null;
+
   const creativeWorkJsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -180,6 +189,7 @@ export default async function ProjectPage({
         allProjects={allProjects}
         locale={locale}
         selectedCategory={selectedCategory}
+        heroPoster={heroPoster}
       />
     </>
   );
