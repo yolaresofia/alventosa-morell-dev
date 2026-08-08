@@ -9,6 +9,8 @@ import type { Locale } from "@/app/i18n/config";
 type PageBuilderProps = {
   page: SanityDocument;
   locale: Locale;
+  /** Vimeo thumbnail for the hero (fetched server-side in the page); used when the first block is a coverVideo. */
+  heroPoster?: string | null;
 };
 
 type BuilderSection = {
@@ -28,6 +30,7 @@ function renderSections(
   page: PageData,
   builderKey: "pageBuilder" | "builder",
   locale: Locale,
+  heroPoster: string | null,
 ) {
   return (
     <div
@@ -45,6 +48,7 @@ function renderSections(
           pageType={page._type}
           locale={locale}
           index={index}
+          heroPoster={heroPoster}
         />
       ))}
     </div>
@@ -80,12 +84,12 @@ function renderEmptyState(page: PageData, builderKey: "pageBuilder" | "builder")
  * layout — the optimistic-section-merge hook that used to live here was the
  * only reason this needed to be a client component.
  */
-export default function PageBuilder({ page, locale }: PageBuilderProps) {
+export default function PageBuilder({ page, locale, heroPoster = null }: PageBuilderProps) {
   const builderKey: "pageBuilder" | "builder" =
     page._type === "project" ? "builder" : "pageBuilder";
   const sections = page?.[builderKey] as BuilderSection[] | undefined;
 
   return sections && sections.length > 0
-    ? renderSections(sections, page as PageData, builderKey, locale)
+    ? renderSections(sections, page as PageData, builderKey, locale, heroPoster)
     : renderEmptyState(page as PageData, builderKey);
 }

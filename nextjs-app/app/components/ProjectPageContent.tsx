@@ -11,6 +11,7 @@ type Props = {
   allProjects: any[];
   locale: Locale;
   selectedCategory: string;
+  heroPoster?: string | null;
 };
 
 function normalizeSlug(slug: any): string | undefined {
@@ -30,6 +31,7 @@ export default function ProjectPageContent({
   allProjects,
   locale,
   selectedCategory,
+  heroPoster = null,
 }: Props) {
   const filteredProjects = allProjects
     .filter((p) => selectedCategory === "all" || p.category === selectedCategory)
@@ -59,7 +61,7 @@ export default function ProjectPageContent({
     <div className="bg-white min-h-screen relative">
       <ProjectCategorySync category={project?.category} />
       <ImageSliderProvider>
-        <PageBuilder page={project} locale={locale} />
+        <PageBuilder page={project} locale={locale} heroPoster={heroPoster} />
         <PopupSlider />
 
         <div className="flex items-center text-sm monitor:text-xl px-6 mb-24">

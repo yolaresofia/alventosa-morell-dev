@@ -11,7 +11,7 @@ import Nav from "@/app/components/Nav";
 import TopLogo from "@/app/components/TopLogo";
 import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import JsonLd from "@/app/components/JsonLd";
-import { LOCALES, isLocale } from "@/app/i18n/config";
+import { LOCALES, isLocale, type Locale } from "@/app/i18n/config";
 import { localizedText } from "@/app/i18n/text";
 import { SITE_URL } from "@/app/config";
 
@@ -94,9 +94,6 @@ export default async function LangLayout({
   const homeLabel = localizedText(uiText?.navigation?.home, lang);
   const menuToggleLabel = localizedText(uiText?.navigation?.menuToggle, lang) || homeLabel;
 
-  const addressText = about?.office?.address
-    ? toPlainText(about.office.address).replace(/\s+/g, " ").trim()
-    : null;
   const instagramUrl =
     about?.social?.instagram?.href || "https://www.instagram.com/alventosamorell/";
   const sameAs = [
@@ -104,18 +101,42 @@ export default async function LangLayout({
     "https://www.linkedin.com/company/alventosa-morell-arquitectes/",
   ];
 
+  const seoSlogan: Record<Locale, string> = {
+    ca: "Arquitectura bioclimàtica a Barcelona",
+    es: "Arquitectura bioclimática en Barcelona",
+    en: "Bioclimatic architecture in Barcelona",
+  };
+  const seoDescription: Record<Locale, string> = {
+    ca: "Estudi d'arquitectura a Barcelona especialitzat en habitatges bioclimàtics, rehabilitació sostenible, edificis Passivhaus i projectes de baix consum energètic.",
+    es: "Estudio de arquitectura en Barcelona especializado en viviendas bioclimáticas, rehabilitación sostenible, edificios Passivhaus y proyectos de bajo consumo energético.",
+    en: "Architecture studio in Barcelona specialising in bioclimatic homes, sustainable renovation, Passivhaus buildings and low-energy projects.",
+  };
+  const seoKnowsAbout: Record<Locale, string[]> = {
+    ca: ["Arquitectura bioclimàtica", "Rehabilitació sostenible", "Passivhaus", "Baix consum energètic", "Disseny passiu", "Arquitectura sostenible"],
+    es: ["Arquitectura bioclimática", "Rehabilitación sostenible", "Passivhaus", "Bajo consumo energético", "Diseño pasivo", "Arquitectura sostenible"],
+    en: ["Bioclimatic architecture", "Sustainable renovation", "Passivhaus", "Low-energy building", "Passive design", "Sustainable architecture"],
+  };
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "ArchitectureFirm",
     "@id": `${SITE_URL}/#organization`,
     name: "Alventosa Morell Arquitectes",
     url: SITE_URL,
+    slogan: seoSlogan[lang],
+    description: seoDescription[lang],
+    knowsAbout: seoKnowsAbout[lang],
+    areaServed: [
+      { "@type": "City", name: "Barcelona" },
+      { "@type": "AdministrativeArea", name: "Catalunya" },
+    ],
     ...(logoUrl && { logo: logoUrl, image: logoUrl }),
     address: {
       "@type": "PostalAddress",
-      // streetAddress keeps the full text from Sanity; the discrete fields below
-      // let parsers extract city/postcode/region for local SEO and Maps matching.
-      ...(addressText && { streetAddress: addressText }),
+      // Structured NAP for local SEO / Maps matching. Kept as discrete fields
+      // (the Sanity office.address is one free-text block, so it can't be split
+      // reliably — these values are stable and rarely change).
+      streetAddress: "Carrer Rocafort 67-69, Local C9",
       postalCode: "08015",
       addressLocality: "Barcelona",
       addressRegion: "Catalunya",
