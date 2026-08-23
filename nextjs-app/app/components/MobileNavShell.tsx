@@ -30,7 +30,7 @@ export default function MobileNavShell({ children, languageSwitcher, toggleLabel
         aria-label={toggleLabel}
         aria-expanded={isOpen}
         onClick={toggleMenu}
-        className="fixed top-0 right-0 h-[60px] flex items-center pr-4 z-50 cursor-pointer bg-transparent border-0"
+        className="fixed top-0 right-0 h-[60px] flex items-center pr-6 pr-[max(1.5rem,env(safe-area-inset-right))] z-50 cursor-pointer bg-transparent border-0"
       >
         <div className="relative w-8 h-6">
           <span
@@ -51,7 +51,7 @@ export default function MobileNavShell({ children, languageSwitcher, toggleLabel
         className={`fixed inset-0 bg-white opacity-90 z-40 ${isOpen ? "block" : "hidden"}`}
         onClick={closeMenu}
       >
-        <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl font-medium text-black">
+        <div className="flex flex-col items-center justify-center h-full space-y-2 text-4xl [@media(orientation:landscape)and(max-height:600px)]:text-2xl [@media(orientation:landscape)and(max-height:600px)]:space-y-1 font-medium text-black">
           {children}
         </div>
         <div className="w-full text-center mt-8">{languageSwitcher}</div>

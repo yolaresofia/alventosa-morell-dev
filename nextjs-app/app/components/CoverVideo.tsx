@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { localizedText } from "@/app/i18n/text";
 import type { CoverVideo as CoverVideoType } from "@/sanity.types";
 import type { Locale } from "@/app/i18n/config";
@@ -27,14 +27,35 @@ function getVimeoEmbedUrl(vimeoUrl: string): string | null {
   }
 }
 
+/** Run a callback when the browser is idle, falling back to a short timeout. */
+function whenIdle(cb: () => void): () => void {
+  const w = window as typeof window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    cancelIdleCallback?: (id: number) => void;
+  };
+  if (typeof w.requestIdleCallback === "function") {
+    const id = w.requestIdleCallback(cb, { timeout: 2000 });
+    return () => w.cancelIdleCallback?.(id);
+  }
+  const t = setTimeout(cb, 200);
+  return () => clearTimeout(t);
+}
+
 /**
  * Vimeo background video. Stays a client component because of the iframe load
  * fade-in and the desktop/mobile URL swap. The alt text is rendered in a
  * sr-only span so crawlers still get the localized caption.
+ *
+ * The iframe boots lazily so it never competes with the LCP: the hero
+ * (priority) waits until the page has loaded and the browser is idle — the
+ * poster is the LCP element and paints first — while non-hero videos wait until
+ * they scroll near the viewport. Until then only the poster is on screen.
  */
 export const CoverVideo = ({ block, locale, poster, priority = false }: CoverVideoProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const alt = localizedText(block.altText, locale);
 
@@ -45,6 +66,42 @@ export const CoverVideo = ({ block, locale, poster, priority = false }: CoverVid
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Decide when to actually load the iframe.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Non-hero: only boot when it scrolls near the viewport.
+    if (!priority) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setShouldLoad(true);
+            io.disconnect();
+          }
+        },
+        { rootMargin: "200px" },
+      );
+      io.observe(el);
+      return () => io.disconnect();
+    }
+
+    // Hero: let the poster paint as the LCP, then boot once the page is idle.
+    let cancelIdle: (() => void) | undefined;
+    const start = () => {
+      cancelIdle = whenIdle(() => setShouldLoad(true));
+    };
+    if (document.readyState === "complete") {
+      start();
+      return () => cancelIdle?.();
+    }
+    window.addEventListener("load", start, { once: true });
+    return () => {
+      window.removeEventListener("load", start);
+      cancelIdle?.();
+    };
+  }, [priority]);
+
   const embedUrl = getVimeoEmbedUrl(
     (isMobile ? block.mobileVimeoUrl : block.vimeoUrl) ?? "",
   );
@@ -52,7 +109,7 @@ export const CoverVideo = ({ block, locale, poster, priority = false }: CoverVid
   if (!embedUrl) return null;
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-white">
+    <div ref={containerRef} className="w-full h-screen relative overflow-hidden bg-white">
       {poster ? (
         <Image
           src={poster}
@@ -66,19 +123,21 @@ export const CoverVideo = ({ block, locale, poster, priority = false }: CoverVid
       ) : (
         <div className="absolute inset-0 bg-white z-10" />
       )}
-      <div
-        className="absolute inset-0 z-20 transition-opacity duration-500"
-        style={{ opacity: isLoaded ? 1 : 0 }}
-      >
-        <iframe
-          src={embedUrl}
-          onLoad={() => setIsLoaded(true)}
-          className="w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full scale-[1.01]"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-          title={alt}
-        />
-      </div>
+      {shouldLoad && (
+        <div
+          className="absolute inset-0 z-20 transition-opacity duration-500"
+          style={{ opacity: isLoaded ? 1 : 0 }}
+        >
+          <iframe
+            src={embedUrl}
+            onLoad={() => setIsLoaded(true)}
+            className="w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full scale-[1.01]"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            title={alt}
+          />
+        </div>
+      )}
       <span className="sr-only">{alt}</span>
     </div>
   );

@@ -14,3 +14,7 @@ html,
 body {
   overscroll-behavior: none;
 }
+
+/* The welcome-overlay styles live inline in the document <head> (see app/layout.tsx)
+   so they apply on the first paint. Do not move them here: in dev the global
+   stylesheet is JS-injected, which would reintroduce the flash. */

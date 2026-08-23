@@ -109,15 +109,12 @@ async function run() {
     changes++;
   }
 
-  // 3. about.seo.seoTitle → drop duplicated brand + add keyword
-  const about = await client.fetch(`*[_type == "about"][0]{ _id }`);
-  if (about?._id) {
-    console.log(`• ${about._id} (about).seo.seoTitle → cleaned + keyword`);
-    tx.patch(about._id, (p) =>
-      p.setIfMissing({ seo: { _type: "seo" } }).set({ "seo.seoTitle": aboutSeoTitle }),
-    );
-    changes++;
-  }
+  // 3. about.seo.seoTitle → SKIPPED. When this script was written the about doc
+  //    had seo:null; it has since been filled with a good, keyword-bearing title
+  //    (no duplicated brand), and it now carries an unpublished draft. Patching it
+  //    would either not go live (draft) or get reverted on the next publish, and
+  //    it wouldn't be an improvement anyway. Left intact on purpose.
+  void aboutSeoTitle;
 
   // 4. projectInfo "Programa" localization
   const projects = await client.fetch(
