@@ -66,7 +66,9 @@ export default async function RootLayout({
               "[data-home-deck]{height:100svh}" +
               "[data-home-deck] [data-home-deck-item]{width:100vw;height:100svh}" +
               "[data-home-deck] [data-home-deck-item]>div:first-child{width:100vw;height:auto;flex:1 1 0%;min-height:0}" +
-              "[data-home-deck] [data-home-deck-item] img{width:100%;height:100%;object-fit:cover}}",
+              "[data-home-deck] [data-home-deck-item] img{width:100%;height:100%;object-fit:cover}}" +
+              // Smaller mobile-menu type when the phone is in landscape (short).
+              "@media (orientation:landscape) and (max-height:600px){[data-mobile-menu]{font-size:1.5rem;line-height:2rem}[data-mobile-menu]>*+*{margin-top:.25rem}}",
           }}
         />
       </head>
