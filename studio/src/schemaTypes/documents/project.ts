@@ -87,6 +87,14 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'excludeFromSearch',
+      title: 'Amagar de Google (noindex)',
+      description:
+        "Si s'activa, aquesta pàgina no s'indexarà als cercadors ni s'inclourà al sitemap, encara que tingui contingut.",
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'projectNumber',
       title: 'Número de projecte',
       type: 'string',
