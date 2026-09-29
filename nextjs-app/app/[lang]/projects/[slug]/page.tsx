@@ -11,6 +11,7 @@ import { LOCALES } from "@/app/i18n/config";
 import { localizedText } from "@/app/i18n/text";
 import { buildSeoMetadata, resolveLocaleParam, resolveLocaleParamSafe } from "@/app/i18n/seo";
 import { SITE_URL } from "@/app/config";
+import { PROJECT_CONTENT_SIGNALS, isProjectIndexable } from "@/app/utils/projectContent";
 
 export const revalidate = 60;
 
@@ -21,7 +22,8 @@ const projectSeoQuery = `*[_type == "project" && slug.current == $slug][0]{
     seoDescription,
     seoImage{ ..., altText }
   },
-  "description": builder[_type == "projectInfo"][0].description
+  "description": builder[_type == "projectInfo"][0].description,
+  ${PROJECT_CONTENT_SIGNALS}
 }`;
 
 type PageParams = Promise<{ lang: string; slug: string }>;
@@ -63,7 +65,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
       : projectDescription
     : undefined;
 
-  return buildSeoMetadata({
+  const metadata = buildSeoMetadata({
     locale,
     path: `/projects/${resolved.slug}`,
     seo: project.seo as SeoFields | null,
@@ -73,6 +75,14 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     fallbackDescription,
     openGraphType: "article",
   });
+
+  // Empty placeholder projects are kept out of the index (they're also left out
+  // of the sitemap). Once real content is added in Sanity this flips back on.
+  if (!isProjectIndexable(project)) {
+    metadata.robots = { index: false, follow: true };
+  }
+
+  return metadata;
 }
 
 export default async function ProjectPage({

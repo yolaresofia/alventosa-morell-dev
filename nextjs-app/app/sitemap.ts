@@ -3,6 +3,11 @@ import { client } from "@/sanity/lib/client";
 import { SITE_URL } from "@/app/config";
 import { LOCALES } from "@/app/i18n/config";
 import { buildLanguageAlternates } from "@/app/i18n/metadata";
+import {
+  PROJECT_CONTENT_SIGNALS,
+  isProjectIndexable,
+  type ProjectContentSignals,
+} from "@/app/utils/projectContent";
 
 export const revalidate = 3600; // Refresh sitemap every hour
 
@@ -37,10 +42,13 @@ function expandToLocales(
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const slugs = await client.fetch<{ slug: string; _updatedAt: string }[]>(
+  const slugs = await client.fetch<
+    ({ slug: string; _updatedAt: string } & ProjectContentSignals)[]
+  >(
     `*[_type == "project" && defined(slug.current)]{
       "slug": slug.current,
-      _updatedAt
+      _updatedAt,
+      ${PROJECT_CONTENT_SIGNALS}
     }`,
   );
 
@@ -50,7 +58,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     expandToLocales(entry.path, now, entry.changeFrequency, entry.priority),
   );
 
-  const projectUrls = slugs.flatMap((p) =>
+  // Empty placeholder projects are left out so Google isn't fed thin content.
+  const projectUrls = slugs.filter(isProjectIndexable).flatMap((p) =>
     expandToLocales(
       `/projects/${p.slug}`,
       new Date(p._updatedAt),
