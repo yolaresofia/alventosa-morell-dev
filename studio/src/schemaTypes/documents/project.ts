@@ -87,12 +87,12 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
-      name: 'excludeFromSearch',
-      title: 'Amagar de Google (noindex)',
+      name: 'showInSearch',
+      title: 'Mostrar a Google (indexar)',
       description:
-        "Si s'activa, aquesta pàgina no s'indexarà als cercadors ni s'inclourà al sitemap, encara que tingui contingut.",
+        "Activat (per defecte): la pàgina s'indexa als cercadors i entra al sitemap. Desactivat: s'amaga de Google encara que tingui contingut. Les pàgines buides no s'indexen mai.",
       type: 'boolean',
-      initialValue: false,
+      initialValue: true,
     }),
     defineField({
       name: 'projectNumber',
